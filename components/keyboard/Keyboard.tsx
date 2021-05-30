@@ -12,7 +12,7 @@ interface Props {
 // const keys = [];
 // "#7823f7"
 // numberOfKeys = 12
-const Keyboard = ({ activeColor = "green", }: Props): ReactElement => {
+const Keyboard = ({ activeColor = "cyan", }: Props): ReactElement => {
 	const midiConfig = useMidiApi();
 
 	const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
@@ -20,7 +20,7 @@ const Keyboard = ({ activeColor = "green", }: Props): ReactElement => {
 	};
 
 	const getOpacity = useCallback((velocity: number): string => {
-		return homeOnTheRange([0, 127], [0, 1], velocity).toFixed(2);
+		return homeOnTheRange([0, 80], [0, 1], velocity).toFixed(2);
 	}, []);
 
 	const keyOn = useCallback(
@@ -43,10 +43,7 @@ const Keyboard = ({ activeColor = "green", }: Props): ReactElement => {
 			if (key) {
 				const classes: DOMTokenList = key.classList
 				const isDark = classes[0] === 'dark'
-				// $dark: rgba(#1a1a1a, 1);
-				// $light: rgba(#c7c7c7, 1);
 				const previousColor = isDark ? '#1a1a1a' : '#c7c7c7'
-				console.log({ on: midiConfig.midi.on });
 
 				if (midiConfig.midi.on) {
 					keyOn(key);
@@ -106,7 +103,7 @@ const Keyboard = ({ activeColor = "green", }: Props): ReactElement => {
 					<path id="47" data-name="47" className="light" d="M1293.93,1.1V346.69h-36.17v172.4l7.48,4.32h65.81l7.23-4.17V1.1Z" />
 					<path id="48" data-name="48" className="light" d="M1341.23,1.92H1387V347.26h34.42V519.39l-6.47,3.74h-67.22l-6.86-4Z" />
 					{/* <g className="key__group" id="49"> */}
-					<path id="49-key" data-name="49" className="dark" d="M1394.63,6V340.31h42.6V6.16Z" />
+					<path id="49" data-name="49" className="dark" d="M1394.63,6V340.31h42.6V6.16Z" />
 					{/* <text x={1400} id="49-c-sharp" className="label sharp" d="M1394.63,6V340.31h42.6V6.16Z">
 							C♯
 						</text>
