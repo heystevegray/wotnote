@@ -43,7 +43,7 @@ const Keyboard = ({ activeColor = "cyan", }: Props): ReactElement => {
 			if (key) {
 				const classes: DOMTokenList = key.classList
 				const isDark = classes[0] === 'dark'
-				const previousColor = isDark ? '#1a1a1a' : '#c7c7c7'
+				const previousColor = isDark ? 'black' : '#c7c7c7'
 
 				if (midiConfig.midi.on) {
 					keyOn(key);

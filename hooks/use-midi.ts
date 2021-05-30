@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from "react";
+
 // https://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
-// 🙃😝 haha
+
 export interface MIDInterface {
   midiAccess: WebMidi.MIDIAccess | undefined;
   midiConnectionEvent: WebMidi.MIDIConnectionEvent | undefined;
   midiSupported: boolean | undefined;
   midiPort?: WebMidi.MIDIPort | undefined;
   midi: MidiNote;
-  inputs: WebMidi.MIDIInput[]
+  inputs: Device[]
 }
-
 
 interface Key {
   value: number;
@@ -20,6 +20,17 @@ interface Key {
 interface MidiNote extends Key {
   velocity: number;
   on: boolean;
+}
+
+interface Device {
+  deviceName: string
+  id: string
+  connection: string
+  name: string
+  manufacturer: string
+  state: string
+  type: string
+  version: string
 }
 
 const noteName: string[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -49,23 +60,35 @@ const useMidiApi = (): MIDInterface => {
     setMidiConfig(merged);
   };
 
-  const getNoteName = (midiNote: number): Key => {
+  const getKey = (midiNote: number): Key => {
     const octave: number = Math.floor(midiNote / 12 - 1);
     const noteIndex: number = midiNote % 12;
     const name = noteName[noteIndex];
     return { value: midiNote, octave, name };
   };
 
+  const getInputName = (input: WebMidi.MIDIInput): string => {
+    return `${input.manufacturer} ${input.name}`.trim()
+  }
+
   const onMIDISuccess = (midiAccess: any): void => {
     // Subscribe to Midi messages
     var inputs = midiAccess.inputs.values();
+    const inputDevices: Device[] = []
+    for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
+      inputDevices.push(
+        {
+          connection: input.value.connection,
+          id: input.value.id,
+          name: input.value.name,
+          manufacturer: input.value.manufacturer,
+          state: input.value.state,
+          type: input.value.type,
+          version: input.value.version,
+          deviceName: getInputName(input.value),
 
-    const inputDevices: WebMidi.MIDIInput[] = []
-    for (var input = inputs.next(); input && !input.done; input = inputs.next()) {
-      inputDevices.push(input.value)
-      console.log("Input port : [ type:'" + input.type + "' id: '" + input.id +
-        "' manufacturer: '" + input.manufacturer + "' name: '" + input.name +
-        "' version: '" + input.version + "']");
+        }
+      )
       input.value.onmidimessage = getMIDIMessage;
     }
     // Subscribe to Midi state changes
@@ -93,18 +116,17 @@ const useMidiApi = (): MIDInterface => {
     switch (command) {
       case 144: // note on
         if (velocity > 0) {
-          update({ midi: { ...getNoteName(note), velocity, on: true } });
+          update({ midi: { ...getKey(note), velocity, on: true } });
         } else {
-          update({ midi: { ...getNoteName(note), velocity, on: false } });
+          update({ midi: { ...getKey(note), velocity, on: false } });
         }
         break;
       case 128: // note off
-        update({ midi: { ...getNoteName(note), velocity, on: false } });
+        update({ midi: { ...getKey(note), velocity, on: false } });
         // onNoteEndCallback
         break;
     }
   };
-
 
   useEffect(() => {
     const initialize = async (): Promise<any> => {
