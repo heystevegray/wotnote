@@ -1,11 +1,10 @@
-import { Grid, Typography } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import Layout from '../components/layout';
 import Keyboard from '../components/keyboard/Keyboard';
-
-import useMidiApi from '../hooks/use-midi';
+// import useMidiApi from '../hooks/use-midi';
 
 export default function Home() {
-    const data = useMidiApi();
+    // const data = useMidiApi();
     // console.log(util.inspect(data, { showHidden: false, depth: null }))
 
     return (

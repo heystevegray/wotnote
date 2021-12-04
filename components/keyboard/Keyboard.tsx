@@ -1,4 +1,4 @@
-import { Grid, FormControl, InputLabel, Select, MenuItem, createStyles, makeStyles, Theme, useTheme } from '@material-ui/core';
+import { Grid, FormControl, InputLabel, Select, MenuItem, createStyles, makeStyles, useTheme } from '@material-ui/core';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
 import { MAX_KEY, MIN_KEY, PianoScale, PIANO_KEYS, PIANO_SCALES, Key, Scale } from './PianoScale';
@@ -118,7 +118,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     return (
         <Grid container spacing={6}>
             <Grid container item xs={12}>
-                <Grid item container xs={6} justify="center">
+                <Grid item container xs={12} lg={6} justify="center">
                     <FormControl className={classes.formControl}>
                         <InputLabel id="key-label">Key</InputLabel>
                         <Select
@@ -137,7 +137,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item container xs={6} justify="center">
+                <Grid item container xs={12} lg={6} justify="center">
                     <FormControl className={classes.formControl}>
                         <InputLabel id="scale-label">Scale</InputLabel>
                         <Select
