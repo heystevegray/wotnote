@@ -24,21 +24,6 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
         return homeOnTheRange([0, 80], [0, 1], velocity).toFixed(2);
     }, []);
 
-    useEffect(() => {
-        const cMajorScale = new PianoScale('C', 'Major');
-        const intervals = cMajorScale.getIntervals();
-        const keyboardCodes = cMajorScale.getNotes();
-
-        console.log({ keyboardCodes });
-
-        keyboardCodes.forEach((keyboardCode) => {
-            const { key } = getElementByKeyCode(keyboardCode.code);
-            if (key) {
-                keyOn(key);
-            }
-        });
-    }, []);
-
     const keyOn = useCallback(
         (key: HTMLElement): void => {
             key.style.fill = activeColor;
@@ -47,10 +32,20 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
         [activeColor, getOpacity, midiConfig.midi.velocity]
     );
 
-    const keyOff = (key: HTMLElement, previousColor: string): void => {
+    const keyOff = (key: HTMLElement, previousColor: string = ''): void => {
         key.style.fill = previousColor || '';
         key.style.opacity = '1';
     };
+
+    const resetKeys = () => {
+        // Reset all keys
+        for (let index = MIN_KEY; index < MAX_KEY; index++) {
+            const key = document.getElementById(`${index}`);
+            if (key) {
+                keyOff(key);
+            }
+        }
+    }
 
     const getElementByKeyCode = (keyCode: number): KeyProperties => {
         const keyElement = document.getElementById(`${keyCode}`);
@@ -59,6 +54,20 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
         const previousColor = isDark ? 'black' : '#c7c7c7';
         return { key: keyElement, previousColor };
     };
+
+    useEffect(() => {
+        const scale = new PianoScale('E', "Major");
+        const keyboardCodes = scale.getNotes();
+
+        resetKeys()
+
+        keyboardCodes.forEach((keyboardCode) => {
+            const { key } = getElementByKeyCode(keyboardCode.code);
+            if (key) {
+                keyOn(key);
+            }
+        });
+    }, []);
 
     useEffect(() => {
         if (midiConfig) {
