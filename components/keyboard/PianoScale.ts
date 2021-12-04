@@ -27,21 +27,22 @@ interface Note {
 }
 
 const DEFAULT_KEY_CODE = 24
+const OCTAVE = 12 * 3
 
 const KEYS =
 	[
-		{ key: 'C', code: DEFAULT_KEY_CODE },
-		{ key: 'C#', code: 25 },
-		{ key: 'D', code: 26 },
-		{ key: 'D#', code: 27 },
-		{ key: 'E', code: 28 },
-		{ key: 'F', code: 29 },
-		{ key: 'F#', code: 30 },
-		{ key: 'G', code: 31 },
-		{ key: 'G#', code: 32 },
-		{ key: 'A', code: 33 },
-		{ key: 'A#', code: 34 },
-		{ key: 'B', code: 35 },
+		{ key: 'C', code: DEFAULT_KEY_CODE + OCTAVE },
+		{ key: 'C#', code: 25 + OCTAVE },
+		{ key: 'D', code: 26 + OCTAVE },
+		{ key: 'D#', code: 27 + OCTAVE },
+		{ key: 'E', code: 28 + OCTAVE },
+		{ key: 'F', code: 29 + OCTAVE },
+		{ key: 'F#', code: 30 + OCTAVE },
+		{ key: 'G', code: 31 + OCTAVE },
+		{ key: 'G#', code: 32 + OCTAVE },
+		{ key: 'A', code: 33 + OCTAVE },
+		{ key: 'A#', code: 34 + OCTAVE },
+		{ key: 'B', code: 35 + OCTAVE },
 	];
 
 const formulas: ScaleFormula = {
