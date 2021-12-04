@@ -14,7 +14,7 @@ interface KeyProperties {
     previousColor: string;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
     createStyles({
         formControl: {
             minWidth: 200,
@@ -26,7 +26,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     const midiConfig = useMidiApi();
     const classes = useStyles();
     const [key, setKey] = useState<Key | undefined>(undefined)
-    const [scale, setScale] = useState<Scale | undefined>(undefined)
+    const [scale, setScale] = useState<Scale | undefined>("Major")
     const theme = useTheme();
 
     const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
