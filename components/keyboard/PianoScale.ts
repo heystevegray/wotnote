@@ -1,6 +1,8 @@
-type Key = 'C' | 'C#' | 'D' | 'D#' | 'E' | 'F' | 'F#' | 'G' | 'G#' | 'A' | 'A#' | 'B';
+export type Key = 'C' | 'C#' | 'D' | 'D#' | 'E' | 'F' | 'F#' | 'G' | 'G#' | 'A' | 'A#' | 'B';
 
-type Scale = 'Major' | 'Harmonic Minor' | 'Melodic Minor' | 'Natural Minor';
+
+export type Scale = 'Major' | 'Harmonic Minor' | 'Melodic Minor' | 'Natural Minor';
+
 
 interface Interval {
 	name: 'half' | 'whole' | 'whole + half';
@@ -87,16 +89,16 @@ const formulas: ScaleFormula = {
 
 export const MIN_KEY = 21;
 export const MAX_KEY = 108;
+export const PIANO_KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+export const PIANO_SCALES = [MAJOR, HARMONIC_MINOR, MELODIC_MINOR, NATURAL_MINOR]
 
 export class PianoScale {
 	key: Key;
 	scale: Scale;
-	activeColor: string;
 
-	constructor(key: Key, scale: Scale, activeColor = 'cyan') {
+	constructor(key: Key, scale: Scale) {
 		this.key = key;
 		this.scale = scale;
-		this.activeColor = activeColor;
 	}
 
 	getIntervals(): number[] {
