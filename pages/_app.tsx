@@ -3,7 +3,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../lib/theme';
 import React, { useEffect } from 'react';
-import "../components/keyboard/Keyboard.scss";
+import '../components/keyboard/Keyboard.scss';
 
 // Determines if we are running on server or in client.
 const isServerSideRendered = () => {

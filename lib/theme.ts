@@ -9,7 +9,7 @@ const THEME: ThemeOptions = {
         background: {
             default: '#181818',
             paper: '#202020',
-        }
+        },
     },
 };
 
