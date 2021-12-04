@@ -7,7 +7,7 @@ const THEME: ThemeOptions = {
             main: '#00ff00',
         },
         background: {
-            default: '#000',
+            default: '#181818',
             paper: '#202020',
         }
     },
