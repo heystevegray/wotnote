@@ -25,9 +25,9 @@ const useStyles = makeStyles(() =>
 const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElement => {
     const midiConfig = useMidiApi();
     const classes = useStyles();
-    const [pianoKey, setPianoKey] = useState<Key | undefined>(undefined)
-    const [scale, setScale] = useState<Scale | undefined>("Major")
-    const [notes, setNotes] = useState<Note[] | undefined>(undefined)
+    const [pianoKey, setPianoKey] = useState<Key | undefined>(undefined);
+    const [scale, setScale] = useState<Scale | undefined>('Major');
+    const [notes, setNotes] = useState<Note[] | undefined>(undefined);
     const theme = useTheme();
 
     const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
@@ -39,19 +39,19 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     }, []);
 
     const keyOn = useCallback(
-        (key: HTMLElement, overrideColor: string = ''): void => {
+        (key: HTMLElement, overrideColor = ''): void => {
             key.style.fill = overrideColor || activeColor;
             key.style.opacity = midiConfig?.midi?.velocity === 0 ? '1' : getOpacity(midiConfig?.midi?.velocity);
         },
         [activeColor, getOpacity, midiConfig.midi.velocity]
     );
 
-    const keyOff = (key: HTMLElement, previousColor: string = ''): void => {
-        const keyCode = +key.id
+    const keyOff = (key: HTMLElement, previousColor = '', forceOff = false): void => {
+        const keyCode = +key.id;
 
         // Don't turn the note off if it's displaying the piano scale
-        if (notes?.map(note => note.code).includes(keyCode)) {
-            key.style.fill = theme.palette.primary.main
+        if (!forceOff && notes?.map((note) => note.code).includes(keyCode)) {
+            key.style.fill = theme.palette.primary.main;
         } else {
             key.style.fill = previousColor || '';
         }
@@ -63,10 +63,10 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
         for (let index = MIN_KEY; index < MAX_KEY; index++) {
             const key = document.getElementById(`${index}`);
             if (key) {
-                keyOff(key);
+                keyOff(key, '', true);
             }
         }
-    }
+    };
 
     const getElementByKeyCode = (keyCode: number): KeyProperties => {
         const keyElement = document.getElementById(`${keyCode}`);
@@ -77,13 +77,12 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     };
 
     useEffect(() => {
-
-        resetKeys()
+        resetKeys();
 
         if (pianoKey) {
             const selectedScale = new PianoScale(pianoKey, scale || 'Major');
             const notes = selectedScale.getNotes();
-            setNotes(notes)
+            setNotes(notes);
 
             notes.forEach((keyboardCode) => {
                 const { key } = getElementByKeyCode(keyboardCode.code);
@@ -92,7 +91,6 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                 }
             });
         }
-
     }, [pianoKey, scale]);
 
     useEffect(() => {
