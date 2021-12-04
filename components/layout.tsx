@@ -6,7 +6,7 @@ import useMidiApi from '../hooks/use-midi';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         header: {
-            padding: '1em 2em',
+            padding: theme.spacing(2),
         },
         formControl: {
             margin: theme.spacing(1),
