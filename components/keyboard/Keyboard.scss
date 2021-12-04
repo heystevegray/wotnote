@@ -1,37 +1,37 @@
-@import "../../assets/sass";
+@import '../../assets/sass';
 
 @mixin text {
-  font-size: 1.5em;
-  font-weight: bold;
-  width: 100%;
-  fill: white;
-  flex-grow: 1;
+    font-size: 1.5em;
+    font-weight: bold;
+    width: 100%;
+    fill: white;
+    flex-grow: 1;
 }
 
 #piano {
-  background-color: transparent;
-  grid-area: piano;
+    background-color: transparent;
+    grid-area: piano;
 
-  .key {
-    &__group {
-      fill: $dark;
-      width: 100%;
+    .key {
+        &__group {
+            fill: $dark;
+            width: 100%;
 
-      .label {
-        &.sharp {
-          transform: translate(0, 125px);
-          @include text;
+            .label {
+                &.sharp {
+                    transform: translate(0, 125px);
+                    @include text;
+                }
+
+                &.flat {
+                    @include text;
+                    transform: translate(0, 235px);
+                }
+            }
         }
-
-        &.flat {
-          @include text;
-          transform: translate(0, 235px);
-        }
-      }
     }
-  }
 
-  .light {
-    fill: $light;
-  }
+    .light {
+        fill: $light;
+    }
 }

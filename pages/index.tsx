@@ -3,10 +3,10 @@ import Layout from '../components/layout';
 import Keybard from '../components/keyboard/Keyboard';
 
 import useMidiApi from '../hooks/use-midi';
-import util from 'util'
+import util from 'util';
 
 export default function Home() {
-    const data = useMidiApi()
+    const data = useMidiApi();
     // console.log(util.inspect(data, { showHidden: false, depth: null }))
 
     return (
@@ -19,9 +19,7 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <Typography>
-                            {JSON.stringify(data.midi, null, 2)}
-                        </Typography>
+                        <Typography>{JSON.stringify(data.midi, null, 2)}</Typography>
                     </Grid>
                 </Grid>
             </Layout>
