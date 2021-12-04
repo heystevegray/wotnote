@@ -1,7 +1,7 @@
 import { Grid, FormControl, InputLabel, Select, MenuItem, createStyles, makeStyles, useTheme } from '@material-ui/core';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
-import { MAX_KEY, MIN_KEY, PianoScale, PIANO_KEYS, PIANO_SCALES, Key, Scale } from './PianoScale';
+import { MAX_KEY, MIN_KEY, PianoScale, PIANO_KEYS, PIANO_SCALES, Key, Scale, Note } from './PianoScale';
 
 interface Props {
     activeColor?: string;
@@ -25,8 +25,9 @@ const useStyles = makeStyles(() =>
 const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElement => {
     const midiConfig = useMidiApi();
     const classes = useStyles();
-    const [key, setKey] = useState<Key | undefined>(undefined)
+    const [pianoKey, setPianoKey] = useState<Key | undefined>(undefined)
     const [scale, setScale] = useState<Scale | undefined>("Major")
+    const [notes, setNotes] = useState<Note[] | undefined>(undefined)
     const theme = useTheme();
 
     const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
@@ -46,7 +47,14 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     );
 
     const keyOff = (key: HTMLElement, previousColor: string = ''): void => {
-        key.style.fill = previousColor || '';
+        const keyCode = +key.id
+
+        // Don't turn the note off if it's displaying the piano scale
+        if (notes?.map(note => note.code).includes(keyCode)) {
+            key.style.fill = theme.palette.primary.main
+        } else {
+            key.style.fill = previousColor || '';
+        }
         key.style.opacity = '1';
     };
 
@@ -72,11 +80,12 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
 
         resetKeys()
 
-        if (key) {
-            const selectedScale = new PianoScale(key, scale || 'Major');
-            const keyboardCodes = selectedScale.getNotes();
+        if (pianoKey) {
+            const selectedScale = new PianoScale(pianoKey, scale || 'Major');
+            const notes = selectedScale.getNotes();
+            setNotes(notes)
 
-            keyboardCodes.forEach((keyboardCode) => {
+            notes.forEach((keyboardCode) => {
                 const { key } = getElementByKeyCode(keyboardCode.code);
                 if (key) {
                     keyOn(key, theme.palette.primary.main);
@@ -84,7 +93,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
             });
         }
 
-    }, [key, scale]);
+    }, [pianoKey, scale]);
 
     useEffect(() => {
         if (midiConfig) {
@@ -124,8 +133,8 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                         <Select
                             labelId="key-label"
                             id="key"
-                            value={key}
-                            onChange={(event) => setKey(event.target.value as Key)}
+                            value={pianoKey}
+                            onChange={(event) => setPianoKey(event.target.value as Key)}
                         >
                             {PIANO_KEYS.map((pianoKey, index) => {
                                 return (

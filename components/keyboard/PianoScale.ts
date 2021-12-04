@@ -3,7 +3,10 @@ export type Key = 'C' | 'C#' | 'D' | 'D#' | 'E' | 'F' | 'F#' | 'G' | 'G#' | 'A' 
 
 export type Scale = 'Major' | 'Harmonic Minor' | 'Melodic Minor' | 'Natural Minor';
 
-
+export interface Note {
+	key: Key;
+	code: number;
+}
 interface Interval {
 	name: 'half' | 'whole' | 'whole + half';
 	step: 0.5 | 1 | 1.5
@@ -19,11 +22,6 @@ interface ScaleFormula {
 	[HARMONIC_MINOR]: Interval[];
 	[MELODIC_MINOR]: Interval[];
 	[NATURAL_MINOR]: Interval[];
-}
-
-interface Note {
-	key: Key;
-	code: number;
 }
 
 const DEFAULT_KEY_CODE = 24
