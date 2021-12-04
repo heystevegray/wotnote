@@ -11,7 +11,7 @@ export default function Home() {
 
     return (
         <>
-            <Layout title="Next.js example">
+            <Layout title="wotnote">
                 <Grid container spacing={4} direction="column">
                     <Grid item container direction="column" xs={12} alignItems="center">
                         <Grid container item alignContent="center" justify="center">

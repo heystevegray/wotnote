@@ -1,8 +1,7 @@
 import React, { ReactElement, useEffect, useCallback } from "react";
 import useMidiApi from "../../hooks/use-midi";
+import { MAX_KEY, MIN_KEY, PianoScale } from "./PianoScale";
 
-const MIN_KEY = 21;
-const MAX_KEY = 108;
 
 interface Props {
 	activeColor?: string;
@@ -10,8 +9,16 @@ interface Props {
 	// show note names.
 }
 
-const Keyboard = ({ activeColor = "cyan", numberOfKeys = 12 }: Props): ReactElement => {
+interface KeyProperties {
+	key: HTMLElement | null,
+	previousColor: string
+}
+
+const Keyboard = ({ activeColor = "cyan", numberOfKeys = 88 }: Props): ReactElement => {
 	const midiConfig = useMidiApi();
+
+
+
 
 	const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
 		return ((value - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
@@ -21,10 +28,25 @@ const Keyboard = ({ activeColor = "cyan", numberOfKeys = 12 }: Props): ReactElem
 		return homeOnTheRange([0, 80], [0, 1], velocity).toFixed(2);
 	}, []);
 
+	useEffect(() => {
+		const cMajorScale = new PianoScale("C", "Major");
+		const intervals = cMajorScale.getIntervals();
+		const keyboardCodes = cMajorScale.getNotes();
+
+		console.log({ keyboardCodes });
+
+		keyboardCodes.forEach((keyboardCode) => {
+			const { key } = getElementByKeyCode(keyboardCode.code);
+			if (key) {
+				keyOn(key)
+			}
+		})
+	}, [])
+
 	const keyOn = useCallback(
 		(key: HTMLElement): void => {
 			key.style.fill = activeColor;
-			key.style.opacity = getOpacity(midiConfig.midi.velocity);
+			key.style.opacity = midiConfig?.midi?.velocity === 0 ? '1' : getOpacity(midiConfig?.midi?.velocity);
 		},
 		[activeColor, getOpacity, midiConfig.midi.velocity]
 	);
@@ -33,6 +55,14 @@ const Keyboard = ({ activeColor = "cyan", numberOfKeys = 12 }: Props): ReactElem
 		key.style.fill = previousColor || "";
 		key.style.opacity = "1";
 	};
+
+	const getElementByKeyCode = (keyCode: number): KeyProperties => {
+		const keyElement = document.getElementById(`${keyCode}`)
+		const classes: DOMTokenList | undefined = keyElement?.classList
+		const isDark = classes && classes[0] === 'dark'
+		const previousColor = isDark ? 'black' : '#c7c7c7'
+		return { key: keyElement, previousColor }
+	}
 
 	useEffect(() => {
 		if (midiConfig) {
