@@ -1,7 +1,28 @@
-import { Grid, FormControl, InputLabel, Select, MenuItem, createStyles, makeStyles, useTheme } from '@material-ui/core';
+import {
+    Grid,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    createStyles,
+    makeStyles,
+    useTheme,
+    Typography,
+} from '@material-ui/core';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
-import { MAX_KEY, MIN_KEY, PianoScale, PIANO_KEYS, PIANO_SCALES, Key, Scale, Note } from './PianoScale';
+import Chord from './chord/Chord';
+import {
+    MAX_KEY,
+    MIN_KEY,
+    PianoScale,
+    PIANO_KEYS,
+    PIANO_SCALES,
+    Key,
+    Scale,
+    Note,
+    Chord as ChordType,
+} from './PianoScale';
 
 interface Props {
     activeColor?: string;
@@ -28,6 +49,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     const [pianoKey, setPianoKey] = useState<Key | undefined>(undefined);
     const [scale, setScale] = useState<Scale | undefined>('Major');
     const [notes, setNotes] = useState<Note[] | undefined>(undefined);
+    const [chords, setChords] = useState<ChordType[] | undefined>(undefined);
     const theme = useTheme();
 
     const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
@@ -81,8 +103,12 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
 
         if (pianoKey) {
             const selectedScale = new PianoScale(pianoKey, scale || 'Major');
+
             const notes = selectedScale.getNotes();
             setNotes(notes);
+
+            const chords = selectedScale.getChords();
+            setChords(chords);
 
             notes.forEach((keyboardCode) => {
                 const { key } = getElementByKeyCode(keyboardCode.code);
@@ -526,6 +552,20 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                     </g>
                 </svg>
             </Grid>
+            {chords && (
+                <Grid container item xs={12} spacing={2}>
+                    <Grid container item direction="column" alignItems="center">
+                        <Grid item xs={12}>
+                            <Typography variant="h2">Diatonic Chords</Typography>
+                        </Grid>
+                    </Grid>
+                    {chords.map((chord) => (
+                        <Grid item xs={12} md={3}>
+                            <Chord chord={chord} />
+                        </Grid>
+                    ))}
+                </Grid>
+            )}
         </Grid>
     );
 };
