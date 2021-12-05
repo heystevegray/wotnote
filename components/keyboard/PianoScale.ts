@@ -6,9 +6,16 @@ export interface Note {
     key: Key;
     code: number;
 }
+
+interface Chord {
+    key: Key;
+    notes: Note[];
+}
+
+type Step = 0.5 | 1 | 1.5;
 interface Interval {
     name: 'half' | 'whole' | 'whole + half';
-    step: 0.5 | 1 | 1.5;
+    step: Step
 }
 
 const MAJOR = 'Major';
@@ -98,12 +105,19 @@ export class PianoScale {
         this.scale = scale;
     }
 
-    getIntervals(): number[] {
-        return Object.values(formulas[this.scale]).map((interval) => interval.step);
+    getIntervals(octaves = 1): Step[] {
+        const intervals: Step[] = []
+        new Array(octaves).fill(0).forEach(() => {
+            const steps: Step[] = Object.values(formulas[this.scale]).map((interval) => interval.step)
+            intervals.push(...steps)
+        })
+
+        return intervals
+
     }
 
-    getNotes(): Note[] {
-        const intervals = this.getIntervals();
+    getNotes(octaves: number = 1): Note[] {
+        const intervals = this.getIntervals(octaves);
         const notes: Note[] = [];
 
         let startKeyCode = KEYS.find((note) => note.key === this.key)?.code || DEFAULT_KEY_CODE;
@@ -131,5 +145,29 @@ export class PianoScale {
         }
 
         return notes;
+    }
+
+    getChords(): Chord[] {
+        const chords: Chord[] = [];
+        const twoOctaves = this.getNotes(2);
+
+        for (let index = 0; index < twoOctaves.length; index++) {
+            const chord: Chord = {
+                key: twoOctaves[index].key,
+                notes: [
+                    {
+                        ...twoOctaves[index],
+                    },
+                    {
+                        ...twoOctaves[index + 2],
+                    },
+                    { ...twoOctaves[index + 4] },
+                ],
+            };
+
+            chords.push(chord);
+        }
+
+        return chords.slice(0, 7);
     }
 }
