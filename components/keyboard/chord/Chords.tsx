@@ -8,8 +8,8 @@ interface Props {
 
 const Chords = ({ chords }: Props) => {
 	return (
-		<Grid container item xs={12} spacing={1} justify="center">
-			<Grid container item xs={12}>
+		<Grid container item xs={12} justify="center">
+			<Grid container item xs={12} spacing={3} justify="center">
 				<Grid item xs={12}>
 					<Typography align="center" variant="h2">
 						Diatonic Chords
@@ -23,12 +23,14 @@ const Chords = ({ chords }: Props) => {
 						</Link>
 					</Typography>
 				</Grid>
+				{chords.map((chord, index) => (
+					<Grid container spacing={2} item xs={12} md={6} lg={3} key={`${chord.key}-${index}`}>
+						<Grid item xs={12}>
+							<Chord chord={chord} chordIndex={index} />
+						</Grid>
+					</Grid>
+				))}
 			</Grid>
-			{chords.map((chord, index) => (
-				<Grid container item xs={12} md={6} lg={3} key={`${chord.key}-${index}`}>
-					<Chord chord={chord} chordIndex={index} />
-				</Grid>
-			))}
 		</Grid>
 	)
 }

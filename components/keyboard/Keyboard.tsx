@@ -555,11 +555,11 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                     </g>
                 </svg>
             </Grid>
-            <Grid item xs={12}>
-                {chords && (
+            {chords && (
+                <Grid item xs={12}>
                     <Chords chords={chords} />
-                )}
-            </Grid>
+                </Grid>
+            )}
         </Grid>
     );
 };
