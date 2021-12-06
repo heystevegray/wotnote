@@ -36,9 +36,9 @@ const Chord = ({ chord, chordIndex }: Props) => {
                     </Grid>
                 </Grid>
                 <Grid container item justify="center">
-                    <Grid container item xs={3}>
+                    <Grid container item xs={12} justify="center">
                         {chord.notes.map((note: Note) => (
-                            <Grid container item xs justify="center" key={note.code}>
+                            <Grid container item xs={2} justify="center" key={note.code}>
                                 <Typography variant="h4" color="textSecondary">
                                     {note.key}
                                 </Typography>
