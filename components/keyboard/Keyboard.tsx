@@ -1,7 +1,31 @@
-import { Grid, FormControl, InputLabel, Select, MenuItem, createStyles, makeStyles, useTheme } from '@material-ui/core';
+import {
+    Grid,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    createStyles,
+    makeStyles,
+    useTheme,
+    Typography,
+    Link,
+} from '@material-ui/core';
+import { Container } from 'next/app';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
-import { MAX_KEY, MIN_KEY, PianoScale, PIANO_KEYS, PIANO_SCALES, Key, Scale, Note } from './PianoScale';
+import Chord from './chord/Chord';
+import Chords from './chord/Chords';
+import {
+    MAX_KEY,
+    MIN_KEY,
+    PianoScale,
+    PIANO_KEYS,
+    PIANO_SCALES,
+    Key,
+    Scale,
+    Note,
+    Chord as ChordType,
+} from './PianoScale';
 
 interface Props {
     activeColor?: string;
@@ -25,9 +49,10 @@ const useStyles = makeStyles(() =>
 const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElement => {
     const midiConfig = useMidiApi();
     const classes = useStyles();
-    const [pianoKey, setPianoKey] = useState<Key | undefined>(undefined);
+    const [pianoKey, setPianoKey] = useState<Key | undefined>('C');
     const [scale, setScale] = useState<Scale | undefined>('Major');
     const [notes, setNotes] = useState<Note[] | undefined>(undefined);
+    const [chords, setChords] = useState<ChordType[] | undefined>(undefined);
     const theme = useTheme();
 
     const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
@@ -81,8 +106,12 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
 
         if (pianoKey) {
             const selectedScale = new PianoScale(pianoKey, scale || 'Major');
+
             const notes = selectedScale.getNotes();
             setNotes(notes);
+
+            const chords = selectedScale.getChords();
+            setChords(chords);
 
             notes.forEach((keyboardCode) => {
                 const { key } = getElementByKeyCode(keyboardCode.code);
@@ -125,7 +154,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     return (
         <Grid container spacing={6}>
             <Grid container item xs={12}>
-                <Grid item container xs={12} lg={6} justify="center">
+                <Grid item container xs={12} md={6} justify="center">
                     <FormControl className={classes.formControl}>
                         <InputLabel id="key-label">Key</InputLabel>
                         <Select
@@ -144,7 +173,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item container xs={12} lg={6} justify="center">
+                <Grid item container xs={12} md={6} justify="center">
                     <FormControl className={classes.formControl}>
                         <InputLabel id="scale-label">Scale</InputLabel>
                         <Select
@@ -526,6 +555,11 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                     </g>
                 </svg>
             </Grid>
+            {chords && (
+                <Grid item xs={12}>
+                    <Chords chords={chords} />
+                </Grid>
+            )}
         </Grid>
     );
 };
