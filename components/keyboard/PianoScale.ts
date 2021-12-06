@@ -7,7 +7,7 @@ export interface Note {
     code: number;
 }
 
-interface Chord {
+export interface Chord {
     key: Key;
     notes: Note[];
 }
@@ -15,7 +15,7 @@ interface Chord {
 type Step = 0.5 | 1 | 1.5;
 interface Interval {
     name: 'half' | 'whole' | 'whole + half';
-    step: Step
+    step: Step;
 }
 
 const MAJOR = 'Major';
@@ -52,7 +52,6 @@ const formulas: ScaleFormula = {
     [MAJOR]: [
         { name: 'whole', step: 1 },
         { name: 'whole', step: 1 },
-        { name: 'whole', step: 1 },
         { name: 'half', step: 0.5 },
         { name: 'whole', step: 1 },
         { name: 'whole', step: 1 },
@@ -60,7 +59,6 @@ const formulas: ScaleFormula = {
         { name: 'half', step: 0.5 },
     ],
     [HARMONIC_MINOR]: [
-        { name: 'whole', step: 1 },
         { name: 'whole', step: 1 },
         { name: 'half', step: 0.5 },
         { name: 'whole', step: 1 },
@@ -71,7 +69,6 @@ const formulas: ScaleFormula = {
     ],
     [MELODIC_MINOR]: [
         { name: 'whole', step: 1 },
-        { name: 'whole', step: 1 },
         { name: 'half', step: 0.5 },
         { name: 'whole', step: 1 },
         { name: 'whole', step: 1 },
@@ -80,7 +77,6 @@ const formulas: ScaleFormula = {
         { name: 'half', step: 0.5 },
     ],
     [NATURAL_MINOR]: [
-        { name: 'whole', step: 1 },
         { name: 'whole', step: 1 },
         { name: 'half', step: 0.5 },
         { name: 'whole', step: 1 },
@@ -106,17 +102,18 @@ export class PianoScale {
     }
 
     getIntervals(octaves = 1): Step[] {
-        const intervals: Step[] = []
+        // For all the math to work, we need to start with an extra whole step
+        const intervals: Step[] = [1];
+
         new Array(octaves).fill(0).forEach(() => {
-            const steps: Step[] = Object.values(formulas[this.scale]).map((interval) => interval.step)
-            intervals.push(...steps)
-        })
+            const steps: Step[] = Object.values(formulas[this.scale]).map((interval) => interval.step);
+            intervals.push(...steps);
+        });
 
-        return intervals
-
+        return intervals;
     }
 
-    getNotes(octaves: number = 1): Note[] {
+    getNotes(octaves = 1): Note[] {
         const intervals = this.getIntervals(octaves);
         const notes: Note[] = [];
 
@@ -133,14 +130,13 @@ export class PianoScale {
             }
 
             if (index === 0) {
-                key = KEYS[0].key as Key;
                 code = startKeyCode;
             } else {
                 code = startKeyCode + offset;
-                key = KEYS[code % 12].key as Key;
                 startKeyCode += offset;
             }
 
+            key = KEYS[code % 12].key as Key;
             notes.push({ key, code });
         }
 
@@ -168,6 +164,6 @@ export class PianoScale {
             chords.push(chord);
         }
 
-        return chords.slice(0, 7);
+        return chords.slice(0, 8);
     }
 }

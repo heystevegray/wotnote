@@ -8,6 +8,7 @@ import {
     makeStyles,
     useTheme,
     Typography,
+    Link,
 } from '@material-ui/core';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
@@ -553,20 +554,27 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                 </svg>
             </Grid>
             {chords && (
-                <Grid container item xs={12} spacing={2}>
-                    <Grid container item direction="column" alignItems="center">
+                <Grid container item xs={12} spacing={1} justify="center" >
+                    <Grid container item xs={12}>
                         <Grid item xs={12}>
-                            <Typography variant="h2">Diatonic Chords</Typography>
+                            <Typography align="center" variant="h2">Diatonic Chords</Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography align="center" variant="body1">
+                                "Diatonic chords are chords built on the notes of a particular scale." |{' '}
+                                <Link target='_blank' href="https://www.pianote.com/blog/diatonic-chords/">Source</Link>
+                            </Typography>
                         </Grid>
                     </Grid>
-                    {chords.map((chord) => (
-                        <Grid item xs={12} md={3}>
-                            <Chord chord={chord} />
+                    {chords.map((chord, index) => (
+                        <Grid container item xs={12} md={3} lg={1} >
+                            <Chord chord={chord} chordNumber={index + 1} />
                         </Grid>
                     ))}
                 </Grid>
-            )}
-        </Grid>
+            )
+            }
+        </Grid >
     );
 };
 
