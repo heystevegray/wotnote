@@ -10,9 +10,11 @@ import {
     Typography,
     Link,
 } from '@material-ui/core';
+import { Container } from 'next/app';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
 import Chord from './chord/Chord';
+import Chords from './chord/Chords';
 import {
     MAX_KEY,
     MIN_KEY,
@@ -47,7 +49,7 @@ const useStyles = makeStyles(() =>
 const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElement => {
     const midiConfig = useMidiApi();
     const classes = useStyles();
-    const [pianoKey, setPianoKey] = useState<Key | undefined>(undefined);
+    const [pianoKey, setPianoKey] = useState<Key | undefined>('C');
     const [scale, setScale] = useState<Scale | undefined>('Major');
     const [notes, setNotes] = useState<Note[] | undefined>(undefined);
     const [chords, setChords] = useState<ChordType[] | undefined>(undefined);
@@ -152,7 +154,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     return (
         <Grid container spacing={6}>
             <Grid container item xs={12}>
-                <Grid item container xs={12} lg={6} justify="center">
+                <Grid item container xs={12} md={6} justify="center">
                     <FormControl className={classes.formControl}>
                         <InputLabel id="key-label">Key</InputLabel>
                         <Select
@@ -171,7 +173,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item container xs={12} lg={6} justify="center">
+                <Grid item container xs={12} md={6} justify="center">
                     <FormControl className={classes.formControl}>
                         <InputLabel id="scale-label">Scale</InputLabel>
                         <Select
@@ -553,28 +555,12 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                     </g>
                 </svg>
             </Grid>
-            {chords && (
-                <Grid container item xs={12} spacing={1} justify="center" >
-                    <Grid container item xs={12}>
-                        <Grid item xs={12}>
-                            <Typography align="center" variant="h2">Diatonic Chords</Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography align="center" variant="body1">
-                                "Diatonic chords are chords built on the notes of a particular scale." |{' '}
-                                <Link target='_blank' href="https://www.pianote.com/blog/diatonic-chords/">Source</Link>
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    {chords.map((chord, index) => (
-                        <Grid container item xs={12} md={3} lg={1} >
-                            <Chord chord={chord} chordNumber={index + 1} />
-                        </Grid>
-                    ))}
-                </Grid>
-            )
-            }
-        </Grid >
+            <Grid item xs={12}>
+                {chords && (
+                    <Chords chords={chords} />
+                )}
+            </Grid>
+        </Grid>
     );
 };
 

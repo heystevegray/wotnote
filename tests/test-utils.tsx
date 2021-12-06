@@ -1,6 +1,5 @@
 // https://testing-library.com/docs/react-testing-library/setup/
 
-import React from 'react';
 import { render } from '@testing-library/react';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import { NextRouter } from 'next/router';

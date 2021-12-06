@@ -1,5 +1,5 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core';
-import React from 'react';
+import Piano from '../piano/Piano';
 import { Chord as ChordType, Note } from '../PianoScale';
 
 const useStyles = makeStyles((theme) => ({
@@ -12,11 +12,12 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
     chord: ChordType;
-    chordNumber: number;
+    chordIndex: number;
 }
 
-const Chord = ({ chord, chordNumber }: Props) => {
+const Chord = ({ chord, chordIndex }: Props) => {
     const classes = useStyles();
+    const chordNumber = chordIndex + 1
     const index = chordNumber === 8 ? 1 : chordNumber;
 
     return (
@@ -30,13 +31,20 @@ const Chord = ({ chord, chordNumber }: Props) => {
                 </Grid>
             </Grid>
             <Grid container item xs={12}>
-                {chord.notes.map((note: Note) => (
-                    <Grid container item xs justify="center">
-                        <Typography variant="h4" color="textSecondary">
-                            {note.key}
-                        </Typography>
-                    </Grid>
-                ))}
+                <Grid item xs={12}>
+                    <Piano activeNotes={chord.notes} chordIndex={chordIndex} />
+                </Grid>
+            </Grid>
+            <Grid container item justify="center">
+                <Grid container item xs={6}>
+                    {chord.notes.map((note: Note) => (
+                        <Grid container item xs justify="center" key={note.code}>
+                            <Typography variant="h4" color="textSecondary">
+                                {note.key}
+                            </Typography>
+                        </Grid>
+                    ))}
+                </Grid>
             </Grid>
         </Grid>
     );
