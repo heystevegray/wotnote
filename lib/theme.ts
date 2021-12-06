@@ -15,6 +15,9 @@ const THEME: ThemeOptions = {
         h4: {
             fontSize: '2rem',
         },
+        body1: {
+            fontSize: '1.3rem',
+        },
     },
     palette: {
         type: 'dark',
