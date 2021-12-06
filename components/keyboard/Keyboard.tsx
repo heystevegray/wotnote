@@ -7,13 +7,9 @@ import {
     createStyles,
     makeStyles,
     useTheme,
-    Typography,
-    Link,
 } from '@material-ui/core';
-import { Container } from 'next/app';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
-import Chord from './chord/Chord';
 import Chords from './chord/Chords';
 import {
     MAX_KEY,

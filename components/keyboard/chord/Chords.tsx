@@ -1,4 +1,4 @@
-import { Grid, Typography, Link, Container } from "@material-ui/core"
+import { Grid, Typography, Link } from "@material-ui/core"
 import { Chord as ChordType } from "../PianoScale"
 import Chord from "./Chord"
 
