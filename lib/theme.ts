@@ -3,20 +3,8 @@ import { createMuiTheme, responsiveFontSizes, ThemeOptions } from '@material-ui/
 const THEME: ThemeOptions = {
     typography: {
         fontFamily: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
-        h1: {
-            fontSize: '3rem',
-        },
-        h2: {
-            fontSize: '3rem',
-        },
-        h3: {
-            fontSize: '3rem',
-        },
-        h4: {
-            fontSize: '2rem',
-        },
         body1: {
-            fontSize: '1.3rem',
+            fontSize: '1.25rem',
         },
     },
     palette: {
