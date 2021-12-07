@@ -1,4 +1,15 @@
-import { Grid, FormControl, InputLabel, Select, MenuItem, createStyles, makeStyles, useTheme } from '@material-ui/core';
+import {
+    Grid,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    createStyles,
+    makeStyles,
+    useTheme,
+    Typography,
+    Container,
+} from '@material-ui/core';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
 import Chords from './chord/Chords';
@@ -32,13 +43,13 @@ const useStyles = makeStyles((theme) =>
         },
         keySelect: {
             justifyContent: 'flex-end',
-            [theme.breakpoints.only('sm')]: {
+            [theme.breakpoints.down('sm')]: {
                 justifyContent: 'center',
             },
         },
         scaleSelect: {
             justifyContent: 'flex-start',
-            [theme.breakpoints.only('sm')]: {
+            [theme.breakpoints.down('sm')]: {
                 justifyContent: 'center',
             },
         },
@@ -554,6 +565,23 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                     </g>
                 </svg>
             </Grid>
+            {notes && (
+                <Container>
+                    <Grid container justify="center">
+                        <Grid container item xs={12} md={4} lg={3} justify="center">
+                            <Grid container justify="center" spacing={2}>
+                                {notes.map((note) => (
+                                    <Grid item xs>
+                                        <Typography variant="h4" component="h2" align="center">
+                                            {note.key}
+                                        </Typography>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Container>
+            )}
             {chords && (
                 <Grid item xs={12}>
                     <Chords chords={chords} />
