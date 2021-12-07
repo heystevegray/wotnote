@@ -10,7 +10,7 @@ const Chords = ({ chords }: Props) => {
     return (
         <Grid container item xs={12} justify="center">
             <Grid container item xs={12} spacing={3} justify="center">
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Typography align="center" variant="h2">
                         Diatonic Chords
                     </Typography>
@@ -22,7 +22,7 @@ const Chords = ({ chords }: Props) => {
                             Source
                         </Link>
                     </Typography>
-                </Grid>
+                </Grid> */}
                 {chords.map((chord, index) => (
                     <Grid container spacing={2} item xs={12} md={6} lg={3} key={`${chord.key}-${index}`}>
                         <Grid item xs={12}>

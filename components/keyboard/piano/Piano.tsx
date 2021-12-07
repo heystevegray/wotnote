@@ -42,7 +42,7 @@ const Piano = ({ activeNotes, chordIndex }: Props) => {
 	}, [activeNotes]);
 
 	const noteOffset = activeNotes?.[0]?.code || 0;
-	const widthOffset = 1000 + (noteOffset * 16);
+	const widthOffset = 1000 + (noteOffset * 15);
 
 	return (
 		<Grid container>
@@ -52,7 +52,7 @@ const Piano = ({ activeNotes, chordIndex }: Props) => {
 					xmlns="http://www.w3.org/2000/svg"
 					width="100%"
 					height={200}
-					viewBox={`${widthOffset} 0 ${SVG_WIDTH / 4} ${SVG_HEIGHT}`}
+					viewBox={`${widthOffset} 0 ${SVG_WIDTH / 3.5} ${SVG_HEIGHT}`}
 				>
 					<g id="piano-component-keys">
 						<path
