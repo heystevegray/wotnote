@@ -25,10 +25,22 @@ interface KeyProperties {
     previousColor: string;
 }
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         formControl: {
             minWidth: 200,
+        },
+        keySelect: {
+            justifyContent: 'flex-end',
+            [theme.breakpoints.only('sm')]: {
+                justifyContent: 'center',
+            },
+        },
+        scaleSelect: {
+            justifyContent: 'flex-start',
+            [theme.breakpoints.only('sm')]: {
+                justifyContent: 'center',
+            },
         },
     })
 );
@@ -139,9 +151,9 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     }, [numberOfKeys]);
 
     return (
-        <Grid container spacing={6}>
-            <Grid container item xs={12}>
-                <Grid item container xs={12} md={6} justify="center">
+        <Grid container spacing={3}>
+            <Grid container item xs={12} spacing={2}>
+                <Grid item container xs={12} md={6} className={classes.keySelect}>
                     <FormControl className={classes.formControl}>
                         <InputLabel id="key-label">Key</InputLabel>
                         <Select
@@ -160,7 +172,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item container xs={12} md={6} justify="center">
+                <Grid item container xs={12} md={6} className={classes.scaleSelect}>
                     <FormControl className={classes.formControl}>
                         <InputLabel id="scale-label">Scale</InputLabel>
                         <Select

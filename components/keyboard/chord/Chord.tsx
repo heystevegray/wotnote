@@ -2,19 +2,19 @@ import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import Piano from '../piano/Piano';
 import { Chord as ChordType, Note } from '../PianoScale';
 
-const useStyles = makeStyles((theme) => ({
-    container: {
-        padding: theme.spacing(2),
-        width: '100%',
-    },
-}));
-
 interface Props {
     chord: ChordType;
     chordIndex: number;
 }
 
 const scaleDegrees = ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Leading', 'Octave'];
+
+const useStyles = makeStyles((theme) => ({
+    container: {
+        padding: theme.spacing(2),
+        width: '100%',
+    },
+}));
 
 const Chord = ({ chord, chordIndex }: Props) => {
     const classes = useStyles();
