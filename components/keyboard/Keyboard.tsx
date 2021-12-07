@@ -8,7 +8,6 @@ import {
     makeStyles,
     useTheme,
     Typography,
-    Container,
 } from '@material-ui/core';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
