@@ -14,7 +14,7 @@ interface Props {
     chordIndex: number;
 }
 
-const scaleDegrees = ["Tonic", "Supertonic", "Mediant", "Subdominant", "Dominant", "Submediant", "Leading"]
+const scaleDegrees = ["Tonic", "Supertonic", "Mediant", "Subdominant", "Dominant", "Submediant", "Leading", "Octave"]
 
 const Chord = ({ chord, chordIndex }: Props) => {
     const classes = useStyles();
@@ -28,7 +28,7 @@ const Chord = ({ chord, chordIndex }: Props) => {
                     <Typography color="textSecondary">Chord {chordNumber}</Typography>
                 </Grid>
                 <Grid container item xs={6} justify="flex-end">
-                    <Typography color="textSecondary">{scaleDegrees[chordIndex % numberOfDegrees]}</Typography>
+                    <Typography color="textSecondary">{scaleDegrees[chordIndex]}</Typography>
                 </Grid>
                 <Grid container item xs={12} direction="column" alignItems="center">
                     <Grid item xs={12}>

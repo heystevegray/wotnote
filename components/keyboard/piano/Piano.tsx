@@ -36,7 +36,7 @@ const Piano = ({ activeNotes, chordIndex }: Props) => {
 	useEffect(() => {
 		resetKeys();
 		highlightKeys();
-	}, []);
+	}, [activeNotes]);
 
 	return (
 		<Grid container>
