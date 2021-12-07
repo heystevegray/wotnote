@@ -566,21 +566,19 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                 </svg>
             </Grid>
             {notes && (
-                <Container>
-                    <Grid container justify="center">
-                        <Grid container item xs={12} md={4} lg={3} justify="center">
-                            <Grid container justify="center" spacing={2}>
-                                {notes.map((note) => (
-                                    <Grid item xs>
-                                        <Typography variant="h4" component="h2" align="center">
-                                            {note.key}
-                                        </Typography>
-                                    </Grid>
-                                ))}
-                            </Grid>
+                <Grid container justify="center">
+                    <Grid container item xs={9} md={6} lg={3} justify="center">
+                        <Grid container justify="center" spacing={2}>
+                            {notes.map((note) => (
+                                <Grid item xs>
+                                    <Typography variant="h4" component="h2" align="center">
+                                        {note.key}
+                                    </Typography>
+                                </Grid>
+                            ))}
                         </Grid>
                     </Grid>
-                </Container>
+                </Grid>
             )}
             {chords && (
                 <Grid item xs={12}>
