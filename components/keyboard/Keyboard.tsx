@@ -1,13 +1,4 @@
-import {
-    Grid,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    createStyles,
-    makeStyles,
-    useTheme,
-} from '@material-ui/core';
+import { Grid, FormControl, InputLabel, Select, MenuItem, createStyles, makeStyles, useTheme } from '@material-ui/core';
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
 import Chords from './chord/Chords';

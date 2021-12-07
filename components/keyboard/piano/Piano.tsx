@@ -4,8 +4,11 @@ import { MAX_KEY, MIN_KEY, Note } from '../PianoScale';
 
 interface Props {
 	activeNotes?: Note[];
-	chordIndex: number
+	chordIndex: number;
 }
+
+const SVG_WIDTH = 4346.38;
+const SVG_HEIGHT = 524.24;
 
 const Piano = ({ activeNotes, chordIndex }: Props) => {
 	const theme = useTheme();
@@ -38,10 +41,19 @@ const Piano = ({ activeNotes, chordIndex }: Props) => {
 		highlightKeys();
 	}, [activeNotes]);
 
+	const noteOffset = activeNotes?.[0]?.code || 0;
+	const widthOffset = 1000 + (noteOffset * 16);
+
 	return (
 		<Grid container>
-			<Grid item xs={12}>
-				<svg id="piano" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4346.38 524.24">
+			<Grid item xs={12} style={{ overflow: 'hidden' }}>
+				<svg
+					id="piano"
+					xmlns="http://www.w3.org/2000/svg"
+					width="100%"
+					height={200}
+					viewBox={`${widthOffset} 0 ${SVG_WIDTH / 4} ${SVG_HEIGHT}`}
+				>
 					<g id="piano-component-keys">
 						<path
 							id="21"
@@ -402,7 +414,7 @@ const Piano = ({ activeNotes, chordIndex }: Props) => {
 					</g>
 				</svg>
 			</Grid>
-		</Grid>
+		</Grid >
 	);
 };
 
