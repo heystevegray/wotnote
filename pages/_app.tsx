@@ -35,7 +35,9 @@ const App = ({ Component, pageProps }: AppProps) => {
         <ThemeProvider theme={theme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
-            <Component {...pageProps} />
+            <div style={{ padding: theme.spacing(4), height: '100vh' }}>
+                <Component {...pageProps} />
+            </div>
         </ThemeProvider>
     );
 };
