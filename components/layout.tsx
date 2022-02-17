@@ -12,6 +12,7 @@ import {
 import { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import useMidiApi from '../hooks/use-midi';
+import Footer from './footer/Footer';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -31,9 +32,10 @@ const useStyles = makeStyles((theme: Theme) =>
 interface LayoutProps {
     children: ReactElement[] | ReactElement | string;
     title: string;
+    description: string;
 }
 
-const Layout = ({ children, title }: LayoutProps): ReactElement => {
+const Layout = ({ children, title, description }: LayoutProps): ReactElement => {
     const classes = useStyles();
     const data = useMidiApi();
     const devices = data.inputs.map((input) => input.deviceName);
@@ -52,11 +54,14 @@ const Layout = ({ children, title }: LayoutProps): ReactElement => {
         <>
             <Head>
                 <title>{title}</title>
+                <meta name="description" content={description} />
+                <link rel="icon" href="/favicon.ico" />
+                <meta name="application-name" content="wotnote" />
             </Head>
             <header className={classes.header}>
                 <Grid container>
                     <Grid item xs={6}>
-                        <Typography variant="h4" component="h1" gutterBottom>
+                        <Typography variant="h5" component="h1" gutterBottom>
                             wotnote
                         </Typography>
                     </Grid>
@@ -81,7 +86,16 @@ const Layout = ({ children, title }: LayoutProps): ReactElement => {
                     </Grid>
                 </Grid>
             </header>
-            <main>{children}</main>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <main>{children}</main>
+                </Grid>
+                <Grid item xs={12}>
+                    <footer>
+                        <Footer />
+                    </footer>
+                </Grid>
+            </Grid>
         </>
     );
 };

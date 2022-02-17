@@ -572,7 +572,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                                 <Grid container item xs>
                                     <Grid item xs={12}>
                                         <Typography color="textSecondary" align="center">
-                                            {index % 7 + 1}
+                                            {(index % 7) + 1}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>

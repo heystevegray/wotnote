@@ -120,7 +120,7 @@ export class PianoScale {
         let startKeyCode = KEYS.find((note) => note.key === this.key)?.code || DEFAULT_KEY_CODE;
 
         for (const [index, interval] of intervals.entries()) {
-            let key, code, offset;
+            let code, offset;
 
             if (interval === 1.5) {
                 // Harmonic Minor is a special case
@@ -136,7 +136,7 @@ export class PianoScale {
                 startKeyCode += offset;
             }
 
-            key = KEYS[code % 12].key as Key;
+            const key = KEYS[code % 12].key as Key;
             notes.push({ key, code });
         }
 

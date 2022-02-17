@@ -8,7 +8,7 @@ export default function Home() {
     // console.log(util.inspect(data, { showHidden: false, depth: null }))
 
     return (
-        <Layout title="wotnote">
+        <Layout title="wotnote" description="Write music faster">
             <Grid container spacing={4} direction="column">
                 <Grid item container direction="column" xs={12} alignItems="center">
                     <Grid container item alignContent="center" justify="center">

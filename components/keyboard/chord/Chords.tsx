@@ -37,7 +37,7 @@ const Chords = ({ chords }: Props) => {
                         <Typography align="center">Diatonic Chords</Typography>
                     </Grid>
                     <Grid item>
-                        <IconButton aria-describedby={id} onClick={handleClick}>
+                        <IconButton aria-label="Diatonic Chord Info" aria-describedby={id} onClick={handleClick}>
                             <Info />
                         </IconButton>
                         <Popover
