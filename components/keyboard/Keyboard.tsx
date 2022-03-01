@@ -579,7 +579,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography variant="h4" component="h2" align="center">
+                                        <Typography variant="h5" component="h2" align="center">
                                             {note.key}
                                         </Typography>
                                     </Grid>
