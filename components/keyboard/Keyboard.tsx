@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) =>
                 justifyContent: 'center',
             },
         },
+        container: {
+            paddingBottom: theme.spacing(2),
+        },
     })
 );
 
@@ -161,7 +164,7 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
     }, [numberOfKeys]);
 
     return (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} className={classes.container}>
             <Grid container item xs={12} spacing={2}>
                 <Grid item container xs={12} md={6} className={classes.keySelect}>
                     <FormControl className={classes.formControl}>
