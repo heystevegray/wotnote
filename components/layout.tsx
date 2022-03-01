@@ -55,8 +55,7 @@ const Layout = ({ children, title, description }: LayoutProps): ReactElement => 
             <Head>
                 <title>{title}</title>
                 <meta name="description" content={description} />
-                <link rel="icon" href="/favicon.ico" />
-                <meta name="application-name" content="wotnote" />
+                <link rel="icon" href="favicon.ico" />
             </Head>
             <header className={classes.header}>
                 <Grid container>
