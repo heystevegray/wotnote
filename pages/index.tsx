@@ -1,6 +1,7 @@
 import { Grid } from '@material-ui/core';
 import Layout from '../components/layout';
 import Keyboard from '../components/keyboard/Keyboard';
+import Head from 'next/head';
 // import useMidiApi from '../hooks/use-midi';
 
 export default function Home() {
@@ -8,17 +9,24 @@ export default function Home() {
     // console.log(util.inspect(data, { showHidden: false, depth: null }))
 
     return (
-        <Layout title="wotnote" description="Write music faster">
-            <Grid container spacing={4} direction="column">
-                <Grid item container direction="column" xs={12} alignItems="center">
-                    <Grid container item alignContent="center" justify="center">
-                        <Keyboard />
+        <>
+            <Head>
+                <title>wotnote</title>
+                <meta name="description" content="Write music faster" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <Layout>
+                <Grid container spacing={4} direction="column">
+                    <Grid item container direction="column" xs={12} alignItems="center">
+                        <Grid container item alignContent="center" justify="center">
+                            <Keyboard />
+                        </Grid>
                     </Grid>
-                </Grid>
-                {/* <Grid item>
+                    {/* <Grid item>
                     <Typography>{JSON.stringify(data.midi, null, 2)}</Typography>
                 </Grid> */}
-            </Grid>
-        </Layout>
+                </Grid>
+            </Layout>
+        </>
     );
 }

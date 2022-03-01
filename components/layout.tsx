@@ -10,7 +10,6 @@ import {
     Theme,
 } from '@material-ui/core';
 import { ReactElement, useEffect, useState } from 'react';
-import Head from 'next/head';
 import useMidiApi from '../hooks/use-midi';
 import Footer from './footer/Footer';
 
@@ -31,11 +30,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface LayoutProps {
     children: ReactElement[] | ReactElement | string;
-    title: string;
-    description: string;
 }
 
-const Layout = ({ children, title, description }: LayoutProps): ReactElement => {
+const Layout = ({ children }: LayoutProps): ReactElement => {
     const classes = useStyles();
     const data = useMidiApi();
     const devices = data.inputs.map((input) => input.deviceName);
@@ -52,12 +49,6 @@ const Layout = ({ children, title, description }: LayoutProps): ReactElement => 
 
     return (
         <>
-            <Head>
-                <title>{title}</title>
-                <meta name="description" content={description} />
-                <link rel="icon" href="/favicon.ico" />
-                <link rel="icon" type="image/png" href="/android-chrome-192x192.png" />
-            </Head>
             <header className={classes.header}>
                 <Grid container>
                     <Grid item xs={6}>
