@@ -55,7 +55,8 @@ const Layout = ({ children, title, description }: LayoutProps): ReactElement => 
             <Head>
                 <title>{title}</title>
                 <meta name="description" content={description} />
-                <link rel="icon" href="favicon.ico" />
+                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" type="image/png" href="/android-chrome-192x192.png" />
             </Head>
             <header className={classes.header}>
                 <Grid container>
