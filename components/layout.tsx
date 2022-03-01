@@ -86,16 +86,10 @@ const Layout = ({ children, title, description }: LayoutProps): ReactElement => 
                     </Grid>
                 </Grid>
             </header>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <main>{children}</main>
-                </Grid>
-                <Grid item xs={12}>
-                    <footer>
-                        <Footer />
-                    </footer>
-                </Grid>
-            </Grid>
+            <main style={{ overflow: 'hidden' }}>{children}</main>
+            <footer>
+                <Footer />
+            </footer>
         </>
     );
 };
