@@ -1,6 +1,6 @@
 import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import Piano from '../piano/Piano';
-import { Chord as ChordType, Note } from '../PianoScale';
+import { Chord as ChordType, Note } from '../../../lib/classes/PianoScale';
 
 interface Props {
     chord: ChordType;

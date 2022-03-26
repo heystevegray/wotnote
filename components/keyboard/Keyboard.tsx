@@ -23,7 +23,7 @@ import {
     Scale,
     Note,
     Chord as ChordType,
-} from './PianoScale';
+} from '../../lib/classes/PianoScale';
 
 interface Props {
     activeColor?: string;
@@ -588,11 +588,6 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                             ))}
                         </Grid>
                     </Grid>
-                </Grid>
-            )}
-            {chords && (
-                <Grid item xs={12}>
-                    <Shuffle chords={chords} />
                 </Grid>
             )}
             {chords && (

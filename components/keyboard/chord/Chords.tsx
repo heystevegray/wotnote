@@ -1,7 +1,7 @@
 import { Grid, Typography, IconButton, Popover, Link, makeStyles } from '@material-ui/core';
 import { Info } from '@material-ui/icons';
 import { MouseEventHandler, useState } from 'react';
-import { Chord as ChordType } from '../PianoScale';
+import { Chord as ChordType } from '../../../lib/classes/PianoScale';
 import Chord from './Chord';
 
 export interface ChordProps {

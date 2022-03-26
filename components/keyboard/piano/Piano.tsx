@@ -1,6 +1,6 @@
 import { Grid, useTheme } from '@material-ui/core';
 import { useEffect } from 'react';
-import { MAX_KEY, MIN_KEY, Note } from '../PianoScale';
+import { MAX_KEY, MIN_KEY, Note } from '../../../lib/classes/PianoScale';
 
 interface Props {
     activeNotes?: Note[];
