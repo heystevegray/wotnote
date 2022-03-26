@@ -12,6 +12,7 @@ import {
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import useMidiApi from '../../hooks/use-midi';
 import Chords from './chord/Chords';
+import Shuffle from './chord/Shuffle';
 import {
     MAX_KEY,
     MIN_KEY,
@@ -587,6 +588,11 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
                             ))}
                         </Grid>
                     </Grid>
+                </Grid>
+            )}
+            {chords && (
+                <Grid item xs={12}>
+                    <Shuffle chords={chords} />
                 </Grid>
             )}
             {chords && (

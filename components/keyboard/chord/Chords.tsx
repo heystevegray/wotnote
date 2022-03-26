@@ -4,7 +4,7 @@ import { MouseEventHandler, useState } from 'react';
 import { Chord as ChordType } from '../PianoScale';
 import Chord from './Chord';
 
-interface Props {
+export interface ChordProps {
     chords: ChordType[];
 }
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Chords = ({ chords }: Props) => {
+const Chords = ({ chords }: ChordProps) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
