@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) =>
                 justifyContent: 'center',
             },
         },
+        container: {
+            paddingBottom: theme.spacing(2),
+        },
     })
 );
 
@@ -27,7 +30,7 @@ const KeySelector = () => {
     const classes = useStyles();
     const { pianoKey, scale, setPianoKey, setScale } = useContext(KeyboardContext);
     return (
-        <Grid container item xs={12} spacing={2}>
+        <Grid container item xs={12} spacing={2} className={classes.container}>
             <Grid item container xs={12} md={6} className={classes.keySelect}>
                 <FormControl className={classes.formControl}>
                     <InputLabel id="key-label">Key</InputLabel>

@@ -31,11 +31,7 @@ function TabPanel(props: TabPanelProps) {
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && (
-                <Box p={3}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
+            {value === index && <Box>{children}</Box>}
         </div>
     );
 }
@@ -46,6 +42,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         backgroundColor: theme.palette.background.paper,
     },
 }));
+
+const midiIndex = 2;
 
 export default function Home() {
     const data = useMidiApi();
@@ -65,22 +63,24 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Layout>
-                <Grid item xs={12}>
-                    <KeySelector />
-                </Grid>
-                <Grid item xs={12}>
-                    <AppBar position="static" color="transparent">
-                        <Tabs
-                            value={value}
-                            onChange={handleChange}
-                            aria-label="simple tabs example"
-                            indicatorColor="primary"
-                        >
-                            <Tab label="Chords" {...a11yProps(0)} />
-                            <Tab label="Shuffle" {...a11yProps(1)} />
-                            <Tab label="Midi" {...a11yProps(2)} />
-                        </Tabs>
-                    </AppBar>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <AppBar position="static" color="transparent">
+                            <Tabs
+                                value={value}
+                                onChange={handleChange}
+                                aria-label="simple tabs example"
+                                indicatorColor="primary"
+                            >
+                                <Tab label="Chords" {...a11yProps(0)} />
+                                <Tab label="Shuffle" {...a11yProps(1)} />
+                                <Tab label="Midi" {...a11yProps(midiIndex)} />
+                            </Tabs>
+                        </AppBar>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {value !== midiIndex && <KeySelector />}
+                    </Grid>
                 </Grid>
                 <TabPanel value={value} index={0}>
                     <Keyboard />
@@ -88,8 +88,10 @@ export default function Home() {
                 <TabPanel value={value} index={1}>
                     <Shuffle />
                 </TabPanel>
-                <TabPanel value={value} index={2}>
-                    <Typography>{JSON.stringify(data.midi, null, 2)}</Typography>
+                <TabPanel value={value} index={midiIndex}>
+                    <Box p={2}>
+                        <Typography>{JSON.stringify(data.midi, null, 2)}</Typography>
+                    </Box>
                 </TabPanel>
             </Layout>
         </>
