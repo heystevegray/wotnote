@@ -3,8 +3,9 @@ import Layout from '../components/layout';
 import Keyboard from '../components/keyboard/Keyboard';
 import Head from 'next/head';
 import { useState } from 'react';
-import { Shuffle } from '@material-ui/icons';
 import useMidiApi from '../hooks/use-midi';
+import Shuffle from '../components/keyboard/chord/Shuffle';
+import KeySelector from '../components/keyboard/KeySelector';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -64,18 +65,28 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Layout>
-                <AppBar position="static">
-                    <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                        <Tab label="Chords" {...a11yProps(0)} />
-                        <Tab label="Shuffle" {...a11yProps(1)} />
-                        <Tab label="Midi" {...a11yProps(2)} />
-                    </Tabs>
-                </AppBar>
+                <Grid item xs={12}>
+                    <KeySelector />
+                </Grid>
+                <Grid item xs={12}>
+                    <AppBar position="static" color="transparent">
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            aria-label="simple tabs example"
+                            indicatorColor="primary"
+                        >
+                            <Tab label="Chords" {...a11yProps(0)} />
+                            <Tab label="Shuffle" {...a11yProps(1)} />
+                            <Tab label="Midi" {...a11yProps(2)} />
+                        </Tabs>
+                    </AppBar>
+                </Grid>
                 <TabPanel value={value} index={0}>
                     <Keyboard />
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <Shuffle chords={[]} />
+                    <Shuffle />
                 </TabPanel>
                 <TabPanel value={value} index={2}>
                     <Typography>{JSON.stringify(data.midi, null, 2)}</Typography>

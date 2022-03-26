@@ -4,6 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../lib/theme';
 import React, { useEffect } from 'react';
 import '../components/keyboard/Keyboard.scss';
+import KeyboardProvider from '../providers/Keyboard';
 
 // Determines if we are running on server or in client.
 const isServerSideRendered = () => {
@@ -32,11 +33,13 @@ const App = ({ Component, pageProps }: AppProps) => {
     }, []);
 
     return (
-        <ThemeProvider theme={theme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-            <Component {...pageProps} />
-        </ThemeProvider>
+        <KeyboardProvider>
+            <ThemeProvider theme={theme}>
+                {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                <CssBaseline />
+                <Component {...pageProps} />
+            </ThemeProvider>
+        </KeyboardProvider>
     );
 };
 

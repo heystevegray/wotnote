@@ -1,29 +1,9 @@
-import {
-    Grid,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    createStyles,
-    makeStyles,
-    useTheme,
-    Typography,
-} from '@material-ui/core';
-import React, { ReactElement, useEffect, useCallback, useState } from 'react';
+import { Grid, createStyles, makeStyles, useTheme, Typography } from '@material-ui/core';
+import React, { ReactElement, useEffect, useCallback, useContext } from 'react';
 import useMidiApi from '../../hooks/use-midi';
 import Chords from './chord/Chords';
-import Shuffle from './chord/Shuffle';
-import {
-    MAX_KEY,
-    MIN_KEY,
-    PianoScale,
-    PIANO_KEYS,
-    PIANO_SCALES,
-    Key,
-    Scale,
-    Note,
-    Chord as ChordType,
-} from '../../lib/classes/PianoScale';
+import { MAX_KEY, MIN_KEY } from '../../lib/classes/PianoScale';
+import { KeyboardContext } from '../../providers/Keyboard';
 
 interface Props {
     activeColor?: string;
@@ -38,21 +18,6 @@ interface KeyProperties {
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-        formControl: {
-            minWidth: 200,
-        },
-        keySelect: {
-            justifyContent: 'flex-end',
-            [theme.breakpoints.down('sm')]: {
-                justifyContent: 'center',
-            },
-        },
-        scaleSelect: {
-            justifyContent: 'flex-start',
-            [theme.breakpoints.down('sm')]: {
-                justifyContent: 'center',
-            },
-        },
         container: {
             paddingBottom: theme.spacing(2),
         },
@@ -62,10 +27,7 @@ const useStyles = makeStyles((theme) =>
 const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElement => {
     const midiConfig = useMidiApi();
     const classes = useStyles();
-    const [pianoKey, setPianoKey] = useState<Key | undefined>('C');
-    const [scale, setScale] = useState<Scale | undefined>('Major');
-    const [notes, setNotes] = useState<Note[] | undefined>(undefined);
-    const [chords, setChords] = useState<ChordType[] | undefined>(undefined);
+    const { pianoKey, chords, notes, scale } = useContext(KeyboardContext);
     const theme = useTheme();
 
     const homeOnTheRange = ([in_min, in_max]: number[], [out_min, out_max]: number[], value: number): number => {
@@ -118,14 +80,6 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
         resetKeys();
 
         if (pianoKey) {
-            const selectedScale = new PianoScale(pianoKey, scale || 'Major');
-
-            const notes = selectedScale.getNotes();
-            setNotes(notes);
-
-            const chords = selectedScale.getChords();
-            setChords(chords);
-
             notes.forEach((keyboardCode) => {
                 const { key } = getElementByKeyCode(keyboardCode.code);
                 if (key) {
@@ -166,46 +120,6 @@ const Keyboard = ({ activeColor = 'cyan', numberOfKeys = 88 }: Props): ReactElem
 
     return (
         <Grid container spacing={3} className={classes.container}>
-            <Grid container item xs={12} spacing={2}>
-                <Grid item container xs={12} md={6} className={classes.keySelect}>
-                    <FormControl className={classes.formControl}>
-                        <InputLabel id="key-label">Key</InputLabel>
-                        <Select
-                            labelId="key-label"
-                            id="key"
-                            value={pianoKey}
-                            onChange={(event) => setPianoKey(event.target.value as Key)}
-                        >
-                            {PIANO_KEYS.map((pianoKey, index) => {
-                                return (
-                                    <MenuItem key={pianoKey + index} value={pianoKey}>
-                                        {pianoKey}
-                                    </MenuItem>
-                                );
-                            })}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item container xs={12} md={6} className={classes.scaleSelect}>
-                    <FormControl className={classes.formControl}>
-                        <InputLabel id="scale-label">Scale</InputLabel>
-                        <Select
-                            labelId="scale-label"
-                            id="scale"
-                            value={scale}
-                            onChange={(event) => setScale(event.target.value as Scale)}
-                        >
-                            {PIANO_SCALES.map((pianoScale, index) => {
-                                return (
-                                    <MenuItem key={pianoScale + index} value={pianoScale}>
-                                        {pianoScale}
-                                    </MenuItem>
-                                );
-                            })}
-                        </Select>
-                    </FormControl>
-                </Grid>
-            </Grid>
             <Grid item xs={12}>
                 <svg id="piano" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4346.38 524.24">
                     <g id="keys">

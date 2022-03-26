@@ -1,11 +1,12 @@
 import { Button, Grid, Typography } from '@material-ui/core';
 import { ShuffleOutlined } from '@material-ui/icons';
 import { Container } from 'next/app';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { KeyboardContext } from '../../../providers/Keyboard';
 import Chord from './Chord';
-import { ChordProps } from './Chords';
 
-const Shuffle = ({ chords }: ChordProps) => {
+const Shuffle = () => {
+    const { chords } = useContext(KeyboardContext);
     const [chordProgression, setChordProgression] = useState([1, 5, 6, 4]);
 
     const randomBetween = (min: number, max: number): number => {

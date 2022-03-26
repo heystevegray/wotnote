@@ -1,33 +1,40 @@
-import { FunctionComponent } from 'react';
-import { ReactNode } from 'react';
-import { Provider } from 'react';
-import { createContext, FC, useState, Dispatch, SetStateAction } from 'react';
+import { createContext, FC, ReactNode, useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { Scale, Key, Note, Chord, PianoScale } from '../lib/classes/PianoScale';
-
-export interface IKeyboard {
-    pianoKey: Key | undefined;
-    scale: Scale | undefined;
-    notes: Note[] | undefined;
-    chords: Chord[] | undefined;
-}
-
-export interface KeyboardContextType extends IKeyboard {
+export interface IKeyboardContext {
+    pianoKey: Key;
+    scale: Scale;
+    notes: Note[];
+    chords: Chord[];
     setPianoKey: Dispatch<SetStateAction<Key>>;
-    setScale: Dispatch<SetStateAction<Scale | undefined>>;
+    setScale: Dispatch<SetStateAction<Scale>>;
 }
 
-export const KeyboardContext = createContext<KeyboardContextType | null>(null);
+const initialState: IKeyboardContext = {
+    chords: [],
+    notes: [],
+    pianoKey: 'C',
+    scale: 'Major',
+    setPianoKey: () => undefined,
+    setScale: () => undefined,
+};
+
+export const KeyboardContext = createContext<IKeyboardContext>(initialState);
 
 const KeyboardProvider: FC<ReactNode> = ({ children }) => {
-    const [pianoKey, setPianoKey] = useState<Key>('C');
-    const [scale, setScale] = useState<Scale | undefined>('Major');
+    const selectedScale = new PianoScale(initialState.pianoKey, initialState.scale);
+    const [pianoKey, setPianoKey] = useState<Key>(initialState.pianoKey);
+    const [scale, setScale] = useState<Scale>(initialState.scale);
 
-    const [notes, setNotes] = useState<Note[] | undefined>(undefined);
-    const [chords, setChords] = useState<Chord[] | undefined>(undefined);
+    const [notes, setNotes] = useState<Note[]>(selectedScale.getNotes());
+    const [chords, setChords] = useState<Chord[]>(selectedScale.getChords());
 
-    const selectedScale = new PianoScale(pianoKey, scale || 'Major');
-    setNotes(selectedScale.getNotes());
-    setChords(selectedScale.getChords());
+    useEffect(() => {
+        if (pianoKey) {
+            const newPianoScale = new PianoScale(pianoKey, scale || 'Major');
+            setNotes(newPianoScale.getNotes());
+            setChords(newPianoScale.getChords());
+        }
+    }, [pianoKey, scale]);
 
     return (
         <KeyboardContext.Provider
@@ -40,7 +47,7 @@ const KeyboardProvider: FC<ReactNode> = ({ children }) => {
                 setScale,
             }}
         >
-            {{ children }}
+            {children}
         </KeyboardContext.Provider>
     );
 };
