@@ -3,6 +3,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../lib/theme';
 import React, { useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import '../components/keyboard/Keyboard.scss';
 
 // Determines if we are running on server or in client.
@@ -36,6 +37,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
             <Component {...pageProps} />
+            <Analytics />
         </ThemeProvider>
     );
 };
