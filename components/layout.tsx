@@ -25,6 +25,10 @@ const useStyles = makeStyles((theme: Theme) =>
         selectEmpty: {
             marginTop: theme.spacing(2),
         },
+        footer: {
+            marginTop: theme.spacing(6),
+            marginBottom: theme.spacing(6),
+        },
     })
 );
 
@@ -78,7 +82,7 @@ const Layout = ({ children }: LayoutProps): ReactElement => {
                 </Grid>
             </header>
             <main style={{ overflow: 'hidden' }}>{children}</main>
-            <footer>
+            <footer className={classes.footer}>
                 <Footer />
             </footer>
         </>
