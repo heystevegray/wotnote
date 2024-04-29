@@ -13,7 +13,7 @@ const THEME: ThemeOptions = {
             main: '#0089ff',
         },
         background: {
-            default: '#101010',
+            default: '#000000',
             paper: '#202020',
         },
     },
