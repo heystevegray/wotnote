@@ -8,7 +8,7 @@ import { useTheme } from "next-themes"
 
 import { urlParams } from "@/lib/config"
 import {
-  Chord as ChordType,
+  ChordProps,
   Key,
   MAX_KEY,
   MIN_KEY,
@@ -46,8 +46,10 @@ const Keyboard = ({
   const scale: Scale =
     (searchParams.get(urlParams.scale) as Scale) ?? PIANO_SCALES[0]
 
-  const [notes, setNotes] = useState<Note[] | undefined>(undefined)
-  const [chords, setChords] = useState<ChordType[] | undefined>(undefined)
+  const selectedScale = new Piano(key, scale)
+  const notes = selectedScale.getNotes()
+  const chords = selectedScale.getChords()
+
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
@@ -112,14 +114,6 @@ const Keyboard = ({
     resetKeys()
 
     if (key) {
-      const selectedScale = new Piano(key, scale || "Major")
-
-      const notes = selectedScale.getNotes()
-      setNotes(notes)
-
-      const chords = selectedScale.getChords()
-      setChords(chords)
-
       notes.forEach((keyboardCode) => {
         const { key } = getElementByKeyCode(keyboardCode.code)
         if (key) {

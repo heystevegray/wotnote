@@ -1,3 +1,4 @@
+import { ChordProps, Note } from "@/lib/core/Piano"
 import { cn } from "@/lib/utils"
 import {
   Card,
@@ -8,11 +9,10 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import { Note } from "./Piano"
 import PianoRoll from "./piano-roll"
 
 interface Props {
-  chord: ChordType
+  chord: ChordProps
   chordIndex: number
 }
 

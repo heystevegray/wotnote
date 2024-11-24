@@ -3,7 +3,7 @@ export interface Note {
   code: number
 }
 
-export interface Chord {
+export interface ChordProps {
   key: Key
   notes: Note[]
 }
@@ -172,12 +172,12 @@ export class Piano {
     return notes
   }
 
-  getChords(): Chord[] {
-    const chords: Chord[] = []
+  getChords(): ChordProps[] {
+    const chords: ChordProps[] = []
     const twoOctaves = this.getNotes(2)
 
     for (let index = 0; index < twoOctaves.length; index++) {
-      const chord: Chord = {
+      const chord: ChordProps = {
         key: twoOctaves[index].key,
         notes: [
           {
