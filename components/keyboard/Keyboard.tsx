@@ -3,7 +3,7 @@
 import React, { ReactElement, useCallback, useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 
-import useMidiApi from "../../hooks/use-midi"
+import useMidi from "../../lib/hooks/use-midi"
 import Container from "../container"
 import {
   Chord as ChordType,
@@ -34,7 +34,7 @@ const Keyboard = ({
   activeColor = "cyan",
   numberOfKeys = 88,
 }: Props): ReactElement => {
-  const midiConfig = useMidiApi()
+  const midiConfig = useMidi()
   const [pianoKey, setPianoKey] = useState<Key | undefined>("C")
   const [scale, setScale] = useState<Scale | undefined>("Major")
   const [notes, setNotes] = useState<Note[] | undefined>(undefined)

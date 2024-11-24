@@ -16,3 +16,8 @@ export const siteConfig = {
     github: "https://github.com/heystevegray/wotnote",
   },
 }
+
+export const urlParams = {
+  key: "key",
+  scale: "scale",
+}

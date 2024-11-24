@@ -105,25 +105,47 @@ const formulas: ScaleFormula = {
 
 export const MIN_KEY = 21
 export const MAX_KEY = 108
-export const PIANO_KEYS = [
-  "C",
-  "C#",
-  "D",
-  "D#",
-  "E",
-  "F",
-  "F#",
-  "G",
-  "G#",
-  "A",
-  "A#",
-  "B",
+
+export type PianoKeysType =
+  | "c"
+  | "c#"
+  | "d"
+  | "d#"
+  | "e"
+  | "f"
+  | "f#"
+  | "g"
+  | "g#"
+  | "a"
+  | "a#"
+  | "b"
+
+export const PIANO_KEYS: PianoKeysType[] = [
+  "c",
+  "c#",
+  "d",
+  "d#",
+  "e",
+  "f",
+  "f#",
+  "g",
+  "g#",
+  "a",
+  "a#",
+  "b",
 ]
-export const PIANO_SCALES = [
-  MAJOR,
-  HARMONIC_MINOR,
-  MELODIC_MINOR,
-  NATURAL_MINOR,
+
+export type PianoScaleType =
+  | "major"
+  | "harmonic-minor"
+  | "melodic-minor"
+  | "natural-minor"
+
+export const PIANO_SCALES: PianoScaleType[] = [
+  "major",
+  "harmonic-minor",
+  "melodic-minor",
+  "natural-minor",
 ]
 
 export class PianoScale {

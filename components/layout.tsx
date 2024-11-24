@@ -11,7 +11,7 @@ import {
   makeStyles,
 } from "@material-ui/core"
 
-import useMidiApi from "../hooks/use-midi"
+import useMidi from "../lib/hooks/use-midi"
 import Footer from "./footer/footer"
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,7 +39,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps): ReactElement => {
   const classes = useStyles()
-  const data = useMidiApi()
+  const data = useMidi()
   const devices = data.inputs.map((input) => input.deviceName)
   const [selectedDevice, setSelectedDevice] = useState("")
 

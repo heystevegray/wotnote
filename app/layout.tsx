@@ -1,10 +1,12 @@
-import "@/styles/globals.css"
+import "@/app/globals.css"
 import { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/react"
 
 import { siteConfig } from "@/lib/config"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 import Footer from "@/components/footer/footer"
 import { SiteHeader } from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
@@ -41,15 +43,18 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontSans.variable
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader />
-            <div className="flex-1">{children}</div>
-          </div>
-          <Analytics />
-          <TailwindIndicator />
-        </ThemeProvider>
-        <Footer />
+        <SidebarProvider>
+          <AppSidebar />
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="relative flex min-h-screen flex-col w-full">
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Analytics />
+            <TailwindIndicator />
+          </ThemeProvider>
+        </SidebarProvider>
       </body>
     </html>
   )

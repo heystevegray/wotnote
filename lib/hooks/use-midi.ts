@@ -56,7 +56,7 @@ const initialNote: MidiNote = {
   on: false,
 }
 
-const useMidiApi = (): MIDInterface => {
+const useMidi = (): MIDInterface => {
   const [midiConfig, setMidiConfig] = useState<MIDInterface>({
     midiSupported: undefined,
     midiAccess: undefined,
@@ -159,4 +159,4 @@ const useMidiApi = (): MIDInterface => {
   return midiConfig
 }
 
-export default useMidiApi
+export default useMidi
