@@ -1,29 +1,13 @@
 import { MouseEventHandler, useState } from "react"
-import {
-  Grid,
-  IconButton,
-  Link,
-  Popover,
-  Typography,
-  makeStyles,
-} from "@material-ui/core"
-import { Info } from "@material-ui/icons"
 
 import { Chord as ChordType } from "../PianoScale"
-import Chord from "./Chord"
+import Chord from "./chord-card"
 
 interface Props {
   chords: ChordType[]
 }
 
-const useStyles = makeStyles((theme) => ({
-  popover: {
-    padding: theme.spacing(4),
-  },
-}))
-
 const Chords = ({ chords }: Props) => {
-  const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
@@ -38,8 +22,8 @@ const Chords = ({ chords }: Props) => {
   const id = open ? "chord info" : undefined
 
   return (
-    <Grid container item xs={12} justify="center">
-      <Grid container item xs={12} spacing={2} justify="center">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+      {/* <Grid container item xs={12} spacing={2} justify="center">
         <Grid
           container
           item
@@ -69,12 +53,7 @@ const Chords = ({ chords }: Props) => {
                 horizontal: "center",
               }}
             >
-              <Grid
-                container
-                className={classes.popover}
-                justify="center"
-                alignItems="center"
-              >
+              <Grid container justify="center" alignItems="center">
                 <Grid item xs={12}>
                   <Typography align="center" variant="body1">
                     "Diatonic chords are chords built on the notes of a
@@ -90,24 +69,11 @@ const Chords = ({ chords }: Props) => {
               </Grid>
             </Popover>
           </Grid>
-        </Grid>
-        {chords.map((chord, index) => (
-          <Grid
-            container
-            spacing={2}
-            item
-            xs={12}
-            md={6}
-            lg={3}
-            key={`${chord.key}-${index}`}
-          >
-            <Grid item xs={12}>
-              <Chord chord={chord} chordIndex={index} />
-            </Grid>
-          </Grid>
-        ))}
-      </Grid>
-    </Grid>
+        </Grid> */}
+      {chords.map((chord, index) => (
+        <Chord chord={chord} chordIndex={index} key={`${chord.key}-${index}`} />
+      ))}
+    </div>
   )
 }
 

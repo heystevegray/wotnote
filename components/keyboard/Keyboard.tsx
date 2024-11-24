@@ -1,15 +1,6 @@
+"use client"
+
 import React, { ReactElement, useCallback, useEffect, useState } from "react"
-import {
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-  createStyles,
-  makeStyles,
-  useTheme,
-} from "@material-ui/core"
 
 import useMidiApi from "../../hooks/use-midi"
 import {
@@ -36,40 +27,15 @@ interface KeyProperties {
   previousColor: string
 }
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    formControl: {
-      minWidth: 200,
-    },
-    keySelect: {
-      justifyContent: "flex-end",
-      [theme.breakpoints.down("sm")]: {
-        justifyContent: "center",
-      },
-    },
-    scaleSelect: {
-      justifyContent: "flex-start",
-      [theme.breakpoints.down("sm")]: {
-        justifyContent: "center",
-      },
-    },
-    container: {
-      paddingBottom: theme.spacing(2),
-    },
-  })
-)
-
 const Keyboard = ({
   activeColor = "cyan",
   numberOfKeys = 88,
 }: Props): ReactElement => {
   const midiConfig = useMidiApi()
-  const classes = useStyles()
   const [pianoKey, setPianoKey] = useState<Key | undefined>("C")
   const [scale, setScale] = useState<Scale | undefined>("Major")
   const [notes, setNotes] = useState<Note[] | undefined>(undefined)
   const [chords, setChords] = useState<ChordType[] | undefined>(undefined)
-  const theme = useTheme()
 
   const homeOnTheRange = (
     [in_min, in_max]: number[],
@@ -105,7 +71,7 @@ const Keyboard = ({
 
     // Don't turn the note off if it's displaying the piano scale
     if (!forceOff && notes?.map((note) => note.code).includes(keyCode)) {
-      key.style.fill = theme.palette.primary.main
+      key.style.fill = "hsl(var(--primary))"
     } else {
       key.style.fill = previousColor || ""
     }
@@ -145,7 +111,7 @@ const Keyboard = ({
       notes.forEach((keyboardCode) => {
         const { key } = getElementByKeyCode(keyboardCode.code)
         if (key) {
-          keyOn(key, theme.palette.primary.main)
+          keyOn(key)
         }
       })
     }
@@ -179,6 +145,8 @@ const Keyboard = ({
       }
     }
   }, [numberOfKeys])
+
+  return <Chords chords={chords ?? []} />
 
   return (
     <Grid container spacing={3} className={classes.container}>

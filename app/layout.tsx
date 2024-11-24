@@ -1,15 +1,17 @@
 import "@/styles/globals.css"
 import { Metadata } from "next"
+import { Analytics } from "@vercel/analytics/react"
 
 import { siteConfig } from "@/lib/config"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
+import Container from "@/components/container"
 import { SiteHeader } from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
-         title: {
+  title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
   },
@@ -43,8 +45,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
-              <div className="flex-1">{children}</div>
+              <div className="flex-1">
+                <Container>{children}</Container>
+              </div>
             </div>
+            <Analytics />
             <TailwindIndicator />
           </ThemeProvider>
         </body>
