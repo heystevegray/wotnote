@@ -1,8 +1,10 @@
 "use client"
 
 import React, { ReactElement, useCallback, useEffect, useState } from "react"
+import { useTheme } from "next-themes"
 
 import useMidiApi from "../../hooks/use-midi"
+import Container from "../container"
 import {
   Chord as ChordType,
   Key,
@@ -15,6 +17,7 @@ import {
   Scale,
 } from "./PianoScale"
 import Chords from "./chord/Chords"
+import Piano from "./piano/Piano"
 
 interface Props {
   activeColor?: string
@@ -36,6 +39,8 @@ const Keyboard = ({
   const [scale, setScale] = useState<Scale | undefined>("Major")
   const [notes, setNotes] = useState<Note[] | undefined>(undefined)
   const [chords, setChords] = useState<ChordType[] | undefined>(undefined)
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
 
   const homeOnTheRange = (
     [in_min, in_max]: number[],
@@ -90,9 +95,7 @@ const Keyboard = ({
 
   const getElementByKeyCode = (keyCode: number): KeyProperties => {
     const keyElement = document.getElementById(`${keyCode}`)
-    const classes: DOMTokenList | undefined = keyElement?.classList
-    const isDark = classes && classes[0] === "dark"
-    const previousColor = isDark ? "black" : "#c7c7c7"
+    const previousColor = isDark ? "red" : "blue"
     return { key: keyElement, previousColor }
   }
 
@@ -122,9 +125,7 @@ const Keyboard = ({
       const key = document.getElementById(`${midiConfig.midi.value}`)
 
       if (key) {
-        const classes: DOMTokenList = key.classList
-        const isDark = classes[0] === "dark"
-        const previousColor = isDark ? "black" : "#c7c7c7"
+        const previousColor = isDark ? "orange" : "yellow"
 
         if (midiConfig.midi.on) {
           keyOn(key)
@@ -146,7 +147,14 @@ const Keyboard = ({
     }
   }, [numberOfKeys])
 
-  return <Chords chords={chords ?? []} />
+  return (
+    <div>
+      <Piano chordIndex={0} height={200} />
+      <Container>
+        <Chords chords={chords ?? []} />
+      </Container>
+    </div>
+  )
 
   return (
     <Grid container spacing={3} className={classes.container}>

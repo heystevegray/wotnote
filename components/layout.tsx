@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core"
 
 import useMidiApi from "../hooks/use-midi"
-import Footer from "./footer/Footer"
+import Footer from "./footer/footer"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

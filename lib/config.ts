@@ -1,4 +1,5 @@
 export const MY_WEBSITE_URL = "https://www.stevegray.io/"
+export const MY_NAME = "Steve Gray"
 
 export type SiteConfig = typeof siteConfig
 

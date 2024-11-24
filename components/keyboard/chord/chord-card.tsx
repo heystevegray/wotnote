@@ -33,7 +33,7 @@ const Chord = ({ chord, chordIndex }: Props) => {
   const degree = scaleDegrees[chordIndex]
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-xl">
       <CardHeader className="flex flex-row gap-2 items-center space-y-0">
         <CardTitle>
           <div

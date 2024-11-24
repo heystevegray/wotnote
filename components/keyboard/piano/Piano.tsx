@@ -1,16 +1,19 @@
 import { useEffect } from "react"
 
+import { ClassName } from "@/lib/types"
+
 import { MAX_KEY, MIN_KEY, Note } from "../PianoScale"
 
-interface Props {
+type Props = {
   activeNotes?: Note[]
   chordIndex: number
-}
+  height?: number
+} & ClassName
 
 const SVG_WIDTH = 4346.38
 const SVG_HEIGHT = 524.24
 
-const Piano = ({ activeNotes, chordIndex }: Props) => {
+const Piano = ({ activeNotes, chordIndex, className, height }: Props) => {
   const getKeyByCode = (code: number) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
   }
@@ -43,12 +46,13 @@ const Piano = ({ activeNotes, chordIndex }: Props) => {
   const widthOffset = 1000 + noteOffset * 15
 
   return (
-    <div>
+    <div className={className}>
       <svg
         id="piano"
         xmlns="http://www.w3.org/2000/svg"
         width="100%"
         viewBox={`${widthOffset} 0 ${SVG_WIDTH / 3.5} ${SVG_HEIGHT}`}
+        height={height}
       >
         <g id="piano-component-keys">
           <path
