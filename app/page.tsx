@@ -1,4 +1,4 @@
-import Keyboard from "@/components/keyboard/Keyboard"
+import Keyboard from "@/components/piano/Keyboard"
 
 export default function IndexPage() {
   return (

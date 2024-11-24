@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react"
 import packageJson from "package.json"
 
 import { siteConfig, urlParams } from "@/lib/config"
+import { Key, PIANO_KEYS, PIANO_SCALES, Scale } from "@/lib/core/Piano"
 import useMidi from "@/lib/hooks/use-midi"
 import { capitalizeFirstLetter } from "@/lib/utils"
 import {
@@ -21,13 +22,6 @@ import {
 } from "@/components/ui/sidebar"
 
 import {
-  Key,
-  PIANO_KEYS,
-  PIANO_SCALES,
-  PianoKeysType,
-  PianoScaleType,
-} from "./keyboard/PianoScale"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -38,7 +32,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
@@ -50,10 +43,10 @@ export function AppSidebar() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const defaultKey: PianoKeysType =
-    (searchParams.get(urlParams.key) as PianoKeysType) ?? PIANO_KEYS[0]
-  const defaultSacale: PianoScaleType =
-    (searchParams.get(urlParams.scale) as PianoScaleType) ?? PIANO_SCALES[0]
+  const defaultKey: Key =
+    (searchParams.get(urlParams.key) as Key) ?? PIANO_KEYS[0]
+  const defaultSacale: Scale =
+    (searchParams.get(urlParams.scale) as Scale) ?? PIANO_SCALES[0]
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -67,11 +60,11 @@ export function AppSidebar() {
     [searchParams]
   )
 
-  const handleKeyChange = (key: PianoKeysType) => {
+  const handleKeyChange = (key: Key) => {
     router.push(pathname + "?" + createQueryString(urlParams.key, key))
   }
 
-  const handleScaleChange = (scale: PianoScaleType) => {
+  const handleScaleChange = (scale: Scale) => {
     router.push(pathname + "?" + createQueryString(urlParams.scale, scale))
   }
 

@@ -8,8 +8,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import { Chord as ChordType, Note } from "../PianoScale"
-import Piano from "../piano/Piano"
+import { Note } from "./Piano"
+import PianoRoll from "./piano-roll"
 
 interface Props {
   chord: ChordType
@@ -49,7 +49,7 @@ const Chord = ({ chord, chordIndex }: Props) => {
       </CardHeader>
       <CardContent className="space-y-4 flex flex-col">
         <h2 className="text-3xl text-center font-bold">{chord.key}</h2>
-        <Piano activeNotes={chord.notes} chordIndex={chordIndex} />
+        <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} />
       </CardContent>
       <CardFooter className="flex items-center justify-center">
         <div className="flex gap-4">

@@ -1,8 +1,8 @@
 import Head from "next/head"
 import { Grid } from "@material-ui/core"
 
-import Keyboard from "../components/keyboard/Keyboard"
 import Layout from "../components/layout"
+import Keyboard from "../components/piano/Keyboard"
 
 // import useMidiApi from '../hooks/use-midi';
 

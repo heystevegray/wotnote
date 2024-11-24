@@ -1,6 +1,6 @@
 import { MouseEventHandler, useState } from "react"
 
-import { Chord as ChordType } from "../PianoScale"
+import { Chord as ChordType } from "../Piano"
 import Chord from "./chord-card"
 
 interface Props {

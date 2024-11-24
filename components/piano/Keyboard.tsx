@@ -1,10 +1,12 @@
 "use client"
 
 import React, { ReactElement, useCallback, useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
+import { Select } from "@radix-ui/react-select"
+import { Grid } from "lucide-react"
 import { useTheme } from "next-themes"
 
-import useMidi from "../../lib/hooks/use-midi"
-import Container from "../container"
+import { urlParams } from "@/lib/config"
 import {
   Chord as ChordType,
   Key,
@@ -13,11 +15,14 @@ import {
   Note,
   PIANO_KEYS,
   PIANO_SCALES,
-  PianoScale,
+  Piano,
   Scale,
-} from "./PianoScale"
-import Chords from "./chord/Chords"
-import Piano from "./piano/Piano"
+} from "@/lib/core/Piano"
+
+import useMidi from "../../lib/hooks/use-midi"
+import Container from "../container"
+import Chords from "./chords"
+import PianoRoll from "./piano-roll"
 
 interface Props {
   activeColor?: string
@@ -35,8 +40,12 @@ const Keyboard = ({
   numberOfKeys = 88,
 }: Props): ReactElement => {
   const midiConfig = useMidi()
-  const [pianoKey, setPianoKey] = useState<Key | undefined>("C")
-  const [scale, setScale] = useState<Scale | undefined>("Major")
+  const searchParams = useSearchParams()
+
+  const key: Key = (searchParams.get(urlParams.key) as Key) ?? PIANO_KEYS[0]
+  const scale: Scale =
+    (searchParams.get(urlParams.scale) as Scale) ?? PIANO_SCALES[0]
+
   const [notes, setNotes] = useState<Note[] | undefined>(undefined)
   const [chords, setChords] = useState<ChordType[] | undefined>(undefined)
   const { theme } = useTheme()
@@ -102,8 +111,8 @@ const Keyboard = ({
   useEffect(() => {
     resetKeys()
 
-    if (pianoKey) {
-      const selectedScale = new PianoScale(pianoKey, scale || "Major")
+    if (key) {
+      const selectedScale = new Piano(key, scale || "Major")
 
       const notes = selectedScale.getNotes()
       setNotes(notes)
@@ -118,7 +127,7 @@ const Keyboard = ({
         }
       })
     }
-  }, [pianoKey, scale])
+  }, [key, scale])
 
   useEffect(() => {
     if (midiConfig) {
@@ -149,7 +158,7 @@ const Keyboard = ({
 
   return (
     <div>
-      <Piano chordIndex={0} height={200} />
+      <PianoRoll chordIndex={0} height={200} />
       <Container>
         <Chords chords={chords ?? []} />
       </Container>
@@ -165,13 +174,13 @@ const Keyboard = ({
             <Select
               labelId="key-label"
               id="key"
-              value={pianoKey}
-              onChange={(event) => setPianoKey(event.target.value as Key)}
+              value={key}
+              onChange={(event) => setkey(event.target.value as Key)}
             >
-              {PIANO_KEYS.map((pianoKey, index) => {
+              {PIANO_KEYS.map((key, index) => {
                 return (
-                  <MenuItem key={pianoKey + index} value={pianoKey}>
-                    {pianoKey}
+                  <MenuItem key={key + index} value={key}>
+                    {key}
                   </MenuItem>
                 )
               })}

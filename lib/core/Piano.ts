@@ -1,23 +1,3 @@
-export type Key =
-  | "C"
-  | "C#"
-  | "D"
-  | "D#"
-  | "E"
-  | "F"
-  | "F#"
-  | "G"
-  | "G#"
-  | "A"
-  | "A#"
-  | "B"
-
-export type Scale =
-  | "Major"
-  | "Harmonic Minor"
-  | "Melodic Minor"
-  | "Natural Minor"
-
 export interface Note {
   key: Key
   code: number
@@ -34,17 +14,7 @@ interface Interval {
   step: Step
 }
 
-const MAJOR = "Major"
-const HARMONIC_MINOR = "Harmonic Minor"
-const MELODIC_MINOR = "Melodic Minor"
-const NATURAL_MINOR = "Natural Minor"
-
-interface ScaleFormula {
-  [MAJOR]: Interval[]
-  [HARMONIC_MINOR]: Interval[]
-  [MELODIC_MINOR]: Interval[]
-  [NATURAL_MINOR]: Interval[]
-}
+type ScaleFormula = Record<Scale, Interval[]>
 
 const DEFAULT_KEY_CODE = 24
 const OCTAVE = 12 * 3
@@ -65,7 +35,7 @@ const KEYS = [
 ]
 
 const formulas: ScaleFormula = {
-  [MAJOR]: [
+  major: [
     { name: "whole", step: 1 },
     { name: "whole", step: 1 },
     { name: "half", step: 0.5 },
@@ -74,7 +44,7 @@ const formulas: ScaleFormula = {
     { name: "whole", step: 1 },
     { name: "half", step: 0.5 },
   ],
-  [HARMONIC_MINOR]: [
+  "harmonic-minor": [
     { name: "whole", step: 1 },
     { name: "half", step: 0.5 },
     { name: "whole", step: 1 },
@@ -83,7 +53,7 @@ const formulas: ScaleFormula = {
     { name: "whole + half", step: 1.5 },
     { name: "half", step: 0.5 },
   ],
-  [MELODIC_MINOR]: [
+  "melodic-minor": [
     { name: "whole", step: 1 },
     { name: "half", step: 0.5 },
     { name: "whole", step: 1 },
@@ -92,7 +62,7 @@ const formulas: ScaleFormula = {
     { name: "whole", step: 1 },
     { name: "half", step: 0.5 },
   ],
-  [NATURAL_MINOR]: [
+  "natural-minor": [
     { name: "whole", step: 1 },
     { name: "half", step: 0.5 },
     { name: "whole", step: 1 },
@@ -106,7 +76,7 @@ const formulas: ScaleFormula = {
 export const MIN_KEY = 21
 export const MAX_KEY = 108
 
-export type PianoKeysType =
+export type Key =
   | "c"
   | "c#"
   | "d"
@@ -120,7 +90,7 @@ export type PianoKeysType =
   | "a#"
   | "b"
 
-export const PIANO_KEYS: PianoKeysType[] = [
+export const PIANO_KEYS: Key[] = [
   "c",
   "c#",
   "d",
@@ -135,20 +105,20 @@ export const PIANO_KEYS: PianoKeysType[] = [
   "b",
 ]
 
-export type PianoScaleType =
+export type Scale =
   | "major"
   | "harmonic-minor"
   | "melodic-minor"
   | "natural-minor"
 
-export const PIANO_SCALES: PianoScaleType[] = [
+export const PIANO_SCALES: Scale[] = [
   "major",
   "harmonic-minor",
   "melodic-minor",
   "natural-minor",
 ]
 
-export class PianoScale {
+export class Piano {
   key: Key
   scale: Scale
 

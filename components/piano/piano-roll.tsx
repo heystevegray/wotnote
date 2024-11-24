@@ -1,8 +1,7 @@
 import { useEffect } from "react"
 
+import { MAX_KEY, MIN_KEY, Note } from "@/lib/core/Piano"
 import { ClassName } from "@/lib/types"
-
-import { MAX_KEY, MIN_KEY, Note } from "../PianoScale"
 
 type Props = {
   activeNotes?: Note[]
@@ -13,7 +12,7 @@ type Props = {
 const SVG_WIDTH = 4346.38
 const SVG_HEIGHT = 524.24
 
-const Piano = ({ activeNotes, chordIndex, className, height }: Props) => {
+const PianoRoll = ({ activeNotes, chordIndex, className, height }: Props) => {
   const getKeyByCode = (code: number) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
   }
@@ -597,4 +596,4 @@ const Piano = ({ activeNotes, chordIndex, className, height }: Props) => {
   )
 }
 
-export default Piano
+export default PianoRoll
