@@ -1,5 +1,6 @@
 import "@/app/globals.css"
 import { Metadata } from "next"
+import { cookies } from "next/headers"
 import { Analytics } from "@vercel/analytics/react"
 
 import { siteConfig } from "@/lib/config"
@@ -33,7 +34,9 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const cookieStore = await cookies()
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -43,7 +46,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontSans.variable
         )}
       >
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col w-full">
