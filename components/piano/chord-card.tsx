@@ -1,5 +1,5 @@
 import { ChordProps, Note } from "@/lib/core/Piano"
-import { cn } from "@/lib/utils"
+import { capitalizeFirstLetter, cn } from "@/lib/utils"
 import {
   Card,
   CardContent,
@@ -48,14 +48,20 @@ const Chord = ({ chord, chordIndex }: Props) => {
         <CardDescription>{degree.value}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 flex flex-col">
-        <h2 className="text-3xl text-center font-bold">{chord.key}</h2>
-        <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} />
+        <h2 className="text-3xl text-center font-bold">
+          {capitalizeFirstLetter(chord.key)}
+        </h2>
+        <PianoRoll
+          activeNotes={chord.notes}
+          chordIndex={chordIndex}
+          size={0.25}
+        />
       </CardContent>
       <CardFooter className="flex items-center justify-center">
         <div className="flex gap-4">
           {chord.notes.map((note: Note) => (
             <div key={note.code}>
-              <p className="text-xl">{note.key}</p>
+              <p className="text-xl">{capitalizeFirstLetter(note.key)}</p>
             </div>
           ))}
         </div>

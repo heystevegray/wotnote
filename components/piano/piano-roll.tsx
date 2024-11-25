@@ -7,12 +7,19 @@ type Props = {
   activeNotes?: Note[]
   chordIndex: number
   height?: number
+  size?: 0.25 | 0.5 | 0.75 | 1
 } & ClassName
 
 const SVG_WIDTH = 4346.38
 const SVG_HEIGHT = 524.24
 
-const PianoRoll = ({ activeNotes, chordIndex, className, height }: Props) => {
+const PianoRoll = ({
+  activeNotes,
+  chordIndex,
+  className,
+  height,
+  size = 1,
+}: Props) => {
   const getKeyByCode = (code: number) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
   }
@@ -30,7 +37,6 @@ const PianoRoll = ({ activeNotes, chordIndex, className, height }: Props) => {
   const highlightKeys = () => {
     activeNotes?.map((note) => {
       const key = getKeyByCode(note.code)
-      console.log({ key })
 
       if (key) {
         key.style.fill = "hsl(var(--primary))"
@@ -43,8 +49,16 @@ const PianoRoll = ({ activeNotes, chordIndex, className, height }: Props) => {
     highlightKeys()
   }, [activeNotes])
 
-  const noteOffset = activeNotes?.[0]?.code || 0
-  const widthOffset = 1000 + noteOffset * 15
+  useEffect(() => {
+    const keyboardOffset = MIN_KEY + MAX_KEY * size
+    const keyGroup = document.getElementById("keys") as ChildNode
+    for (let index = keyboardOffset; index <= MAX_KEY; index++) {
+      const keyElement = document.getElementById(`${index}`) as ChildNode
+      if (keyGroup && keyElement) {
+        keyGroup.removeChild(keyElement)
+      }
+    }
+  }, [size])
 
   return (
     <div className={className}>
@@ -52,7 +66,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className, height }: Props) => {
         id="piano"
         xmlns="http://www.w3.org/2000/svg"
         width="100%"
-        viewBox={`${widthOffset} 0 ${SVG_WIDTH / 3.5} ${SVG_HEIGHT}`}
+        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
         height={height}
       >
         <g id="piano-component-keys">
@@ -234,7 +248,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className, height }: Props) => {
           {/* <text x={1400} id="49-c-sharp" className="sharp-key" d="M1394.63,6V340.31h42.6V6.16Z">
 							C♯
 						</text/ >
-						<text x={1400} id="49-d-flat" className="flat-key" d="M1394.63,6V340.31h42.6V6.16Z">
+						<text x={1400} id="49-d-flat" className="lat-fkey" d="M1394.63,6V340.31h42.6V6.16Z">
 							D♭
 						</text> */}
           {/* </g> */}
@@ -541,55 +555,55 @@ const PianoRoll = ({ activeNotes, chordIndex, className, height }: Props) => {
           <path
             id="100"
             data-name="100"
-            className="f100 ill-key"
+            className="100 fill-key"
             d="M3882.43.84V345h-34.28V516.39l7.71,4.45H3921l7.38-4.26V.83Z"
           />
           <path
             id="101"
             data-name="101"
-            className="f101 ill-key"
+            className="101 fill-key"
             d="M3932,.84V516l8.32,4.8h65.07l6.78-3.92V345.24H3975V.83Z"
           />
           <path
             id="102"
             data-name="102"
-            className="f102 ill-key-dark"
+            className="102 fill-key-dark"
             d="M3980.13,4.84V337.78h42.43V5Z"
           />
           <path
             id="103"
             data-name="103"
-            className="f103 ill-key"
+            className="103 fill-key"
             d="M4027.63.84v344h-11.78V516.53l6.79,3.92h65.93l6.66-3.85V344.85h-24.88V.84Z"
           />
           <path
             id="104"
             data-name="104"
-            className="f104 ill-key-dark"
+            className="104 fill-key-dark"
             d="M4075.53,4.84V337.78H4118V5Z"
           />
           <path
             id="105"
             data-name="105"
-            className="f105 ill-key"
+            className="105 fill-key"
             d="M4123.13.84V345H4099.7V516.26l7.84,4.53H4173l7.06-4.08v-172h-14.16V.84Z"
           />
           <path
             id="106"
             data-name="106"
-            className="f106 ill-key-dark"
+            className="106 fill-key-dark"
             d="M4170.83,4.84V337.78h42.43V5Z"
           />
           <path
             id="107"
             data-name="107"
-            className="f107 ill-key"
+            className="107 fill-key"
             d="M4218.33.84V345h-36V516.66l7.45,4.3h65.53l7.21-4.15V.84Z"
           />
           <path
             id="108"
             data-name="108"
-            className="f108 ill-key"
+            className="108 fill-key"
             d="M4266,1.15h79.82V516.46l-6.45,3.72h-66.94l-6.83-3.94Z"
           />
         </g>

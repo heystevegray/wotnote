@@ -19,19 +19,19 @@ type ScaleFormula = Record<Scale, Interval[]>
 const DEFAULT_KEY_CODE = 24
 const OCTAVE = 12 * 3
 
-const KEYS = [
-  { key: "C", code: DEFAULT_KEY_CODE + OCTAVE },
-  { key: "C#", code: 25 + OCTAVE },
-  { key: "D", code: 26 + OCTAVE },
-  { key: "D#", code: 27 + OCTAVE },
-  { key: "E", code: 28 + OCTAVE },
-  { key: "F", code: 29 + OCTAVE },
-  { key: "F#", code: 30 + OCTAVE },
-  { key: "G", code: 31 + OCTAVE },
-  { key: "G#", code: 32 + OCTAVE },
-  { key: "A", code: 33 + OCTAVE },
-  { key: "A#", code: 34 + OCTAVE },
-  { key: "B", code: 35 + OCTAVE },
+const KEYS: { key: Key; code: number }[] = [
+  { key: "c", code: DEFAULT_KEY_CODE + OCTAVE },
+  { key: "c#", code: 25 + OCTAVE },
+  { key: "d", code: 26 + OCTAVE },
+  { key: "d#", code: 27 + OCTAVE },
+  { key: "e", code: 28 + OCTAVE },
+  { key: "f", code: 29 + OCTAVE },
+  { key: "f#", code: 30 + OCTAVE },
+  { key: "g", code: 31 + OCTAVE },
+  { key: "g#", code: 32 + OCTAVE },
+  { key: "a", code: 33 + OCTAVE },
+  { key: "a#", code: 34 + OCTAVE },
+  { key: "b", code: 35 + OCTAVE },
 ]
 
 const formulas: ScaleFormula = {
@@ -117,6 +117,16 @@ export const PIANO_SCALES: Scale[] = [
   "melodic-minor",
   "natural-minor",
 ]
+
+export type Accidental = "sharp" | "flat"
+
+export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental }
+
+export const baseConfig: DefaultConfig = {
+  key: "c",
+  scale: "major",
+  accidental: "flat",
+}
 
 export class Piano {
   key: Key

@@ -26,8 +26,6 @@ import PianoRoll from "./piano-roll"
 
 interface Props {
   activeColor?: string
-  numberOfKeys?: 12 | 24 | 49 | 61 | 76 | 88
-  // show note names.
 }
 
 interface KeyProperties {
@@ -35,12 +33,11 @@ interface KeyProperties {
   previousColor: string
 }
 
-const Keyboard = ({
-  activeColor = "cyan",
-  numberOfKeys = 88,
-}: Props): ReactElement => {
+const Keyboard = ({ activeColor = "cyan" }: Props): ReactElement => {
   const midiConfig = useMidi()
   const searchParams = useSearchParams()
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
 
   const key: Key = (searchParams.get(urlParams.key) as Key) ?? PIANO_KEYS[0]
   const scale: Scale =
@@ -50,12 +47,9 @@ const Keyboard = ({
   const notes = selectedScale.getNotes()
   const chords = selectedScale.getChords()
 
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-
-  const homeOnTheRange = (
-    [in_min, in_max]: number[],
-    [out_min, out_max]: number[],
+  const mapRange = (
+    [in_min, in_max]: [number, number],
+    [out_min, out_max]: [number, number],
     value: number
   ): number => {
     return (
@@ -64,7 +58,7 @@ const Keyboard = ({
   }
 
   const getOpacity = useCallback((velocity: number): string => {
-    return homeOnTheRange([0, 80], [0, 1], velocity).toFixed(2)
+    return mapRange([0, 80], [0, 1], velocity).toFixed(2)
   }, [])
 
   const keyOn = useCallback(
@@ -139,20 +133,9 @@ const Keyboard = ({
     }
   }, [activeColor, getOpacity, keyOn, midiConfig])
 
-  useEffect(() => {
-    const keyboardOffset = MIN_KEY + numberOfKeys
-    const keyGroup = document.getElementById("keys") as ChildNode
-    for (let index = keyboardOffset; index <= MAX_KEY; index++) {
-      const keyElement = document.getElementById(`${index}`) as ChildNode
-      if (keyGroup && keyElement) {
-        keyGroup.removeChild(keyElement)
-      }
-    }
-  }, [numberOfKeys])
-
   return (
     <div>
-      <PianoRoll chordIndex={0} height={200} />
+      <PianoRoll chordIndex={0} />
       <Container>
         <Chords chords={chords ?? []} />
       </Container>

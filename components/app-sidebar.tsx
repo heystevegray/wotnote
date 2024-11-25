@@ -6,7 +6,13 @@ import { ChevronDown } from "lucide-react"
 import packageJson from "package.json"
 
 import { siteConfig, urlParams } from "@/lib/config"
-import { Key, PIANO_KEYS, PIANO_SCALES, Scale } from "@/lib/core/Piano"
+import {
+  Key,
+  PIANO_KEYS,
+  PIANO_SCALES,
+  Scale,
+  baseConfig,
+} from "@/lib/core/Piano"
 import useMidi from "@/lib/hooks/use-midi"
 import { capitalizeFirstLetter } from "@/lib/utils"
 import {
@@ -44,9 +50,9 @@ export function AppSidebar() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const defaultKey: Key =
-    (searchParams.get(urlParams.key) as Key) ?? PIANO_KEYS[0]
+    (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
   const defaultSacale: Scale =
-    (searchParams.get(urlParams.scale) as Scale) ?? PIANO_SCALES[0]
+    (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
