@@ -20,4 +20,5 @@ export const siteConfig = {
 export const urlParams = {
   key: "key",
   scale: "scale",
+  color: "color",
 }

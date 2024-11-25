@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ChevronDown } from "lucide-react"
 import packageJson from "package.json"
 
-import { siteConfig, urlParams } from "@/lib/config"
+import { urlParams } from "@/lib/config"
 import {
   Key,
   PIANO_KEYS,
@@ -33,6 +33,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import { Input } from "./ui/input"
 import {
   Select,
   SelectContent,
@@ -43,16 +44,18 @@ import {
 } from "./ui/select"
 
 export function AppSidebar() {
+  const router = useRouter()
+  const pathname = usePathname()
+
   const data = useMidi()
   const devices = data.inputs.map((input) => input.deviceName)
 
-  const router = useRouter()
-  const pathname = usePathname()
   const searchParams = useSearchParams()
   const defaultKey: Key =
     (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
   const defaultSacale: Scale =
     (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
+  const defaultColor = searchParams.get(urlParams.color) as string
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -72,6 +75,10 @@ export function AppSidebar() {
 
   const handleScaleChange = (scale: Scale) => {
     router.push(pathname + "?" + createQueryString(urlParams.scale, scale))
+  }
+
+  const handleColorChange = (color: string) => {
+    router.push(pathname + "?" + createQueryString(urlParams.color, color))
   }
 
   return (
@@ -103,42 +110,45 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Piano</SidebarGroupLabel>
-          <SidebarGroup>
-            <Select defaultValue={defaultKey} onValueChange={handleKeyChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a Key" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {PIANO_KEYS.map((key) => (
-                    <SelectItem key={key} value={key}>
-                      {capitalizeFirstLetter(key)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </SidebarGroup>
-          <SidebarGroup>
-            <Select
-              defaultValue={defaultSacale}
-              onValueChange={handleScaleChange}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a Scale" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {PIANO_SCALES.map((scale) => (
-                    <SelectItem key={scale} value={scale}>
-                      {capitalizeFirstLetter(scale.replace(/-/g, " "))}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </SidebarGroup>
+          <SidebarGroupLabel>Key</SidebarGroupLabel>
+          <Select defaultValue={defaultKey} onValueChange={handleKeyChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a Key" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {PIANO_KEYS.map((key) => (
+                  <SelectItem key={key} value={key}>
+                    {capitalizeFirstLetter(key)}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <SidebarGroupLabel>Scale</SidebarGroupLabel>
+          <Select
+            defaultValue={defaultSacale}
+            onValueChange={handleScaleChange}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a Scale" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {PIANO_SCALES.map((scale) => (
+                  <SelectItem key={scale} value={scale}>
+                    {capitalizeFirstLetter(scale.replace(/-/g, " "))}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <SidebarGroupLabel>Color</SidebarGroupLabel>
+          <Input
+            type="color"
+            defaultValue={defaultColor}
+            onChange={(e) => handleColorChange(e.target.value)}
+          />
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>

@@ -1,22 +1,17 @@
 "use client"
 
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
+import React, { ReactElement, useCallback, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { Select } from "@radix-ui/react-select"
-import { Grid } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { urlParams } from "@/lib/config"
 import {
-  ChordProps,
   Key,
   MAX_KEY,
   MIN_KEY,
-  Note,
-  PIANO_KEYS,
-  PIANO_SCALES,
   Piano,
   Scale,
+  baseConfig,
 } from "@/lib/core/Piano"
 
 import useMidi from "../../lib/hooks/use-midi"
@@ -24,24 +19,22 @@ import Container from "../container"
 import Chords from "./chords"
 import PianoRoll from "./piano-roll"
 
-interface Props {
-  activeColor?: string
-}
-
 interface KeyProperties {
   key: HTMLElement | null
   previousColor: string
 }
 
-const Keyboard = ({ activeColor = "cyan" }: Props): ReactElement => {
+const Keyboard = (): ReactElement => {
   const midiConfig = useMidi()
   const searchParams = useSearchParams()
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
-  const key: Key = (searchParams.get(urlParams.key) as Key) ?? PIANO_KEYS[0]
+  const key: Key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
   const scale: Scale =
-    (searchParams.get(urlParams.scale) as Scale) ?? PIANO_SCALES[0]
+    (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
+  const color =
+    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--primary))"
 
   const selectedScale = new Piano(key, scale)
   const notes = selectedScale.getNotes()
@@ -62,14 +55,14 @@ const Keyboard = ({ activeColor = "cyan" }: Props): ReactElement => {
   }, [])
 
   const keyOn = useCallback(
-    (key: HTMLElement, overrideColor = ""): void => {
-      key.style.fill = overrideColor || activeColor
+    (key: HTMLElement): void => {
+      key.style.fill = color
       key.style.opacity =
         midiConfig?.midi?.velocity === 0
           ? "1"
           : getOpacity(midiConfig?.midi?.velocity)
     },
-    [activeColor, getOpacity, midiConfig.midi.velocity]
+    [color, getOpacity, midiConfig.midi.velocity]
   )
 
   const keyOff = (
@@ -81,7 +74,7 @@ const Keyboard = ({ activeColor = "cyan" }: Props): ReactElement => {
 
     // Don't turn the note off if it's displaying the piano scale
     if (!forceOff && notes?.map((note) => note.code).includes(keyCode)) {
-      key.style.fill = "hsl(var(--primary))"
+      key.style.fill = color
     } else {
       key.style.fill = previousColor || ""
     }
@@ -131,7 +124,7 @@ const Keyboard = ({ activeColor = "cyan" }: Props): ReactElement => {
         }
       }
     }
-  }, [activeColor, getOpacity, keyOn, midiConfig])
+  }, [getOpacity, keyOn, midiConfig])
 
   return (
     <div>

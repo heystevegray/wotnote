@@ -1,6 +1,8 @@
 import { useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 
-import { MAX_KEY, MIN_KEY, Note } from "@/lib/core/Piano"
+import { urlParams } from "@/lib/config"
+import { MAX_KEY, MIN_KEY, Note, baseConfig } from "@/lib/core/Piano"
 import { ClassName } from "@/lib/types"
 
 type Props = {
@@ -20,6 +22,11 @@ const PianoRoll = ({
   height,
   size = 1,
 }: Props) => {
+  const searchParams = useSearchParams()
+
+  const color =
+    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--primary))"
+
   const getKeyByCode = (code: number) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
   }
@@ -39,7 +46,7 @@ const PianoRoll = ({
       const key = getKeyByCode(note.code)
 
       if (key) {
-        key.style.fill = "hsl(var(--primary))"
+        key.style.fill = color
       }
     })
   }
