@@ -1,12 +1,39 @@
-export interface Note {
-  key: Key
-  code: number
-}
+import { z } from "zod"
 
-export interface ChordProps {
-  key: Key
-  notes: Note[]
-}
+export const KeyEnum = z.enum([
+  "c",
+  "c#",
+  "d",
+  "d#",
+  "e",
+  "f",
+  "f#",
+  "g",
+  "g#",
+  "a",
+  "a#",
+  "b",
+])
+
+export const NoteSchema = z.object({
+  code: z.number(),
+  key: KeyEnum,
+})
+
+export type Note = z.infer<typeof NoteSchema>
+
+export const ChordSchema = z.object({
+  notes: z.array(NoteSchema),
+  key: KeyEnum,
+})
+
+export type ChordProps = z.infer<typeof ChordSchema>
+
+export const SongSchema = z.object({
+  chords: z.array(ChordSchema),
+})
+
+export type Song = z.infer<typeof SongSchema>
 
 type Step = 0.5 | 1 | 1.5
 interface Interval {
@@ -76,19 +103,7 @@ const formulas: ScaleFormula = {
 export const MIN_KEY = 21
 export const MAX_KEY = 108
 
-export type Key =
-  | "c"
-  | "c#"
-  | "d"
-  | "d#"
-  | "e"
-  | "f"
-  | "f#"
-  | "g"
-  | "g#"
-  | "a"
-  | "a#"
-  | "b"
+export type Key = z.infer<typeof KeyEnum>
 
 export const PIANO_KEYS: Key[] = [
   "c",
