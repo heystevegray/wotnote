@@ -128,7 +128,7 @@ const Keyboard = (): ReactElement => {
 
   return (
     <div>
-      <PianoRoll chordIndex={0} />
+      <PianoRoll chordIndex={0} octaves={7} />
       <Container>
         <Chords chords={chords ?? []} />
       </Container>
