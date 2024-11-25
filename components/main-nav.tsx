@@ -18,7 +18,7 @@ export function MainNav({ items }: MainNavProps) {
       <div className="flex flex-row gap-2">
         <SidebarTrigger />
         <Link href="/" className="flex items-center space-x-2">
-          <h1 className="inline-block font-bold">{siteConfig.name}</h1>
+          <h1 className="inline-block">{siteConfig.name}</h1>
         </Link>
       </div>
       {items?.length ? (

@@ -25,7 +25,7 @@ const EmptyScreen = ({
           <div className="w-full flex justify-center">
             <Icons.logo className="size-6" />
           </div>
-          <h2 className="text-3xl bg-clip-text flex flex-col justify-center items-center m-0 p-0 font-bold">
+          <h2 className="text-3xl bg-clip-text flex flex-col justify-center items-center m-0 p-0">
             {title ?? null}
           </h2>
           {description ? (

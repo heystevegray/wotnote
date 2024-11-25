@@ -1,4 +1,4 @@
-import { ChordProps, Note } from "@/lib/core/Piano"
+import { ChordProps, DEFAULT_KEY_CODE, Note } from "@/lib/core/Piano"
 import { capitalizeFirstLetter, cn } from "@/lib/utils"
 import {
   Card,
@@ -32,6 +32,9 @@ const Chord = ({ chord, chordIndex }: Props) => {
   const chordNumber = (chordIndex % numberOfDegrees) + 1
   const degree = scaleDegrees[chordIndex]
 
+  console.log("\n\n", { Chord: chord.key })
+  console.log({ ...chord })
+
   return (
     <Card className="shadow-lg">
       <CardHeader className="flex flex-row gap-2 items-center space-y-0 pb-0">
@@ -48,14 +51,12 @@ const Chord = ({ chord, chordIndex }: Props) => {
         <CardDescription>{degree.value}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 flex flex-col p-0">
-        <h2 className="text-3xl text-center font-bold">
+        <h2 className="text-4xl text-center">
           {capitalizeFirstLetter(chord.key)}
         </h2>
-        <PianoRoll
-          activeNotes={chord.notes}
-          chordIndex={chordIndex}
-          size={0.25}
-        />
+        <div className="w-full">
+          <PianoRoll activeNotes={chord.notes} octaves={7} />
+        </div>
       </CardContent>
       <CardFooter className="flex items-center justify-center pt-4">
         <div className="flex gap-4">
