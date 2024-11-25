@@ -34,7 +34,7 @@ const Chord = ({ chord, chordIndex }: Props) => {
 
   return (
     <Card className="shadow-lg">
-      <CardHeader className="flex flex-row gap-2 items-center space-y-0">
+      <CardHeader className="flex flex-row gap-2 items-center space-y-0 pb-0">
         <CardTitle>
           <div
             className={cn(
@@ -47,7 +47,7 @@ const Chord = ({ chord, chordIndex }: Props) => {
         </CardTitle>
         <CardDescription>{degree.value}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 flex flex-col">
+      <CardContent className="space-y-4 flex flex-col p-0">
         <h2 className="text-3xl text-center font-bold">
           {capitalizeFirstLetter(chord.key)}
         </h2>
@@ -57,7 +57,7 @@ const Chord = ({ chord, chordIndex }: Props) => {
           size={0.25}
         />
       </CardContent>
-      <CardFooter className="flex items-center justify-center">
+      <CardFooter className="flex items-center justify-center pt-4">
         <div className="flex gap-4">
           {chord.notes.map((note: Note) => (
             <div key={note.code}>
