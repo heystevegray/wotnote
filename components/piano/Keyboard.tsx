@@ -1,6 +1,6 @@
 "use client"
 
-import React, { ReactElement, useCallback, useEffect } from "react"
+import React, { ReactElement, Suspense, useCallback, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { useTheme } from "next-themes"
 
@@ -127,12 +127,14 @@ const Keyboard = (): ReactElement => {
   }, [getOpacity, keyOn, midiConfig])
 
   return (
-    <div>
-      <PianoRoll chordIndex={0} />
-      <Container>
-        <Chords chords={chords ?? []} />
-      </Container>
-    </div>
+    <Suspense>
+      <div>
+        <PianoRoll chordIndex={0} />
+        <Container>
+          <Chords chords={chords ?? []} />
+        </Container>
+      </div>
+    </Suspense>
   )
 }
 
