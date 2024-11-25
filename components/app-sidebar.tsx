@@ -2,7 +2,6 @@
 
 import { useCallback } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ChevronDown } from "lucide-react"
 import packageJson from "package.json"
 
 import { urlParams } from "@/lib/config"
@@ -22,17 +21,8 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
 import {
   Select,
@@ -83,72 +73,78 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>Settings</SidebarHeader>
+      <SidebarHeader>
+        <SidebarGroupLabel>Settings</SidebarGroupLabel>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>MIDI</SidebarGroupLabel>
           <SidebarGroup>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton>
-                      Select a MIDI Device
-                      <ChevronDown className="ml-auto" />
-                    </SidebarMenuButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
+            <SidebarGroupLabel>Device</SidebarGroupLabel>
+            <div className="flex flex-col gap-2">
+              <Select defaultValue={defaultKey} onValueChange={handleKeyChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a MIDI Device" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
                     {devices.map((device) => (
-                      <DropdownMenuItem key={device}>
-                        <span>{device}</span>
-                      </DropdownMenuItem>
+                      <SelectItem key={device} value={device}>
+                        {device}
+                      </SelectItem>
                     ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SidebarMenuItem>
-            </SidebarMenu>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <p className="text-muted-foreground text-xs">
+                Connect a MIDI device to visualize what you play.
+              </p>
+            </div>
           </SidebarGroup>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Key</SidebarGroupLabel>
-          <Select defaultValue={defaultKey} onValueChange={handleKeyChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a Key" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {PIANO_KEYS.map((key) => (
-                  <SelectItem key={key} value={key}>
-                    {capitalizeFirstLetter(key)}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <SidebarGroupLabel>Scale</SidebarGroupLabel>
-          <Select
-            defaultValue={defaultSacale}
-            onValueChange={handleScaleChange}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a Scale" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {PIANO_SCALES.map((scale) => (
-                  <SelectItem key={scale} value={scale}>
-                    {capitalizeFirstLetter(scale.replace(/-/g, " "))}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <SidebarGroupLabel>Color</SidebarGroupLabel>
-          <Input
-            type="color"
-            defaultValue={defaultColor}
-            onChange={(e) => handleColorChange(e.target.value)}
-          />
+          <SidebarGroupLabel>Piano</SidebarGroupLabel>
+          <SidebarGroup>
+            <SidebarGroupLabel>Key</SidebarGroupLabel>
+            <Select defaultValue={defaultKey} onValueChange={handleKeyChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a Key" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {PIANO_KEYS.map((key) => (
+                    <SelectItem key={key} value={key}>
+                      {capitalizeFirstLetter(key)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <SidebarGroupLabel>Scale</SidebarGroupLabel>
+            <Select
+              defaultValue={defaultSacale}
+              onValueChange={handleScaleChange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a Scale" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {PIANO_SCALES.map((scale) => (
+                    <SelectItem key={scale} value={scale}>
+                      {capitalizeFirstLetter(scale.replace(/-/g, " "))}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <SidebarGroupLabel>Color</SidebarGroupLabel>
+            <Input
+              type="color"
+              defaultValue={defaultColor}
+              onChange={(e) => handleColorChange(e.target.value)}
+            />
+          </SidebarGroup>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
