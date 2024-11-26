@@ -8,7 +8,7 @@ interface Props {
 
 const Chords = ({ chords = [] }: Props) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
       {chords
         .filter((chord) => Boolean(chord?.notes?.length >= 3))
         .map((chord, index) => {

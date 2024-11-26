@@ -60,7 +60,9 @@ const Chord = ({ chord }: Props) => {
       </CardContent>
       <CardFooter className="flex items-center justify-center">
         {chord?.lyrics ? (
-          <p className="text-sm text-muted-foreground">{chord.lyrics}</p>
+          <div className="w-full border-t text-center pt-2">
+            <p className="text-xs text-muted-foreground">{chord.lyrics}</p>
+          </div>
         ) : null}
       </CardFooter>
     </Card>

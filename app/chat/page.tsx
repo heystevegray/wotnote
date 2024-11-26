@@ -13,13 +13,13 @@ import {
   baseConfig,
   convertToFlat,
 } from "@/lib/core/Piano"
-import { capitalizeFirstLetter } from "@/lib/utils"
+import { capitalizeFirstLetter, sampleGeneration } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
 import {
   COMMAND_DIALOG_KEYBOARD_SHORTCUT,
   GenerateDialog,
-} from "@/components/generate-dialog"
+} from "@/components/generation-command-dialog"
 import HeaderText from "@/components/header-text"
 import Chords from "@/components/piano/chords"
 
@@ -30,13 +30,13 @@ export const maxDuration = 30
 
 type Phrase = { id: string; chords: ChordProps[]; phraseIndex: number }
 
-type Generation = {
+export type Generation = {
   song?: {
     name: string
     artist: string
     key?: Key
     scale?: Scale
-    error?: string
+    error?: string | null
   } & { phrases?: Phrase[] }
 }
 
@@ -54,16 +54,7 @@ export default function Home() {
   const query = searchParams.get(urlParams.query) ?? ""
   const key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
   const [open, setOpen] = useState(false)
-  const [generation, setGeneration] = useState<Generation>({
-    song: {
-      name: "",
-      artist: "",
-      key: undefined,
-      scale: undefined,
-      phrases: undefined,
-      error: undefined,
-    },
-  })
+  const [generation, setGeneration] = useState<Generation>(sampleGeneration)
 
   const artist = generation?.song?.artist
     ? `by ${generation?.song?.artist}`
@@ -75,9 +66,9 @@ export default function Home() {
         )} ${capitalizeFirstLetter(generation?.song?.scale)}`
       : ""
 
-  useEffect(() => {
-    onSubmit(query)
-  }, [query])
+  // useEffect(() => {
+  //   onSubmit(query)
+  // }, [query])
 
   const onSubmit = async (value: string) => {
     if (!value) {
@@ -100,8 +91,9 @@ export default function Home() {
 
   const song = generation?.song
   const isError = song?.error
+  const errorMessage = song?.error ?? ""
   const name = song?.name
-  const about = isError ? song?.error : `${artist} ${description}`
+  const about = errorMessage ?? `${artist} ${description}` ?? ""
 
   const content = (
     <div className="mx-auto">
@@ -134,8 +126,8 @@ export default function Home() {
         <div className="space-y-6 divide-y">
           {song?.phrases?.map((phrase, index) => (
             <Phrase
-              phrase={{ ...phrase, phraseIndex: index + 1 }}
               key={phrase.id}
+              phrase={{ ...phrase, phraseIndex: index + 1 }}
             />
           ))}
         </div>
