@@ -44,6 +44,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
   }
 
   useEffect(() => {
+    // resetKeys()
     highlightKeys()
   }, [activeNotes])
 
