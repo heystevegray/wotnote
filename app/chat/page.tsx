@@ -22,6 +22,8 @@ import { generate } from "../actions"
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30
 
+type Phrase = { id: string; chords: ChordProps[] }
+
 type Generation = {
   song?: {
     name: string
@@ -29,7 +31,16 @@ type Generation = {
     key?: Key
     scale?: Scale
     error?: string
-  } & { chords: ChordProps[] }
+  } & { phrases?: Phrase[] }
+}
+
+const Phrase = ({ phrase }: { phrase: Phrase }) => {
+  return (
+    <div className="flex flex-col space-y-2 pt-4">
+      <p>Phrase {phrase.id}</p>
+      <Chords chords={phrase.chords} key={phrase.id} />
+    </div>
+  )
 }
 
 export default function Home() {
@@ -43,7 +54,7 @@ export default function Home() {
       artist: "",
       key: undefined,
       scale: undefined,
-      chords: [],
+      phrases: undefined,
       error: undefined,
     },
   })
@@ -81,12 +92,13 @@ export default function Home() {
     }
   }
 
-  const isError = generation?.song?.error
-  const song = generation?.song?.name
-  const about = isError ? generation.song?.error : `${artist} ${description}`
+  const song = generation?.song
+  const isError = song?.error
+  const name = song?.name
+  const about = isError ? song?.error : `${artist} ${description}`
 
   const content = (
-    <div>
+    <div className="mx-auto">
       <p className="text-xl text-muted-foreground lg:block hidden">
         Press{" "}
         <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
@@ -107,12 +119,18 @@ export default function Home() {
   return (
     <Container className="pb-32 space-y-8">
       <HeaderText
-        title={generation?.song?.name || "Search a song to generate chords."}
+        title={name || "Search a song to generate chords."}
         description={about}
       >
         {content}
       </HeaderText>
-      {isError ? null : <Chords chords={generation?.song?.chords ?? []} />}
+      {isError ? null : (
+        <div className="space-y-6 divide-y">
+          {song?.phrases?.map((phrase) => (
+            <Phrase phrase={phrase} key={phrase.id} />
+          ))}
+        </div>
+      )}
       <GenerateDialog show={open} setShow={setOpen} />
     </Container>
   )

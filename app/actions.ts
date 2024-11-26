@@ -22,8 +22,10 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       }),
       schemaName: "chords",
       schemaDescription: "Piano chords for a song.",
-      system:
-        "You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Jazz songs may add extentions chords don't need to be limited to three notes. If you are not provided with a song or don't know the key, you can generate chords for a song in any key. If you don't know the answer, say 'I don't know.'",
+      system: `You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Chords don't need to be limited to three notes. If you don't know the key, you can generate chords for a song in their most popular key. If you don't know the answer, say set the song error saying 'I don't know.'.
+
+      Format the songs into phrases, each phrase has 4 chords for example. Then add all the phrases necessary to complete the song.
+      `,
       prompt: `${input}"`,
       // prompt: `${input} in the key of "${capitalizeFirstLetter(key)}."`,
       schema: z.object({
@@ -52,27 +54,15 @@ export async function generate({ key, input }: { key: Key; input: string }) {
             "melodic-minor",
             "natural-minor",
           ]),
-          chords: z.array(
+          phrases: z.array(
             z.object({
-              id: z.string().describe("Unique uuid identifier for the chord."),
-              scaleDegree: z.number(),
-              key: z.enum([
-                "c",
-                "c#",
-                "d",
-                "d#",
-                "e",
-                "f",
-                "f#",
-                "g",
-                "g#",
-                "a",
-                "a#",
-                "b",
-              ]),
-              notes: z.array(
+              id: z.string().describe("Unique uuid identifier for the phrase."),
+              chords: z.array(
                 z.object({
-                  code: z.number().describe("MIDI note code."),
+                  id: z
+                    .string()
+                    .describe("Unique uuid identifier for the chord."),
+                  scaleDegree: z.number(),
                   key: z.enum([
                     "c",
                     "c#",
@@ -87,6 +77,25 @@ export async function generate({ key, input }: { key: Key; input: string }) {
                     "a#",
                     "b",
                   ]),
+                  notes: z.array(
+                    z.object({
+                      code: z.number().describe("MIDI note code."),
+                      key: z.enum([
+                        "c",
+                        "c#",
+                        "d",
+                        "d#",
+                        "e",
+                        "f",
+                        "f#",
+                        "g",
+                        "g#",
+                        "a",
+                        "a#",
+                        "b",
+                      ]),
+                    })
+                  ),
                 })
               ),
             })
