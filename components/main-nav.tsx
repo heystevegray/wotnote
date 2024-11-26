@@ -5,6 +5,7 @@ import { siteConfig } from "@/lib/config"
 import { NavItem } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
+import { buttonVariants } from "./ui/button"
 import { SidebarTrigger } from "./ui/sidebar"
 
 interface MainNavProps {
@@ -37,8 +38,7 @@ export function MainNav({ items }: MainNavProps) {
                   <div
                     className={cn(
                       "flex items-center gap-2",
-                      item.isAI &&
-                        "bg-gradient-to-tr from-chord-1 to-chord-2 text-white px-3 py-0 rounded-md text-lg"
+                      item.isAI && buttonVariants({ variant: "ai" })
                     )}
                   >
                     <item.icon className="size-4" />

@@ -95,7 +95,9 @@ export function GenerateDialog({
       />
       <CommandList>
         <CommandEmpty>
-          <Button onClick={() => handleChange(input)}>Search</Button>
+          <Button variant="ai" onClick={() => handleChange(input)}>
+            Search
+          </Button>
         </CommandEmpty>
         {/* <CommandGroup heading="Side note">
           <p>There's a good change this wont work</p>
