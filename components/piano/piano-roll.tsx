@@ -2,26 +2,18 @@ import { Suspense, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
-import { MAX_KEY, MIN_KEY, Note, baseConfig } from "@/lib/core/Piano"
+import { MAX_KEY, MIN_KEY, Note } from "@/lib/core/Piano"
 import { ClassName } from "@/lib/types"
 
 type Props = {
   activeNotes?: Note[]
   chordIndex: number
-  height?: number
-  size?: 0.25 | 0.5 | 0.75 | 1
 } & ClassName
 
 const SVG_WIDTH = 4346.38
 const SVG_HEIGHT = 524.24
 
-const PianoRoll = ({
-  activeNotes,
-  chordIndex,
-  className,
-  height,
-  size = 1,
-}: Props) => {
+const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
   const searchParams = useSearchParams()
 
   const color =
@@ -52,20 +44,8 @@ const PianoRoll = ({
   }
 
   useEffect(() => {
-    resetKeys()
     highlightKeys()
   }, [activeNotes])
-
-  useEffect(() => {
-    const keyboardOffset = MIN_KEY + MAX_KEY * size
-    const keyGroup = document.getElementById("keys") as ChildNode
-    for (let index = keyboardOffset; index <= MAX_KEY; index++) {
-      const keyElement = document.getElementById(`${index}`) as ChildNode
-      if (keyGroup && keyElement) {
-        keyGroup.removeChild(keyElement)
-      }
-    }
-  }, [size])
 
   return (
     <Suspense>
@@ -75,7 +55,6 @@ const PianoRoll = ({
           xmlns="http://www.w3.org/2000/svg"
           width="100%"
           viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-          height={height}
         >
           <g id="piano-component-keys">
             <path
@@ -246,20 +225,12 @@ const PianoRoll = ({
               className="48 fill-key"
               d="M1341.23,1.92H1387V347.26h34.42V519.39l-6.47,3.74h-67.22l-6.86-4Z"
             />
-            {/* <g className=""-key id="49"> */}
             <path
               id="49"
               data-name="49"
               className="49 fill-key-dark"
               d="M1394.63,6V340.31h42.6V6.16Z"
             />
-            {/* <text x={1400} id="49-c-sharp" className="sharp-key" d="M1394.63,6V340.31h42.6V6.16Z">
-							C♯
-						</text/ >
-						<text x={1400} id="49-d-flat" className="lat-fkey" d="M1394.63,6V340.31h42.6V6.16Z">
-							D♭
-						</text> */}
-            {/* </g> */}
             <path
               id="50"
               data-name="50"

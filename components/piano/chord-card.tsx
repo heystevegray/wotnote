@@ -50,11 +50,7 @@ const Chord = ({ chord, chordIndex }: Props) => {
         <h2 className="text-3xl text-center font-bold">
           {capitalizeFirstLetter(chord.key)}
         </h2>
-        <PianoRoll
-          activeNotes={chord.notes}
-          chordIndex={chordIndex}
-          size={0.25}
-        />
+        <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} />
       </CardContent>
       <CardFooter className="flex items-center justify-center pt-4">
         <div className="flex gap-4">

@@ -15,6 +15,8 @@ export const KeyEnum = z.enum([
   "b",
 ])
 
+export type Key = z.infer<typeof KeyEnum>
+
 export const NoteSchema = z.object({
   code: z.number(),
   key: KeyEnum,
@@ -118,8 +120,6 @@ const formulas: ScaleFormula = {
 
 export const MIN_KEY = 21
 export const MAX_KEY = 108
-
-export type Key = z.infer<typeof KeyEnum>
 
 export const PIANO_KEYS: Key[] = [
   "c",

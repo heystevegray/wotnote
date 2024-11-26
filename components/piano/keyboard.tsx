@@ -40,6 +40,8 @@ const Keyboard = (): ReactElement => {
   const notes = selectedScale.getNotes()
   const chords = selectedScale.getChords()
 
+  console.log({ chords })
+
   const mapRange = (
     [in_min, in_max]: [number, number],
     [out_min, out_max]: [number, number],
@@ -128,12 +130,10 @@ const Keyboard = (): ReactElement => {
 
   return (
     <Suspense>
-      <div>
-        <PianoRoll chordIndex={0} />
-        <Container>
-          <Chords chords={chords ?? []} />
-        </Container>
-      </div>
+      <PianoRoll chordIndex={0} activeNotes={notes} />
+      <Container>
+        <Chords chords={chords ?? []} />
+      </Container>
     </Suspense>
   )
 }

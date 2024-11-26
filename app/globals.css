@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    --background: 0 0% 91%;
+    --background: 0 0% 92%;
     --foreground: 0 0 0%;
     --key: 0 0% 100%;
-    /* --key: 0 0% 91%; */
+    /* --key: 0 0% 92%; */
     --key-dark: 0 0% 0%;
-    --card: 0 0% 91%;
+    --card: 0 0% 92%;
     --card-foreground: 0 0 0%;
-    --popover: 0 0% 91%;
+    --popover: 0 0% 92%;
     --popover-foreground: 0 0 0%;
     --primary: 227 64% 65%;
     --primary-foreground: 0 0% 98%;
@@ -27,13 +27,13 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
-    --chord-1: 12 76% 61%;
-    --chord-2: 173 58% 39%;
-    --chord-3: 197 37% 24%;
-    --chord-4: 43 74% 66%;
-    --chord-5: 27 87% 67%;
-    --chord-6: 0 0% 100%;
-    --chord-7: 0 0% 100%;
+    --chord-1: 220 70% 50%;
+    --chord-2: 160 60% 45%;
+    --chord-3: 30 80% 55%;
+    --chord-4: 280 65% 60%;
+    --chord-5: 340 75% 55%;
+    --chord-6: 100 70% 50%;
+    --chord-7: 190 70% 50%;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -50,7 +50,6 @@
     --key: 0 0% 100%;
     --key-dark: 0 0% 000%;
     --card: 0 0% 8%;
-    /* --card: 213, 43%, 96%; */
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 0%;
     --popover-foreground: 0 0% 100%;
@@ -72,8 +71,8 @@
     --chord-3: 30 80% 55%;
     --chord-4: 280 65% 60%;
     --chord-5: 340 75% 55%;
-    --chord-6: 340 75% 55%;
-    --chord-7: 340 75% 55%;
+    --chord-6: 100 70% 50%;
+    --chord-7: 190 70% 50%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
