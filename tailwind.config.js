@@ -22,6 +22,7 @@ module.exports = {
         key: {
           DEFAULT: "hsl(var(--key))",
           dark: "hsl(var(--key-dark))",
+          highlight: "hsl(var(--key-highlight))",
         },
         chord: {
           1: "hsl(var(--chord-1))",
@@ -50,7 +51,7 @@ module.exports = {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT: "hsl(var(--key-highlight))",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {

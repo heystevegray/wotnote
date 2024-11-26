@@ -1,16 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { readStreamableValue } from "ai/rsc"
 import { toast } from "sonner"
 
 import { urlParams } from "@/lib/config"
 import { ChordProps, Key, Scale, baseConfig } from "@/lib/core/Piano"
-import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor"
 import { capitalizeFirstLetter } from "@/lib/utils"
-import { ChatPanel } from "@/components/chat-panel"
+import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
+import { GenerateDialog } from "@/components/generate-dialog"
 import HeaderText from "@/components/header-text"
 import Chords from "@/components/piano/chords"
 
@@ -31,9 +31,9 @@ type Generation = {
 
 export default function Home() {
   const searchParams = useSearchParams()
-  const [input, setInput] = useState("")
+  const query = searchParams.get(urlParams.query) ?? ""
   const key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
-  const [submitted, setSubmitted] = useState(false)
+  const [open, setOpen] = useState(false)
   const [generation, setGeneration] = useState<Generation>({
     song: {
       name: "",
@@ -55,15 +55,15 @@ export default function Home() {
         )} ${capitalizeFirstLetter(generation?.song?.scale)}`
       : ""
 
-  const { isAtBottom, scrollToBottom } = useScrollAnchor()
+  useEffect(() => {
+    onSubmit(query)
+  }, [query])
 
   const onSubmit = async (value: string) => {
     if (!value) {
       toast.error("Please type a song name.")
       return
     }
-
-    setSubmitted(true)
 
     const { object } = await generate({
       key,
@@ -80,23 +80,37 @@ export default function Home() {
   }
 
   const isError = generation?.song?.error
+  const song = generation?.song?.name
   const about = isError ? generation.song?.error : `${artist} ${description}`
+
+  const content = (
+    <div>
+      <p className="text-xl text-muted-foreground lg:block hidden">
+        Press{" "}
+        <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
+          <span className="text-xl p">⌘</span>J
+        </kbd>
+      </p>
+      <Button
+        variant="secondary"
+        className="block md:hidden"
+        onClick={() => setOpen(true)}
+      >
+        Generate
+      </Button>
+    </div>
+  )
 
   return (
     <Container className="pb-32">
       <HeaderText
-        title={generation?.song?.name || "Type a song name below."}
+        title={generation?.song?.name || "Search a song to generate chords."}
         description={about}
-      />
+      >
+        {song ? null : content}
+      </HeaderText>
       {isError ? null : <Chords chords={generation?.song?.chords ?? []} />}
-      <ChatPanel
-        input={input}
-        setInput={setInput}
-        isAtBottom={isAtBottom}
-        scrollToBottom={scrollToBottom}
-        submitted={submitted}
-        onSubmit={onSubmit}
-      />
+      <GenerateDialog show={open} setShow={setOpen} />
     </Container>
   )
 }

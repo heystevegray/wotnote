@@ -11,7 +11,6 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import Footer from "@/components/footer"
 import { SiteHeader } from "@/components/header"
-import MidiKeyboard from "@/components/midi-keyboard"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 
@@ -61,7 +60,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 {/* <MidiKeyboard /> */}
                 {children}
               </main>
-
               <Footer />
             </div>
             <Toaster />

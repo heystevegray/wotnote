@@ -32,7 +32,7 @@ const MidiKeyboard = () => {
   const scale: Scale =
     (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
   const color =
-    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--primary))"
+    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
 
   const selectedScale = new Piano(key, scale)
   const notes = selectedScale.getNotes()

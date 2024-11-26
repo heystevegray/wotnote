@@ -8,12 +8,13 @@
     --foreground: 0 0 0%;
     --key: 0 0% 100%;
     /* --key: 0 0% 92%; */
+    --key-highlight: 227 64% 65%;
     --key-dark: 0 0% 0%;
     --card: 0 0% 92%;
     --card-foreground: 0 0 0%;
     --popover: 0 0% 92%;
     --popover-foreground: 0 0 0%;
-    --primary: 227 64% 65%;
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 98%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -48,12 +49,13 @@
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
     --key: 0 0% 100%;
+    --key-highlight: 227 64% 65%;
     --key-dark: 0 0% 000%;
-    --card: 0 0% 8%;
+    --card: 0 0% 100%;
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 0%;
     --popover-foreground: 0 0% 100%;
-    --primary: 227 64% 65%;
+    --primary: 0 0% 100%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 100%;
