@@ -10,7 +10,10 @@ import { ChordProps, Key, Scale, baseConfig } from "@/lib/core/Piano"
 import { capitalizeFirstLetter } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
-import { GenerateDialog } from "@/components/generate-dialog"
+import {
+  COMMAND_DIALOG_KEYBOARD_SHORTCUT,
+  GenerateDialog,
+} from "@/components/generate-dialog"
 import HeaderText from "@/components/header-text"
 import Chords from "@/components/piano/chords"
 
@@ -87,7 +90,8 @@ export default function Home() {
       <p className="text-xl text-muted-foreground lg:block hidden">
         Press{" "}
         <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
-          <span className="text-xl p">⌘</span>J
+          <span className="text-xl p">⌘</span>
+          {COMMAND_DIALOG_KEYBOARD_SHORTCUT}
         </kbd>
       </p>
       <Button

@@ -18,7 +18,7 @@ import {
 import { Icons } from "./icons"
 import { Button } from "./ui/button"
 
-const COMMAND_DIALOG_KEYBOARD_SHORTCUT = "k"
+export const COMMAND_DIALOG_KEYBOARD_SHORTCUT = "k"
 
 export function GenerateDialog({
   show = false,
