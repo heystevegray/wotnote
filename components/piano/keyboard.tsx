@@ -16,7 +16,7 @@ const Keyboard = (): ReactElement => {
   const scale: Scale =
     (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
 
-  const selectedScale = new Piano(key, scale)
+  const selectedScale = new Piano({ key, scale })
   const chords = selectedScale.getChords()
 
   return (

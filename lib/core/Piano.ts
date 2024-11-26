@@ -3,17 +3,38 @@ import { z } from "zod"
 export const KeyEnum = z.enum([
   "c",
   "c#",
+  "db",
   "d",
   "d#",
+  "eb",
   "e",
   "f",
   "f#",
+  "gb",
   "g",
   "g#",
+  "ab",
   "a",
   "a#",
+  "bb",
   "b",
 ])
+
+const SHARPS_TO_FLATS: Partial<Record<Key, Key>> = {
+  "c#": "db",
+  "d#": "eb",
+  "f#": "gb",
+  "g#": "ab",
+  "a#": "bb",
+}
+
+const FLATS_TO_SHARPS: Partial<Record<Key, Key>> = {
+  db: "c#",
+  eb: "d#",
+  gb: "f#",
+  ab: "g#",
+  bb: "a#",
+}
 
 export type Key = z.infer<typeof KeyEnum>
 
@@ -153,11 +174,22 @@ export const baseConfig: DefaultConfig = {
   accidental: "flat",
 }
 
+export const convertToFlat = (key: Key): Key => {
+  let prefferedKey: Key | undefined = key
+  prefferedKey = SHARPS_TO_FLATS[prefferedKey]
+
+  if (prefferedKey) {
+    return prefferedKey
+  }
+
+  return key
+}
+
 export class Piano {
   key: Key
   scale: Scale
 
-  constructor(key: Key, scale: Scale) {
+  constructor({ key, scale }: { key: Key; scale: Scale }) {
     this.key = key
     this.scale = scale
   }

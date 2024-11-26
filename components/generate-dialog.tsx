@@ -103,8 +103,8 @@ export function GenerateDialog({
           <p>There's a good change this wont work</p>
         </CommandGroup> */}
         <CommandGroup heading="Suggestions">
-          {exampleQuestions.map((question) => (
-            <CommandItem onSelect={(value) => handleChange(value)}>
+          {exampleQuestions.map((question, index) => (
+            <CommandItem onSelect={(value) => handleChange(value)} key={index}>
               <Icons.logo />
               <span>{question}</span>
             </CommandItem>

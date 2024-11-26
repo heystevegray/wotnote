@@ -34,9 +34,8 @@ const MidiKeyboard = () => {
   const color =
     (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
 
-  const selectedScale = new Piano(key, scale)
+  const selectedScale = new Piano({ key, scale })
   const notes = selectedScale.getNotes()
-  const chords = selectedScale.getChords()
 
   const mapRange = (
     [in_min, in_max]: [number, number],

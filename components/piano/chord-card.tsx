@@ -1,4 +1,4 @@
-import { ChordProps, Note } from "@/lib/core/Piano"
+import { ChordProps, Note, convertToFlat } from "@/lib/core/Piano"
 import { capitalizeFirstLetter, cn } from "@/lib/utils"
 import {
   Card,
@@ -9,11 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import PianoRoll from "./piano-roll"
-
 interface Props {
   chord: ChordProps
-  chordIndex: number
+  chordIndex?: number
 }
 
 const scaleDegrees = [
@@ -27,13 +25,12 @@ const scaleDegrees = [
   { value: "Octave", color: "bg-chord-1" },
 ]
 
-const Chord = ({ chord, chordIndex }: Props) => {
-  const chordNumber = chord.scaleDegree
-  const degree = scaleDegrees[chordIndex]
+const Chord = ({ chord }: Props) => {
+  const degree = scaleDegrees[chord.scaleDegree]
 
   return (
     <Card className="shadow-lg">
-      <CardHeader className="flex flex-row gap-2 items-center space-y-0 pb-0">
+      <CardHeader className="flex flex-row gap-2 items-center space-y-0 pb-0 p-4">
         <CardTitle>
           <div
             className={cn(
@@ -41,22 +38,24 @@ const Chord = ({ chord, chordIndex }: Props) => {
               degree.color
             )}
           >
-            {chordNumber}
+            {chord.scaleDegree}
           </div>
         </CardTitle>
         <CardDescription>{degree.value}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 flex flex-col p-0">
         <h2 className="text-3xl text-center font-bold">
-          {capitalizeFirstLetter(chord.key)}
+          {capitalizeFirstLetter(convertToFlat(chord.key))}
         </h2>
-        <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} />
+        {/* <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} /> */}
       </CardContent>
-      <CardFooter className="flex items-center justify-center pt-4">
+      <CardFooter className="flex items-center justify-center p-4">
         <div className="flex gap-4">
           {chord.notes.map((note: Note) => (
             <div key={note.code}>
-              <p className="text-xl">{capitalizeFirstLetter(note.key)}</p>
+              <p className="text-xl">
+                {capitalizeFirstLetter(convertToFlat(note.key))}
+              </p>
             </div>
           ))}
         </div>
