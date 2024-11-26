@@ -24,7 +24,8 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       schemaDescription: "Piano chords for a song.",
       system:
         "You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Jazz songs may add extentions chords don't need to be limited to three notes. If you are not provided with a song or don't know the key, you can generate chords for a song in any key. If you don't know the answer, say 'I don't know.'",
-      prompt: `${input} in the key of "${capitalizeFirstLetter(key)}."`,
+      prompt: `${input}"`,
+      // prompt: `${input} in the key of "${capitalizeFirstLetter(key)}."`,
       schema: z.object({
         song: z.object({
           name: z.string(),
@@ -71,7 +72,7 @@ export async function generate({ key, input }: { key: Key; input: string }) {
               ]),
               notes: z.array(
                 z.object({
-                  midiCode: z.number(),
+                  code: z.number().describe("MIDI note code."),
                   key: z.enum([
                     "c",
                     "c#",

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { readStreamableValue } from "ai/rsc"
+import { toast } from "sonner"
 
 import { urlParams } from "@/lib/config"
 import { ChordProps, Key, Scale, baseConfig } from "@/lib/core/Piano"
@@ -44,7 +45,9 @@ export default function Home() {
     },
   })
 
-  const artist = generation?.song?.artist || ""
+  const artist = generation?.song?.artist
+    ? `by ${generation?.song?.artist}`
+    : ""
   const description =
     generation?.song?.scale && generation?.song?.key
       ? `in the key of ${capitalizeFirstLetter(
@@ -54,15 +57,17 @@ export default function Home() {
 
   const { isAtBottom, scrollToBottom } = useScrollAnchor()
 
-  const onSubmit = async (value = "") => {
-    setSubmitted(true)
-    if (!input) {
-      setInput(value)
+  const onSubmit = async (value: string) => {
+    if (!value) {
+      toast.error("Please type a song name.")
+      return
     }
+
+    setSubmitted(true)
 
     const { object } = await generate({
       key,
-      input: value ?? input,
+      input: value,
     })
 
     for await (const partialObject of readStreamableValue(object)) {

@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import { getRandomQuestions } from "./chat-panel"
+import { ChatPanelProps, getRandomQuestions } from "./chat-panel"
 
 export function PromptForm({
   input,
@@ -22,7 +22,7 @@ export function PromptForm({
 }: {
   input: string
   setInput: (value: string) => void
-  onSubmit: () => void
+  onSubmit: ChatPanelProps["onSubmit"]
 }) {
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -50,7 +50,7 @@ export function PromptForm({
         const value = input.trim()
 
         if (value) {
-          onSubmit()
+          onSubmit(value)
         }
       }}
     >

@@ -19,7 +19,7 @@ const HeaderText = ({
   className,
 }: EmptyScreenProps) => {
   return (
-    <div className="py-24">
+    <div className="py-12">
       <Container
         className={cn("flex items-center w-full justify-center", className)}
       >

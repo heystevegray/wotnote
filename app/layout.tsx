@@ -2,6 +2,7 @@ import "@/app/globals.css"
 import { Metadata, Viewport } from "next"
 import { cookies } from "next/headers"
 import { Analytics } from "@vercel/analytics/react"
+import { Toaster } from "sonner"
 
 import { siteConfig } from "@/lib/config"
 import { fontSans } from "@/lib/fonts"
@@ -10,6 +11,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import Footer from "@/components/footer"
 import { SiteHeader } from "@/components/header"
+import MidiKeyboard from "@/components/midi-keyboard"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 
@@ -55,9 +57,14 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col w-full">
               <SiteHeader />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1">
+                {/* <MidiKeyboard /> */}
+                {children}
+              </main>
+
               <Footer />
             </div>
+            <Toaster />
             <Analytics />
             <TailwindIndicator />
           </ThemeProvider>
