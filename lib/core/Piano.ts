@@ -3,37 +3,37 @@ import { z } from "zod"
 export const KeyEnum = z.enum([
   "c",
   "c#",
-  "db",
+  "d♭",
   "d",
   "d#",
-  "eb",
+  "e♭",
   "e",
   "f",
   "f#",
-  "gb",
+  "g♭",
   "g",
   "g#",
-  "ab",
+  "a♭",
   "a",
   "a#",
-  "bb",
+  "b♭",
   "b",
 ])
 
 const SHARPS_TO_FLATS: Partial<Record<Key, Key>> = {
-  "c#": "db",
-  "d#": "eb",
-  "f#": "gb",
-  "g#": "ab",
-  "a#": "bb",
+  "c#": "d♭",
+  "d#": "e♭",
+  "f#": "g♭",
+  "g#": "a♭",
+  "a#": "b♭",
 }
 
 const FLATS_TO_SHARPS: Partial<Record<Key, Key>> = {
-  db: "c#",
-  eb: "d#",
-  gb: "f#",
-  ab: "g#",
-  bb: "a#",
+  "d♭": "c#",
+  "e♭": "d#",
+  "g♭": "f#",
+  "a♭": "g#",
+  "b♭": "a#",
 }
 
 export type Key = z.infer<typeof KeyEnum>
@@ -50,6 +50,7 @@ export const ChordSchema = z.object({
   notes: z.array(NoteSchema),
   key: KeyEnum,
   id: z.string(),
+  lyrics: z.string().optional(),
 })
 
 export type ChordProps = z.infer<typeof ChordSchema>

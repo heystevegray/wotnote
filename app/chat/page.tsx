@@ -6,7 +6,13 @@ import { readStreamableValue } from "ai/rsc"
 import { toast } from "sonner"
 
 import { urlParams } from "@/lib/config"
-import { ChordProps, Key, Scale, baseConfig } from "@/lib/core/Piano"
+import {
+  ChordProps,
+  Key,
+  Scale,
+  baseConfig,
+  convertToFlat,
+} from "@/lib/core/Piano"
 import { capitalizeFirstLetter } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
@@ -22,7 +28,7 @@ import { generate } from "../actions"
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30
 
-type Phrase = { id: string; chords: ChordProps[] }
+type Phrase = { id: string; chords: ChordProps[]; phraseIndex: number }
 
 type Generation = {
   song?: {
@@ -37,7 +43,7 @@ type Generation = {
 const Phrase = ({ phrase }: { phrase: Phrase }) => {
   return (
     <div className="flex flex-col space-y-2 pt-4">
-      <p>Phrase {phrase.id}</p>
+      <p>Phrase {phrase.phraseIndex}</p>
       <Chords chords={phrase.chords} key={phrase.id} />
     </div>
   )
@@ -65,7 +71,7 @@ export default function Home() {
   const description =
     generation?.song?.scale && generation?.song?.key
       ? `in the key of ${capitalizeFirstLetter(
-          generation?.song?.key
+          convertToFlat(generation?.song?.key)
         )} ${capitalizeFirstLetter(generation?.song?.scale)}`
       : ""
 
@@ -103,7 +109,7 @@ export default function Home() {
         Press{" "}
         <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
           <span className="text-xl p">⌘</span>
-          {COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}
+          <span>{COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}</span>
         </kbd>
       </p>
       <Button
@@ -117,7 +123,7 @@ export default function Home() {
   )
 
   return (
-    <Container className="pb-32 space-y-8">
+    <Container className="pb-32 space-y-4">
       <HeaderText
         title={name || "Search a song to generate chords."}
         description={about}
@@ -126,8 +132,11 @@ export default function Home() {
       </HeaderText>
       {isError ? null : (
         <div className="space-y-6 divide-y">
-          {song?.phrases?.map((phrase) => (
-            <Phrase phrase={phrase} key={phrase.id} />
+          {song?.phrases?.map((phrase, index) => (
+            <Phrase
+              phrase={{ ...phrase, phraseIndex: index + 1 }}
+              key={phrase.id}
+            />
           ))}
         </div>
       )}

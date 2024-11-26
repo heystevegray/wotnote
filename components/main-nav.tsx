@@ -15,8 +15,8 @@ interface MainNavProps {
 export function MainNav({ items }: MainNavProps) {
   return (
     <div className="flex gap-6 md:gap-10">
-      <div className="flex flex-row gap-2">
-        <SidebarTrigger />
+      <div className="flex flex-row gap-2 items-center">
+        <SidebarTrigger aria-label="Open Sidebar" />
         <Link href="/" className="flex items-center space-x-2">
           {/* <Icons.logo className="size-6" /> */}
           <span className="inline-block font-bold">{siteConfig.name}</span>

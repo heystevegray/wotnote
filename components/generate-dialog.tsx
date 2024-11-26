@@ -86,11 +86,14 @@ export function GenerateDialog({
   }, [show])
 
   return (
-    <CommandDialog open={open} onOpenChange={() => handleClose()}>
+    <CommandDialog
+      open={open}
+      onOpenChange={() => handleClose()}
+      title="Generate Chords"
+    >
       <CommandInput
         value={input}
         onValueChange={setInput}
-        defaultValue={query}
         placeholder="Type a song name to generate chords..."
       />
       <CommandList>

@@ -56,13 +56,22 @@ export async function generate({ key, input }: { key: Key; input: string }) {
           ]),
           phrases: z.array(
             z.object({
-              id: z.string().describe("Unique uuid identifier for the phrase."),
+              id: z
+                .string()
+                .describe(
+                  "Unique uuid identifier for the phrase, example f837ed0d-d2f0-4fb7-9739-4e213b6d8d88."
+                ),
               chords: z.array(
                 z.object({
                   id: z
                     .string()
-                    .describe("Unique uuid identifier for the chord."),
+                    .describe(
+                      "Unique uuid identifier for the chord, example f837ed0d-d2f0-4fb7-9739-4e213b6d8d88."
+                    ),
                   scaleDegree: z.number(),
+                  lyrics: z
+                    .string()
+                    .describe("The lyrics that map to this chord in the song"),
                   key: z.enum([
                     "c",
                     "c#",
