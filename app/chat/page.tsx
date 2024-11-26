@@ -106,7 +106,7 @@ export default function Home() {
         title={generation?.song?.name || "Search a song to generate chords."}
         description={about}
       >
-        {song ? null : content}
+        {content}
       </HeaderText>
       {isError ? null : <Chords chords={generation?.song?.chords ?? []} />}
       <GenerateDialog show={open} setShow={setOpen} />
