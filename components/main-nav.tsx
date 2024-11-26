@@ -30,11 +30,20 @@ export function MainNav({ items }: MainNavProps) {
                   key={index}
                   href={item.href}
                   className={cn(
-                    "flex items-center text-sm font-medium text-muted-foreground",
+                    "flex items-center text-sm font-medium text-muted-foreground gap-2",
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >
-                  {item.title}
+                  <div
+                    className={cn(
+                      "flex items-center gap-2",
+                      item.isAI &&
+                        "bg-gradient-to-tr from-chord-1 to-chord-2 text-white px-3 py-0 rounded-md text-lg"
+                    )}
+                  >
+                    <item.icon className="size-4" />
+                    {item.title}
+                  </div>
                 </Link>
               )
           )}

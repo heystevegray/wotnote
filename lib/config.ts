@@ -1,3 +1,5 @@
+import { Sparkle } from "lucide-react"
+
 export const MY_WEBSITE_URL = "https://www.stevegray.io/"
 export const MY_NAME = "Steve Gray"
 
@@ -7,10 +9,12 @@ export const siteConfig = {
   name: "wotnote",
   description: "Write music faster",
   mainNav: [
-    // {
-    //   title: "Home",
-    //   href: "/",
-    // },
+    {
+      icon: Sparkle,
+      title: "Chat",
+      href: "/chat",
+      isAI: true,
+    },
   ],
   links: {
     github: "https://github.com/heystevegray/wotnote",

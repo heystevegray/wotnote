@@ -61,7 +61,6 @@ export default function Home() {
 
   const onSubmit = async (value: string) => {
     if (!value) {
-      toast.error("Please type a song name.")
       return
     }
 
@@ -102,7 +101,7 @@ export default function Home() {
   )
 
   return (
-    <Container className="pb-32">
+    <Container className="pb-32 space-y-8">
       <HeaderText
         title={generation?.song?.name || "Search a song to generate chords."}
         description={about}

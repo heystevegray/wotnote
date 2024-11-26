@@ -21,6 +21,7 @@ const Keyboard = (): ReactElement => {
 
   return (
     <Suspense>
+      <MidiKeyboard />
       <Container>
         <Chords chords={chords ?? []} />
       </Container>
