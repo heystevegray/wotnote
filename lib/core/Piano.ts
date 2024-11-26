@@ -23,6 +23,7 @@ export const NoteSchema = z.object({
 export type Note = z.infer<typeof NoteSchema>
 
 export const ChordSchema = z.object({
+  scaleDegree: z.number(),
   notes: z.array(NoteSchema),
   key: KeyEnum,
 })
@@ -120,11 +121,14 @@ export const PIANO_KEYS: Key[] = [
   "b",
 ]
 
-export type Scale =
-  | "major"
-  | "harmonic-minor"
-  | "melodic-minor"
-  | "natural-minor"
+export const ScaleSchema = z.enum([
+  "major",
+  "harmonic-minor",
+  "melodic-minor",
+  "natural-minor",
+])
+
+export type Scale = z.infer<typeof ScaleSchema>
 
 export const PIANO_SCALES: Scale[] = [
   "major",
@@ -213,6 +217,7 @@ export class Piano {
           },
           { ...twoOctaves[index + 4] },
         ],
+        scaleDegree: index + 1,
       }
 
       chords.push(chord)

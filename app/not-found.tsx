@@ -1,18 +1,18 @@
 import Link from "next/link"
 
-import EmptyScreen from "@/components/empty-screen"
+import HeaderText from "@/components/header-text"
 
 const NotFound = () => {
   return (
     <div className="flex items-center justify-center">
-      <EmptyScreen
+      <HeaderText
         title="Ooof."
         description="Page Not Found. You may have hit a wrong note."
       >
         <Link href="/" className="underline">
           Return Home
         </Link>
-      </EmptyScreen>
+      </HeaderText>
     </div>
   )
 }

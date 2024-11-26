@@ -28,8 +28,7 @@ const scaleDegrees = [
 ]
 
 const Chord = ({ chord, chordIndex }: Props) => {
-  const numberOfDegrees = 7
-  const chordNumber = (chordIndex % numberOfDegrees) + 1
+  const chordNumber = chord.scaleDegree
   const degree = scaleDegrees[chordIndex]
 
   return (

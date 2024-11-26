@@ -1,14 +1,10 @@
 import Link from "next/link"
-import { Sparkle } from "lucide-react"
 
-import { generateSong } from "@/lib/chat"
 import { siteConfig } from "@/lib/config"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
-
-import CreateSong from "./create-song"
 
 export function SiteHeader() {
   return (
@@ -33,7 +29,6 @@ export function SiteHeader() {
               </div>
             </Link>
             <ThemeToggle />
-            <CreateSong />
           </nav>
         </div>
       </div>

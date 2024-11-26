@@ -12,15 +12,17 @@ export type EmptyScreenProps = {
 } & ClassName &
   PropsWithChildren
 
-const EmptyScreen = ({
+const HeaderText = ({
   title,
   description,
   children = null,
   className,
 }: EmptyScreenProps) => {
   return (
-    <div className="py-12">
-      <Container className={cn("flex items-center w-full", className)}>
+    <div className="py-24">
+      <Container
+        className={cn("flex items-center w-full justify-center", className)}
+      >
         <div className="flex flex-col text-center space-y-4">
           <div className="w-full flex justify-center">
             <Icons.logo className="size-6" />
@@ -40,4 +42,4 @@ const EmptyScreen = ({
   )
 }
 
-export default EmptyScreen
+export default HeaderText

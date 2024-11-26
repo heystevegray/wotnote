@@ -6,12 +6,16 @@ interface Props {
   chords: ChordProps[]
 }
 
-const Chords = ({ chords }: Props) => {
+const Chords = ({ chords = [] }: Props) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-      {chords.map((chord, index) => (
-        <Chord chord={chord} chordIndex={index} key={`${chord.key}-${index}`} />
-      ))}
+      {chords
+        .filter((chord) => Boolean(chord?.notes?.length >= 3))
+        .map((chord, index) => {
+          return (
+            <Chord chord={chord} chordIndex={index} key={crypto.randomUUID()} />
+          )
+        })}
     </div>
   )
 }

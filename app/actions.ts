@@ -5,24 +5,89 @@ import { streamObject } from "ai"
 import { createStreamableValue } from "ai/rsc"
 import { z } from "zod"
 
-export async function generate(input: string) {
+import { Key } from "@/lib/core/Piano"
+import { capitalizeFirstLetter } from "@/lib/utils"
+
+export async function generate({ key, input }: { key: Key; input: string }) {
   "use server"
 
   const stream = createStreamableValue()
 
   ;(async () => {
     const { partialObjectStream } = streamObject({
-      model: openai("gpt-4-turbo"),
-      system: "You generate three notifications for a messages app.",
-      prompt: input,
+      model: openai("gpt-4o-2024-08-06", {
+        structuredOutputs: true,
+      }),
+      schemaName: "chords",
+      schemaDescription: "Piano chords for a song.",
+      system:
+        "You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Jazz songs may add extentions chords don't need to be limited to three notes. If you are not provided with a song or don't know the key, you can generate chords for a song in any key. If you don't know the answer, say 'I don't know.'",
+      prompt: `${input} in the key of "${capitalizeFirstLetter(key)}."`,
       schema: z.object({
-        notifications: z.array(
-          z.object({
-            name: z.string().describe("Name of a fictional person."),
-            message: z.string().describe("Do not use emojis or links."),
-            minutesAgo: z.number(),
-          })
-        ),
+        data: z.object({
+          song: z.object({
+            name: z.string(),
+            artist: z.string(),
+            key: z.enum([
+              "c",
+              "c#",
+              "d",
+              "d#",
+              "e",
+              "f",
+              "f#",
+              "g",
+              "g#",
+              "a",
+              "a#",
+              "b",
+            ]),
+            scale: z.enum([
+              "major",
+              "harmonic-minor",
+              "melodic-minor",
+              "natural-minor",
+            ]),
+          }),
+          chords: z.array(
+            z.object({
+              scaleDegree: z.number(),
+              key: z.enum([
+                "c",
+                "c#",
+                "d",
+                "d#",
+                "e",
+                "f",
+                "f#",
+                "g",
+                "g#",
+                "a",
+                "a#",
+                "b",
+              ]),
+              notes: z.array(
+                z.object({
+                  code: z.number(),
+                  key: z.enum([
+                    "c",
+                    "c#",
+                    "d",
+                    "d#",
+                    "e",
+                    "f",
+                    "f#",
+                    "g",
+                    "g#",
+                    "a",
+                    "a#",
+                    "b",
+                  ]),
+                })
+              ),
+            })
+          ),
+        }),
       }),
     })
 
