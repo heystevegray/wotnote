@@ -91,9 +91,9 @@ export default function Home() {
 
   const song = generation?.song
   const isError = song?.error
-  const errorMessage = song?.error ?? ""
+  const errorMessage = song?.error || ""
   const name = song?.name
-  const about = errorMessage ?? `${artist} ${description}` ?? ""
+  const about = errorMessage || `${artist} ${description}` || ""
 
   const content = (
     <div className="mx-auto">
