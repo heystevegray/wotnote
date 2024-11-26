@@ -91,7 +91,7 @@ export default function Home() {
         Press{" "}
         <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
           <span className="text-xl p">⌘</span>
-          {COMMAND_DIALOG_KEYBOARD_SHORTCUT}
+          {COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}
         </kbd>
       </p>
       <Button
