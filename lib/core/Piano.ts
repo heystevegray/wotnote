@@ -26,12 +26,27 @@ export const ChordSchema = z.object({
   scaleDegree: z.number(),
   notes: z.array(NoteSchema),
   key: KeyEnum,
+  id: z.string(),
 })
 
 export type ChordProps = z.infer<typeof ChordSchema>
 
+export const ScaleSchema = z.enum([
+  "major",
+  "harmonic-minor",
+  "melodic-minor",
+  "natural-minor",
+])
+
+export type Scale = z.infer<typeof ScaleSchema>
+
 export const SongSchema = z.object({
+  name: z.string(),
+  artist: z.string(),
+  key: KeyEnum,
+  scale: ScaleSchema,
   chords: z.array(ChordSchema),
+  error: z.string().optional(),
 })
 
 export type Song = z.infer<typeof SongSchema>
@@ -121,15 +136,6 @@ export const PIANO_KEYS: Key[] = [
   "b",
 ]
 
-export const ScaleSchema = z.enum([
-  "major",
-  "harmonic-minor",
-  "melodic-minor",
-  "natural-minor",
-])
-
-export type Scale = z.infer<typeof ScaleSchema>
-
 export const PIANO_SCALES: Scale[] = [
   "major",
   "harmonic-minor",
@@ -207,6 +213,7 @@ export class Piano {
 
     for (let index = 0; index < twoOctaves.length; index++) {
       const chord: ChordProps = {
+        id: crypto.randomUUID(),
         key: twoOctaves[index].key,
         notes: [
           {

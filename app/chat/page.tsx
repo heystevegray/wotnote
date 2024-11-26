@@ -6,9 +6,9 @@ import { readStreamableValue } from "ai/rsc"
 
 import { urlParams } from "@/lib/config"
 import { ChordProps, Key, Scale, baseConfig } from "@/lib/core/Piano"
+import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor"
 import { capitalizeFirstLetter } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { ChatPanel } from "@/components/chat-panel"
 import Container from "@/components/container"
 import HeaderText from "@/components/header-text"
 import Chords from "@/components/piano/chords"
@@ -22,60 +22,76 @@ type Generation = {
   song?: {
     name: string
     artist: string
-    key: Key
-    scale: Scale
-  }
-} & { chords: ChordProps[] }
+    key?: Key
+    scale?: Scale
+    error?: string
+  } & { chords: ChordProps[] }
+}
 
 export default function Home() {
   const searchParams = useSearchParams()
   const [input, setInput] = useState("")
   const key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
+  const [submitted, setSubmitted] = useState(false)
   const [generation, setGeneration] = useState<Generation>({
-    song: undefined,
-    chords: [],
+    song: {
+      name: "",
+      artist: "",
+      key: undefined,
+      scale: undefined,
+      chords: [],
+      error: undefined,
+    },
   })
 
-  const artist = generation?.song?.artist ?? ""
-  const description = generation?.song?.key
-    ? `in the key of $${generation?.song?.scale ?? ""}`
-    : ""
+  const artist = generation?.song?.artist || ""
+  const description =
+    generation?.song?.scale && generation?.song?.key
+      ? `in the key of ${capitalizeFirstLetter(
+          generation?.song?.key
+        )} ${capitalizeFirstLetter(generation?.song?.scale)}`
+      : ""
+
+  const { isAtBottom, scrollToBottom } = useScrollAnchor()
+
+  const onSubmit = async (value = "") => {
+    setSubmitted(true)
+    if (!input) {
+      setInput(value)
+    }
+
+    const { object } = await generate({
+      key,
+      input: value ?? input,
+    })
+
+    for await (const partialObject of readStreamableValue(object)) {
+      if (partialObject) {
+        console.log(partialObject)
+        const generation = partialObject as Generation
+        setGeneration(generation)
+      }
+    }
+  }
+
+  const isError = generation?.song?.error
+  const about = isError ? generation.song?.error : `${artist} ${description}`
 
   return (
     <Container className="pb-32">
       <HeaderText
-        title={
-          generation?.song?.name ?? "Type a song name below to generate chords"
-        }
-        description={`${artist} ${description}`}
+        title={generation?.song?.name || "Type a song name below."}
+        description={about}
       />
-      <Chords chords={generation?.chords} />
-      <Container>
-        <div className="fixed bottom-20 right-0 bg-card w-full flex flex-row gap-2 items-center justify-center">
-          <Input
-            className="max-w-lg"
-            value={input}
-            placeholder="Hotline Bling by Drake"
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <Button
-            onClick={async () => {
-              const { object } = await generate({
-                key,
-                input,
-              })
-
-              for await (const partialObject of readStreamableValue(object)) {
-                if (partialObject) {
-                  setGeneration(partialObject.data)
-                }
-              }
-            }}
-          >
-            Ask
-          </Button>
-        </div>
-      </Container>
+      {isError ? null : <Chords chords={generation?.song?.chords ?? []} />}
+      <ChatPanel
+        input={input}
+        setInput={setInput}
+        isAtBottom={isAtBottom}
+        scrollToBottom={scrollToBottom}
+        submitted={submitted}
+        onSubmit={onSubmit}
+      />
     </Container>
   )
 }

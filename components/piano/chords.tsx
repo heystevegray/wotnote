@@ -12,9 +12,7 @@ const Chords = ({ chords = [] }: Props) => {
       {chords
         .filter((chord) => Boolean(chord?.notes?.length >= 3))
         .map((chord, index) => {
-          return (
-            <Chord chord={chord} chordIndex={index} key={crypto.randomUUID()} />
-          )
+          return <Chord chord={chord} chordIndex={index} key={chord.id} />
         })}
     </div>
   )
