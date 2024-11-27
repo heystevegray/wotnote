@@ -21,9 +21,109 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       }),
       schemaName: "chords",
       schemaDescription: "Piano chords for a song.",
-      system: `You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Chords don't need to be limited to three notes. If you don't know the key, you can generate chords for a song in their most popular key. If you don't know the answer, set the song error saying 'There was an error processing "${input}".'.
+      system: `
+      **Task Description:** Generate piano chords for the input song in it's original key or a popular key. Correct any typos in the input text and generate chords for the song.
 
-      Format the songs into phrases, each phrase has 4 chords for example. Then add all the phrases necessary to complete the song.
+      **Input Parameters:**
+      - input: The input text to generate chords for.
+      - Optional parameters:
+        - key: The key of the song (e.g., C, A, Eb, D#).
+
+      **Output Requirements:**
+      1. **Chord Phrases:** Format chord progressions into phrases with a specific structure (e.g., each phrase contains 4 chords for example). 
+      2. **Complete Song Structure:** Provide all necessary phrases to complete the song.
+
+      **Error Handling:**
+      - If unknown key or scale type, output: "There was an error processing '${input}'."
+
+      **Example Format for Chord Progressions:**
+      [
+        {
+            "id": "f837ed0d-d2f0-4fb7-9739-4e213b6d8d88",
+            "chords": [
+                {
+                    "id": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+                    "scaleDegree": 1,
+                    "lyrics": "Look at me",
+                    "key": "c",
+                    "notes": [
+                        {
+                            "code": 60,
+                            "key": "c"
+                        },
+                        {
+                            "code": 64,
+                            "key": "e"
+                        },
+                        {
+                            "code": 67,
+                            "key": "g"
+                        }
+                    ]
+                },
+                {
+                    "id": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+                    "scaleDegree": 4,
+                    "lyrics": "I'm as helpless as a kitten up a tree",
+                    "key": "f",
+                    "notes": [
+                        {
+                            "code": 65,
+                            "key": "f"
+                        },
+                        {
+                            "code": 69,
+                            "key": "a"
+                        },
+                        {
+                            "code": 72,
+                            "key": "c"
+                        }
+                    ]
+                },
+                {
+                    "id": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+                    "scaleDegree": 5,
+                    "lyrics": "And I feel like I'm clinging to a cloud",
+                    "key": "g",
+                    "notes": [
+                        {
+                            "code": 67,
+                            "key": "g"
+                        },
+                        {
+                            "code": 71,
+                            "key": "b"
+                        },
+                        {
+                            "code": 74,
+                            "key": "d"
+                        }
+                    ]
+                },
+                {
+                    "id": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
+                    "scaleDegree": 1,
+                    "lyrics": "I can't understand",
+                    "key": "c",
+                    "notes": [
+                        {
+                            "code": 60,
+                            "key": "c"
+                        },
+                        {
+                            "code": 64,
+                            "key": "e"
+                        },
+                        {
+                            "code": 67,
+                            "key": "g"
+                        }
+                    ]
+                }
+            ]
+        },
+      ...]
       `,
       prompt: `${input}"`,
       // prompt: `${input} in the key of "${capitalizeFirstLetter(key)}."`,
