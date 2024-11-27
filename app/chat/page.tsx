@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { readStreamableValue } from "ai/rsc"
-import { toast } from "sonner"
 
 import { urlParams } from "@/lib/config"
 import {
@@ -13,11 +12,7 @@ import {
   baseConfig,
   convertToFlat,
 } from "@/lib/core/Piano"
-import {
-  capitalizeFirstLetter,
-  generationInitialState,
-  generationSample,
-} from "@/lib/utils"
+import { capitalizeFirstLetter } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
 import {

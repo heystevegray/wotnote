@@ -2,7 +2,7 @@ import { Suspense, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
-import { MAX_KEY, MIN_KEY, Note } from "@/lib/core/Piano"
+import { Note } from "@/lib/core/Piano"
 import { ClassName } from "@/lib/types"
 
 type Props = {
@@ -23,15 +23,15 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
   }
 
-  const resetKeys = () => {
-    // Reset all keys
-    for (let index = MIN_KEY; index < MAX_KEY; index++) {
-      const key = getKeyByCode(index)
-      if (key) {
-        key.style.fill = ""
-      }
-    }
-  }
+  // const resetKeys = () => {
+  //   // Reset all keys
+  //   for (let index = MIN_KEY; index < MAX_KEY; index++) {
+  //     const key = getKeyByCode(index)
+  //     if (key) {
+  //       key.style.fill = ""
+  //     }
+  //   }
+  // }
 
   const highlightKeys = () => {
     activeNotes?.map((note) => {

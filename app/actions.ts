@@ -6,12 +6,11 @@ import { createStreamableValue } from "ai/rsc"
 import { z } from "zod"
 
 import { Key } from "@/lib/core/Piano"
-import { capitalizeFirstLetter } from "@/lib/utils"
 
 export async function generate({ key, input }: { key: Key; input: string }) {
   "use server"
 
-  console.log({ input })
+  console.log({ key, input })
 
   const stream = createStreamableValue()
 

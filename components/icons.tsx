@@ -1,11 +1,4 @@
-import {
-  KeyboardMusic,
-  LucideIcon,
-  LucideProps,
-  Moon,
-  Music3,
-  SunMedium,
-} from "lucide-react"
+import { LucideIcon, LucideProps, Moon, Music3, SunMedium } from "lucide-react"
 
 export type Icon = LucideIcon
 

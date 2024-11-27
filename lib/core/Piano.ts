@@ -28,13 +28,13 @@ const SHARPS_TO_FLATS: Partial<Record<Key, Key>> = {
   "a#": "b♭",
 }
 
-const FLATS_TO_SHARPS: Partial<Record<Key, Key>> = {
-  "d♭": "c#",
-  "e♭": "d#",
-  "g♭": "f#",
-  "a♭": "g#",
-  "b♭": "a#",
-}
+// const FLATS_TO_SHARPS: Partial<Record<Key, Key>> = {
+//   "d♭": "c#",
+//   "e♭": "d#",
+//   "g♭": "f#",
+//   "a♭": "g#",
+//   "b♭": "a#",
+// }
 
 export type Key = z.infer<typeof KeyEnum>
 
