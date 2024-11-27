@@ -108,11 +108,14 @@ export default function Home() {
       {isMobile ? null : (
         <p className="text-muted-foreground">
           Or press{" "}
-          <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-2 font-mono font-medium text-muted-foreground opacity-100">
-            <span className="p">
-              {optionKey} {COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}
-            </span>
-          </kbd>
+          <div className="inline-flex gap-1">
+            <kbd className="pointer-events-none inline-flex select-none items-center rounded border bg-muted px-2 font-mono font-medium text-muted-foreground">
+              {optionKey}
+            </kbd>
+            <kbd className="pointer-events-none inline-flex select-none items-center rounded border bg-muted px-2 font-mono font-medium text-muted-foreground">
+              {COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}
+            </kbd>
+          </div>
         </p>
       )}
     </div>

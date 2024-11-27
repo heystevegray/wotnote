@@ -13,7 +13,7 @@ export default function useUserAgent() {
   const [isWindows, setIsWindows] = useState<boolean | null>(null)
   const [isStandalone, setIsStandalone] = useState<boolean | null>(null)
   const [userAgentString, setUserAgentString] = useState<string | null>(null)
-  const [optionKey, setOptionKey] = useState<"Ctrl + " | "⌘ + " | null>("⌘ + ")
+  const [optionKey, setOptionKey] = useState<"Ctrl" | "⌘" | null>("⌘")
 
   useEffect(() => {
     if (window) {
@@ -46,7 +46,7 @@ export default function useUserAgent() {
       // Check for Windows os
       const isWindows = userAgentString.includes("Win")
       setIsWindows(isWindows)
-      setOptionKey(isWindows ? "Ctrl + " : "⌘ + ")
+      setOptionKey(isWindows ? "Ctrl" : "⌘")
 
       // Check if user agent is mobile
       const isIOS = userAgentString.match(/iPhone|iPad|iPod/i)
