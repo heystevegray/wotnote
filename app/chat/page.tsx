@@ -12,6 +12,7 @@ import {
   baseConfig,
   convertToFlat,
 } from "@/lib/core/Piano"
+import useUserAgent from "@/lib/hooks/use-user-agent"
 import { capitalizeFirstLetter } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
@@ -49,6 +50,7 @@ const Phrase = ({ phrase }: { phrase: Phrase }) => {
 }
 
 export default function Home() {
+  const { optionKey } = useUserAgent()
   const searchParams = useSearchParams()
   const query = searchParams.get(urlParams.query) ?? ""
   const key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
@@ -96,21 +98,18 @@ export default function Home() {
   const about = errorMessage || `${artist} ${description}` || ""
 
   const content = (
-    <div className="mx-auto">
-      <p className="hidden text-xl text-muted-foreground md:block">
-        Press{" "}
-        <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
-          <span className="p text-xl">⌘</span>
-          <span>{COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}</span>
-        </kbd>
-      </p>
-      <Button
-        variant="secondary"
-        className="block md:hidden"
-        onClick={() => setOpen(true)}
-      >
+    <div className="mx-auto flex flex-col gap-4">
+      <Button variant="ai" size="lg" onClick={() => setOpen(true)}>
         Generate
       </Button>
+      <p className="text-muted-foreground">
+        Or press{" "}
+        <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-2 font-mono font-medium text-muted-foreground opacity-100">
+          <span className="p">
+            {optionKey} {COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}
+          </span>
+        </kbd>
+      </p>
     </div>
   )
 

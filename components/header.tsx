@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { siteConfig } from "@/lib/config"
+import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
@@ -19,10 +20,13 @@ export function SiteHeader() {
               rel="noreferrer"
             >
               <div
-                className={buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
-                })}
+                className={cn(
+                  "rounded-full",
+                  buttonVariants({
+                    size: "icon",
+                    variant: "ghost",
+                  })
+                )}
               >
                 <Icons.gitHub className="size-6" />
                 <span className="sr-only">GitHub</span>
