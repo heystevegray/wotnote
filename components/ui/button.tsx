@@ -18,7 +18,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        ai: "bg-gradient-to-tr from-chord-1 to-chord-2 text-white rounded-full min-w-24",
+        ai: "bg-gradient-to-tr from-chord-1 to-chord-2 text-white rounded-full min-w-24 animate-gradient-pulse",
       },
       size: {
         default: "h-10 px-4 py-2",

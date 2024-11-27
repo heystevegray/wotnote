@@ -13,7 +13,7 @@ export default function useUserAgent() {
   const [isWindows, setIsWindows] = useState<boolean | null>(null)
   const [isStandalone, setIsStandalone] = useState<boolean | null>(null)
   const [userAgentString, setUserAgentString] = useState<string | null>(null)
-  const [optionKey, setOptionKey] = useState<"Ctrl + " | "⌘ + " | null>(null)
+  const [optionKey, setOptionKey] = useState<"Ctrl + " | "⌘ + " | null>("⌘ + ")
 
   useEffect(() => {
     if (window) {

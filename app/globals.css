@@ -86,12 +86,36 @@
   }
 }
 
+@keyframes gradient-pulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-pulse {
+  background-size: 200% 200%;
+  animation: gradient-pulse 4s ease infinite;
+  background-image: linear-gradient(
+    270deg,
+    hsl(var(--chord-1)),
+    hsl(var(--chord-2))
+  );
+}
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { readStreamableValue } from "ai/rsc"
+import { Sparkle } from "lucide-react"
 
 import { urlParams } from "@/lib/config"
 import {
@@ -13,7 +14,7 @@ import {
   convertToFlat,
 } from "@/lib/core/Piano"
 import useUserAgent from "@/lib/hooks/use-user-agent"
-import { capitalizeFirstLetter } from "@/lib/utils"
+import { capitalizeFirstLetter, generationSample } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
 import {
@@ -100,7 +101,7 @@ export default function Home() {
   const content = (
     <div className="mx-auto flex flex-col gap-4">
       <Button variant="ai" size="lg" onClick={() => setOpen(true)}>
-        Generate
+        <Sparkle /> Generate
       </Button>
       <p className="text-muted-foreground">
         Or press{" "}
