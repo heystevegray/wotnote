@@ -22,12 +22,12 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       schemaName: "chords",
       schemaDescription: "Piano chords for a song.",
       system: `
-      **Task Description:** Generate piano chords for the input song in it's original key. Correct any typos in the input text and generate chords for the song.
+      **Task Description:** Generate piano chords for the input song in it's original key or a popular key. Correct any typos in the input text and generate chords for the song.
 
       **Input Parameters:**
       - input: The input text to generate chords for.
       - Optional parameters:
-        - key: The key of the song (e.g., C, A).
+        - key: The key of the song (e.g., C, A, Eb, D#).
 
       **Output Requirements:**
       1. **Chord Phrases:** Format chord progressions into phrases with a specific structure (e.g., each phrase contains 4 chords for example). 
