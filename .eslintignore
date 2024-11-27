@@ -1,4 +1,5 @@
-.next/
-node_modules/
-charts/
-prisma/
+dist/*
+.cache
+public
+node_modules
+*.esm.js
