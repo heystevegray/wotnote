@@ -21,9 +21,44 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       }),
       schemaName: "chords",
       schemaDescription: "Piano chords for a song.",
-      system: `You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Chords don't need to be limited to three notes. If you don't know the key, you can generate chords for a song in their most popular key. If you don't know the answer, set the song error saying 'There was an error processing "${input}".'.
+      system: `
+      **Task Description:** Generate piano chords for a song given the key.
 
-      Format the songs into phrases, each phrase has 4 chords for example. Then add all the phrases necessary to complete the song.
+      **Input Parameters:**
+      - input: The input text to generate chords for.
+      - Optional parameters:
+        - key: The key of the song (e.g., C, A).
+
+      **Output Requirements:**
+      1. **Chord Phrases:** Format chord progressions into phrases with a specific structure (e.g., each phrase contains 4 chords for example). 
+      2. **Complete Song Structure:** Provide all necessary phrases to complete the song.
+
+      **Error Handling:**
+      - If unknown key or scale type, output: "There was an error processing '${input}'."
+
+      **Example Format for Chord Progressions:**
+      [Phrase 1, Phrase 2, ...]
+
+      **Example Format for Chords:**
+      {
+        "scaleDegree": 1,
+        "lyrics": "Now I've heard there was a secret chord",
+        "key": "c",
+        "notes": [
+            {
+                "code": 60,
+                "key": "c"
+            },
+            {
+                "code": 64,
+                "key": "e"
+            },
+            {
+                "code": 67,
+                "key": "g"
+            }
+        ]
+    }
       `,
       prompt: `${input}"`,
       // prompt: `${input} in the key of "${capitalizeFirstLetter(key)}."`,
