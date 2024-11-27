@@ -52,7 +52,7 @@ export const generationInitialState: Generation = {
   },
 }
 
-export const sampleGeneration: Generation = {
+export const generationSample: Generation = {
   song: {
     name: "Sister Christian",
     artist: "Night Ranger",

@@ -13,7 +13,11 @@ import {
   baseConfig,
   convertToFlat,
 } from "@/lib/core/Piano"
-import { capitalizeFirstLetter, sampleGeneration } from "@/lib/utils"
+import {
+  capitalizeFirstLetter,
+  generationInitialState,
+  generationSample,
+} from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
 import {
@@ -54,7 +58,7 @@ export default function Home() {
   const query = searchParams.get(urlParams.query) ?? ""
   const key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
   const [open, setOpen] = useState(false)
-  const [generation, setGeneration] = useState<Generation>(sampleGeneration)
+  const [generation, setGeneration] = useState<Generation>()
 
   const artist = generation?.song?.artist
     ? `by ${generation?.song?.artist}`
@@ -66,9 +70,9 @@ export default function Home() {
         )} ${capitalizeFirstLetter(generation?.song?.scale)}`
       : ""
 
-  // useEffect(() => {
-  //   onSubmit(query)
-  // }, [query])
+  useEffect(() => {
+    onSubmit(query)
+  }, [query])
 
   const onSubmit = async (value: string) => {
     if (!value) {
@@ -97,7 +101,7 @@ export default function Home() {
 
   const content = (
     <div className="mx-auto">
-      <p className="text-xl text-muted-foreground lg:block hidden">
+      <p className="text-xl text-muted-foreground md:block hidden">
         Press{" "}
         <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
           <span className="text-xl p">⌘</span>
@@ -115,7 +119,7 @@ export default function Home() {
   )
 
   return (
-    <Container className="pb-32 space-y-4">
+    <Container className="pb-32">
       <HeaderText
         title={name || "Search a song to generate chords."}
         description={about}

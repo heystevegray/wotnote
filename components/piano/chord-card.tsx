@@ -27,9 +27,18 @@ const scaleDegrees = [
 
 const Chord = ({ chord }: Props) => {
   const degree = scaleDegrees[chord.scaleDegree]
+  const loading = chord?.notes?.every((note) => note.key) === false
 
   return (
-    <Card className="shadow-lg">
+    <Card
+      className={cn(
+        "shadow-lg hover:scale-110 hover:shadow-2xl transition-transform ease-in-out",
+        {
+          "scale-110 blur-sm shadow-2xl transition-transform ease-in-out":
+            loading,
+        }
+      )}
+    >
       <CardHeader className="flex flex-row gap-2 items-center space-y-0">
         <CardTitle>
           <div
