@@ -21,17 +21,17 @@ const HeaderText = ({
   return (
     <div className="pt-12">
       <Container
-        className={cn("flex items-center w-full justify-center", className)}
+        className={cn("flex w-full items-center justify-center", className)}
       >
-        <div className="flex flex-col text-center space-y-4">
-          <div className="w-full flex justify-center">
+        <div className="flex flex-col space-y-4 text-center">
+          <div className="flex w-full justify-center">
             <Icons.logo className="size-6" />
           </div>
-          <h2 className="text-3xl bg-clip-text flex flex-col justify-center items-center m-0 p-0">
+          <h2 className="m-0 flex flex-col items-center justify-center bg-clip-text p-0 text-3xl">
             {title ?? null}
           </h2>
           {description ? (
-            <p className="leading-normal text-muted-foreground text-lg">
+            <p className="text-lg leading-normal text-muted-foreground">
               {description}
             </p>
           ) : null}

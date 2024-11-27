@@ -15,7 +15,7 @@ interface MainNavProps {
 export function MainNav({ items }: MainNavProps) {
   return (
     <div className="flex gap-6 md:gap-10">
-      <div className="flex flex-row gap-2 items-center">
+      <div className="flex flex-row items-center gap-2">
         <SidebarTrigger aria-label="Open Sidebar" />
         <Link href="/" className="flex items-center space-x-2">
           {/* <Icons.logo className="size-6" /> */}
@@ -31,7 +31,7 @@ export function MainNav({ items }: MainNavProps) {
                   key={index}
                   href={item.href}
                   className={cn(
-                    "flex items-center text-sm font-medium text-muted-foreground gap-2",
+                    "flex items-center gap-2 text-sm font-medium text-muted-foreground",
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >

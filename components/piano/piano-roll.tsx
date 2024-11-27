@@ -46,6 +46,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
   useEffect(() => {
     // resetKeys()
     highlightKeys()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeNotes])
 
   return (

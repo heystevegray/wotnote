@@ -62,21 +62,20 @@ const MidiKeyboard = () => {
     [color, getOpacity, midiConfig.midi.velocity]
   )
 
-  const keyOff = (
-    key: HTMLElement,
-    previousColor = "",
-    forceOff = false
-  ): void => {
-    const keyCode = +key.id
+  const keyOff = useCallback(
+    (key: HTMLElement, previousColor = "", forceOff = false): void => {
+      const keyCode = +key.id
 
-    // Don't turn the note off if it's displaying the piano scale
-    if (!forceOff && notes?.map((note) => note.code).includes(keyCode)) {
-      key.style.fill = color
-    } else {
-      key.style.fill = previousColor || ""
-    }
-    key.style.opacity = "1"
-  }
+      // Don't turn the note off if it's displaying the piano scale
+      if (!forceOff && notes?.map((note) => note.code).includes(keyCode)) {
+        key.style.fill = color
+      } else {
+        key.style.fill = previousColor || ""
+      }
+      key.style.opacity = "1"
+    },
+    [color, notes]
+  )
 
   const resetKeys = () => {
     // Reset all keys
@@ -105,6 +104,7 @@ const MidiKeyboard = () => {
         }
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, scale])
 
   useEffect(() => {
@@ -123,7 +123,7 @@ const MidiKeyboard = () => {
         }
       }
     }
-  }, [getOpacity, keyOn, midiConfig])
+  }, [getOpacity, isDark, keyOff, keyOn, midiConfig])
 
   return <PianoRoll chordIndex={0} activeNotes={notes} />
 }

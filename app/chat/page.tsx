@@ -72,6 +72,7 @@ export default function Home() {
 
   useEffect(() => {
     onSubmit(query)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query])
 
   const onSubmit = async (value: string) => {
@@ -101,10 +102,10 @@ export default function Home() {
 
   const content = (
     <div className="mx-auto">
-      <p className="text-xl text-muted-foreground md:block hidden">
+      <p className="hidden text-xl text-muted-foreground md:block">
         Press{" "}
         <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xl font-medium text-muted-foreground opacity-100">
-          <span className="text-xl p">⌘</span>
+          <span className="p text-xl">⌘</span>
           <span>{COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}</span>
         </kbd>
       </p>

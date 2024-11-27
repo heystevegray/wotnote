@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="relative flex min-h-screen flex-col w-full">
+            <div className="relative flex min-h-screen w-full flex-col">
               <SiteHeader />
               <main className="flex-1">
                 {/* <MidiKeyboard /> */}

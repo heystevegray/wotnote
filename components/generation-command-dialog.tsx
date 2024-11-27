@@ -107,7 +107,7 @@ export function GenerateDialog({
       <CommandList className="relative">
         <CommandEmpty>
           <Gradient className="opacity-75" />
-          <p className="relative flex mx-auto justify-center p-2 text-center text-lg">
+          <p className="relative mx-auto flex justify-center p-2 text-center text-lg">
             Hit enter, you wont...
             {/* There's a good change this wont work. */}
           </p>

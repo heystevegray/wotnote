@@ -32,18 +32,18 @@ const Chord = ({ chord }: Props) => {
   return (
     <Card
       className={cn(
-        "shadow-lg hover:scale-110 hover:shadow-2xl transition-transform ease-in-out",
+        "shadow-lg transition-transform ease-in-out hover:scale-110 hover:shadow-2xl",
         {
-          "scale-110 blur-sm shadow-2xl transition-transform ease-in-out":
+          "scale-110 shadow-2xl blur-sm transition-transform ease-in-out":
             loading,
         }
       )}
     >
-      <CardHeader className="flex flex-row gap-2 items-center space-y-0">
+      <CardHeader className="flex flex-row items-center gap-2 space-y-0">
         <CardTitle>
           <div
             className={cn(
-              "bg-foreground text-background rounded-full flex items-center justify-center size-6 text-sm text-center",
+              "flex size-6 items-center justify-center rounded-full bg-foreground text-center text-sm text-background",
               degree?.color
             )}
           >
@@ -52,8 +52,8 @@ const Chord = ({ chord }: Props) => {
         </CardTitle>
         <CardDescription>{degree?.value}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 flex flex-col items-center">
-        <h2 className="text-3xl text-center font-bold">
+      <CardContent className="flex flex-col items-center space-y-4">
+        <h2 className="text-center text-3xl font-bold">
           {capitalizeFirstLetter(convertToFlat(chord.key))}
         </h2>
         {/* <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} /> */}
@@ -69,7 +69,7 @@ const Chord = ({ chord }: Props) => {
       </CardContent>
       <CardFooter className="flex items-center justify-center">
         {chord?.lyrics ? (
-          <div className="w-full border-t text-center pt-2">
+          <div className="w-full border-t pt-2 text-center">
             <p className="text-xs text-muted-foreground">{chord.lyrics}</p>
           </div>
         ) : null}

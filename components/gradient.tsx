@@ -5,7 +5,7 @@ const Gradient = ({ className }: ClassName) => {
   return (
     <div
       className={cn(
-        "absolute bg-gradient-to-r from-chord-1 to-chord-2 w-full h-full rounded-3xl blur-3xl animate-ai-spin z-0 origin-center top-0 left-0",
+        "absolute left-0 top-0 z-0 size-full origin-center animate-ai-spin rounded-3xl bg-gradient-to-r from-chord-1 to-chord-2 blur-3xl",
         className
       )}
     />
