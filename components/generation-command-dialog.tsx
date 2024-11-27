@@ -17,7 +17,6 @@ import {
 
 import Gradient from "./gradient"
 import { Icons } from "./icons"
-import { Button } from "./ui/button"
 
 export const COMMAND_DIALOG_KEYBOARD_SHORTCUT = "k"
 
@@ -107,8 +106,8 @@ export function GenerateDialog({
       />
       <CommandList className="relative">
         <CommandEmpty>
-          <Gradient />
-          <p className="relative flex mx-auto justify-center p-12 text-center text-lg">
+          <Gradient className="opacity-75" />
+          <p className="relative flex mx-auto justify-center p-2 text-center text-lg">
             Hit enter, you wont...
             {/* There's a good change this wont work. */}
           </p>
