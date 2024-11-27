@@ -14,7 +14,7 @@ import {
   convertToFlat,
 } from "@/lib/core/Piano"
 import useUserAgent from "@/lib/hooks/use-user-agent"
-import { capitalizeFirstLetter, generationSample } from "@/lib/utils"
+import { capitalizeFirstLetter } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Container from "@/components/container"
 import {
@@ -51,7 +51,7 @@ const Phrase = ({ phrase }: { phrase: Phrase }) => {
 }
 
 export default function Home() {
-  const { optionKey } = useUserAgent()
+  const { optionKey, isMobile } = useUserAgent()
   const searchParams = useSearchParams()
   const query = searchParams.get(urlParams.query) ?? ""
   const key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
@@ -61,7 +61,8 @@ export default function Home() {
   const artist = generation?.song?.artist
     ? `by ${generation?.song?.artist}`
     : ""
-  const description =
+
+  const songDescription =
     generation?.song?.scale && generation?.song?.key
       ? `in the key of ${capitalizeFirstLetter(
           convertToFlat(generation?.song?.key)
@@ -95,30 +96,35 @@ export default function Home() {
   const song = generation?.song
   const isError = song?.error
   const errorMessage = song?.error || ""
-  const name = song?.name
-  const about = errorMessage || `${artist} ${description}` || ""
+  const name = errorMessage ? "Ooof." : song?.name
+  const description =
+    `${artist} ${songDescription}`.trim() || "Wrong? Probably."
 
   const content = (
     <div className="mx-auto flex flex-col gap-4">
       <Button variant="ai" size="lg" onClick={() => setOpen(true)}>
         <Sparkle /> Generate
       </Button>
-      <p className="text-muted-foreground">
-        Or press{" "}
-        <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-2 font-mono font-medium text-muted-foreground opacity-100">
-          <span className="p">
-            {optionKey} {COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}
-          </span>
-        </kbd>
-      </p>
+      {isMobile ? null : (
+        <p className="text-muted-foreground">
+          Or press{" "}
+          <kbd className="pointer-events-none inline-flex select-none items-center gap-1 rounded border bg-muted px-2 font-mono font-medium text-muted-foreground opacity-100">
+            <span className="p">
+              {optionKey} {COMMAND_DIALOG_KEYBOARD_SHORTCUT.toUpperCase()}
+            </span>
+          </kbd>
+        </p>
+      )}
     </div>
   )
 
   return (
     <Container className="pb-32">
       <HeaderText
-        title={name || "Search a song to generate chords."}
-        description={about}
+        hideLogo
+        badge="Beta"
+        title={name || "AI Generated Piano Chords for Every Song"}
+        description={errorMessage || description}
       >
         {content}
       </HeaderText>

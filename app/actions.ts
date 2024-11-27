@@ -21,7 +21,7 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       }),
       schemaName: "chords",
       schemaDescription: "Piano chords for a song.",
-      system: `You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Chords don't need to be limited to three notes. If you don't know the key, you can generate chords for a song in their most popular key. If you don't know the answer, say set the song error saying 'I don't know.'.
+      system: `You are an expert pianist. You are asked to generate the piano chords for a song. You are given the key of the song to generate chords for. Don't forget to infer the correct scale such as major or minor. Chords don't need to be limited to three notes. If you don't know the key, you can generate chords for a song in their most popular key. If you don't know the answer, set the song error saying 'There was an error processing "${input}".'.
 
       Format the songs into phrases, each phrase has 4 chords for example. Then add all the phrases necessary to complete the song.
       `,

@@ -85,6 +85,10 @@ export function GenerateDialog({
     }
   }, [show])
 
+  const shuffledQuestions = React.useMemo(() => {
+    return exampleQuestions.sort(() => 0.5 - Math.random())
+  }, [])
+
   return (
     <CommandDialog
       open={open}
@@ -113,7 +117,7 @@ export function GenerateDialog({
           </p>
         </CommandEmpty>
         <CommandGroup heading="Suggestions">
-          {exampleQuestions.map((question, index) => (
+          {shuffledQuestions.map((question, index) => (
             <CommandItem onSelect={(value) => handleChange(value)} key={index}>
               <Icons.logo />
               <span>{question}</span>

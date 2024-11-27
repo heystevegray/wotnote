@@ -14,7 +14,7 @@ interface MainNavProps {
 
 export function MainNav({ items }: MainNavProps) {
   return (
-    <div className="flex gap-6 md:gap-10">
+    <div className="flex gap-6">
       <div className="flex flex-row items-center gap-2">
         <SidebarTrigger aria-label="Open Sidebar" />
         <Link href="/" className="flex items-center space-x-2">
@@ -23,7 +23,7 @@ export function MainNav({ items }: MainNavProps) {
         </Link>
       </div>
       {items?.length ? (
-        <nav className="flex gap-6">
+        <nav className="hidden gap-6 md:flex">
           {items?.map(
             (item, index) =>
               item.href && (

@@ -5,7 +5,7 @@ const Gradient = ({ className }: ClassName) => {
   return (
     <div
       className={cn(
-        "animate-gradient-pulse absolute left-0 top-0 z-0 size-full",
+        "absolute left-0 top-0 z-0 size-full animate-gradient-pulse",
         className
       )}
     />

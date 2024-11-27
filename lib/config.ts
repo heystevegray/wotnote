@@ -1,5 +1,7 @@
 import { Sparkle } from "lucide-react"
 
+import { Icons } from "@/components/icons"
+
 export const MY_WEBSITE_URL = "https://www.stevegray.io/"
 export const MY_NAME = "Steve Gray"
 
@@ -9,6 +11,12 @@ export const siteConfig = {
   name: "wotnote",
   description: "Write music faster",
   mainNav: [
+    {
+      icon: Icons.logo,
+      title: "Home",
+      href: "/",
+      hideMain: true,
+    },
     {
       icon: Sparkle,
       title: "Chat",

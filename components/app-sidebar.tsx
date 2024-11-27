@@ -1,14 +1,18 @@
 import { Suspense } from "react"
 import packageJson from "package.json"
 
+import { siteConfig } from "@/lib/config"
 // import useMidi from "@/lib/hooks/use-midi"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
 import Settings from "./settings"
@@ -19,9 +23,26 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      {/* <SidebarHeader>
         <SidebarGroupLabel>Settings</SidebarGroupLabel>
-      </SidebarHeader>
+      </SidebarHeader> */}
+      <SidebarGroup>
+        <SidebarGroupLabel>Application</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {siteConfig.mainNav.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild>
+                  <a href={item.href}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
       <SidebarContent>
         {/* <SidebarGroup>
             <SidebarGroupLabel>MIDI</SidebarGroupLabel>
@@ -56,7 +77,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <p>v{packageJson.version}</p>
+        <p className="text-center text-sm">v{packageJson.version}</p>
       </SidebarFooter>
     </Sidebar>
   )
