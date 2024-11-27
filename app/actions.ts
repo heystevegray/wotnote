@@ -22,7 +22,7 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       schemaName: "chords",
       schemaDescription: "Piano chords for a song.",
       system: `
-      **Task Description:** Generate piano chords for a song given the key.
+      **Task Description:** Generate piano chords for the input song in it's original key. Correct any typos in the input text and generate chords for the song.
 
       **Input Parameters:**
       - input: The input text to generate chords for.
