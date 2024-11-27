@@ -82,6 +82,14 @@ module.exports = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       keyframes: {
+        "ai-spin": {
+          "0%": {
+            transform: "rotate(0deg) scale(1)",
+          },
+          "100%": {
+            transform: "rotate(360deg) scale(1)",
+          },
+        },
         "accordion-down": {
           from: {
             height: "0",
@@ -102,6 +110,7 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "ai-spin": "ai-spin 40s linear infinite",
       },
     },
   },

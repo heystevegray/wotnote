@@ -15,6 +15,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 
+import Gradient from "./gradient"
 import { Icons } from "./icons"
 import { Button } from "./ui/button"
 
@@ -95,16 +96,23 @@ export function GenerateDialog({
         value={input}
         onValueChange={setInput}
         placeholder="Type a song name to generate chords..."
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && input) {
+            // Prevent the default action
+            e.preventDefault()
+            // Call the handleChange function with the input value
+            handleChange(input)
+          }
+        }}
       />
-      <CommandList>
+      <CommandList className="relative">
         <CommandEmpty>
-          <Button variant="ai" onClick={() => handleChange(input)}>
-            Search
-          </Button>
+          <Gradient />
+          <p className="relative flex mx-auto justify-center p-12 text-center text-lg">
+            Hit enter, you wont...
+            {/* There's a good change this wont work. */}
+          </p>
         </CommandEmpty>
-        {/* <CommandGroup heading="Side note">
-          <p>There's a good change this wont work</p>
-        </CommandGroup> */}
         <CommandGroup heading="Suggestions">
           {exampleQuestions.map((question, index) => (
             <CommandItem onSelect={(value) => handleChange(value)} key={index}>
