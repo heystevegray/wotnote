@@ -33,12 +33,12 @@ export const exampleQuestions = [
   "With or Without You by U2",
   "Every Breath You Take by The Police",
   "Billie Jean by Michael Jackson",
-  "Misty by Erroll Garner (Jazz Standard)",
-  "Autumn Leaves by Joseph Kosma (Jazz Standard)",
-  "Take Five by Dave Brubeck (Jazz Standard)",
-  "Fly Me to the Moon by Frank Sinatra (Jazz Standard)",
-  "What a Wonderful World by Louis Armstrong (Jazz Standard)",
-  "Summertime by George Gershwin (Jazz Standard)",
+  "Misty by Erroll Garner",
+  "Autumn Leaves by Joseph Kosma",
+  "Take Five by Dave Brubeck",
+  "Fly Me to the Moon by Frank Sinatra",
+  "What a Wonderful World by Louis Armstrong",
+  "Summertime by George Gershwin",
 ]
 
 export const generationInitialState: Generation = {

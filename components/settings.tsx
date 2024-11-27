@@ -10,6 +10,7 @@ import {
   PIANO_SCALES,
   Scale,
   baseConfig,
+  convertToFlat,
 } from "@/lib/core/Piano"
 import { capitalizeFirstLetter } from "@/lib/utils"
 
@@ -69,7 +70,7 @@ const Settings = () => {
           <SelectGroup>
             {PIANO_KEYS.map((key) => (
               <SelectItem key={key} value={key}>
-                {capitalizeFirstLetter(key)}
+                {capitalizeFirstLetter(convertToFlat(key))}
               </SelectItem>
             ))}
           </SelectGroup>

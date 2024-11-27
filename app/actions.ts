@@ -37,28 +37,93 @@ export async function generate({ key, input }: { key: Key; input: string }) {
       - If unknown key or scale type, output: "There was an error processing '${input}'."
 
       **Example Format for Chord Progressions:**
-      [Phrase 1, Phrase 2, ...]
-
-      **Example Format for Chords:**
-      {
-        "scaleDegree": 1,
-        "lyrics": "Now I've heard there was a secret chord",
-        "key": "c",
-        "notes": [
-            {
-                "code": 60,
-                "key": "c"
-            },
-            {
-                "code": 64,
-                "key": "e"
-            },
-            {
-                "code": 67,
-                "key": "g"
-            }
-        ]
-    }
+      [
+        {
+            "id": "f837ed0d-d2f0-4fb7-9739-4e213b6d8d88",
+            "chords": [
+                {
+                    "id": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+                    "scaleDegree": 1,
+                    "lyrics": "Look at me",
+                    "key": "c",
+                    "notes": [
+                        {
+                            "code": 60,
+                            "key": "c"
+                        },
+                        {
+                            "code": 64,
+                            "key": "e"
+                        },
+                        {
+                            "code": 67,
+                            "key": "g"
+                        }
+                    ]
+                },
+                {
+                    "id": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+                    "scaleDegree": 4,
+                    "lyrics": "I'm as helpless as a kitten up a tree",
+                    "key": "f",
+                    "notes": [
+                        {
+                            "code": 65,
+                            "key": "f"
+                        },
+                        {
+                            "code": 69,
+                            "key": "a"
+                        },
+                        {
+                            "code": 72,
+                            "key": "c"
+                        }
+                    ]
+                },
+                {
+                    "id": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+                    "scaleDegree": 5,
+                    "lyrics": "And I feel like I'm clinging to a cloud",
+                    "key": "g",
+                    "notes": [
+                        {
+                            "code": 67,
+                            "key": "g"
+                        },
+                        {
+                            "code": 71,
+                            "key": "b"
+                        },
+                        {
+                            "code": 74,
+                            "key": "d"
+                        }
+                    ]
+                },
+                {
+                    "id": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
+                    "scaleDegree": 1,
+                    "lyrics": "I can't understand",
+                    "key": "c",
+                    "notes": [
+                        {
+                            "code": 60,
+                            "key": "c"
+                        },
+                        {
+                            "code": 64,
+                            "key": "e"
+                        },
+                        {
+                            "code": 67,
+                            "key": "g"
+                        }
+                    ]
+                }
+            ]
+        },
+      ...]
       `,
       prompt: `${input}"`,
       // prompt: `${input} in the key of "${capitalizeFirstLetter(key)}."`,
