@@ -90,7 +90,7 @@ const MidiKeyboard = () => {
 
   const getElementByKeyCode = (keyCode: number): KeyProperties => {
     const keyElement = document.getElementById(`${keyCode}`)
-    const previousColor = isDark ? "red" : "blue"
+    const previousColor = isDark ? "hsl(var(--key-dark))" : "hsl(var(--key))"
     return { key: keyElement, previousColor }
   }
 
@@ -112,7 +112,9 @@ const MidiKeyboard = () => {
       const key = document.getElementById(`${midiConfig.midi.value}`)
 
       if (key) {
-        const previousColor = isDark ? "orange" : "yellow"
+        const previousColor = isDark
+          ? "hsl(var(--key-dark))"
+          : "hsl(var(--key))"
 
         if (midiConfig.midi.on) {
           keyOn(key)
