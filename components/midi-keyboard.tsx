@@ -5,14 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { useTheme } from "next-themes"
 
 import { urlParams } from "@/lib/config"
-import {
-  baseConfig,
-  Key,
-  MAX_KEY,
-  MIN_KEY,
-  Piano,
-  Scale,
-} from "@/lib/core/Piano"
+import { baseConfig, Key, Piano, Scale } from "@/lib/core/Piano"
 import useMidi from "@/lib/hooks/use-midi"
 
 import PianoRoll from "./piano/piano-roll"
@@ -83,15 +76,15 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
     [color, notes]
   )
 
-  const resetKeys = () => {
-    // Reset all keys
-    for (let index = MIN_KEY; index < MAX_KEY; index++) {
-      const key = document.getElementById(`${index}`)
-      if (key) {
-        keyOff(key, "", true)
-      }
-    }
-  }
+  // const resetKeys = () => {
+  //   // Reset all keys
+  //   for (let index = MIN_KEY; index < MAX_KEY; index++) {
+  //     const key = document.getElementById(`${index}`)
+  //     if (key) {
+  //       keyOff(key, "", true)
+  //     }
+  //   }
+  // }
 
   const getElementByKeyCode = (keyCode: number): KeyProperties => {
     const keyElement = document.getElementById(`${keyCode}`)

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 
 import { siteConfig } from "@/lib/config"
@@ -10,26 +10,29 @@ import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 
-const hideDuration = 10000
+const hideDuration = 3000
 
 export function SiteHeader() {
   const [hide, setHide] = useState(false)
 
-  let timeoutId: NodeJS.Timeout
-
-  const resetTimer = () => {
-    clearTimeout(timeoutId)
-    setHide(false)
-    timeoutId = setTimeout(() => setHide(true), hideDuration)
-  }
+  const timeoutId = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    timeoutId = setTimeout(() => setHide(true), hideDuration)
+    const resetTimer = () => {
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current)
+      }
+      setHide(false)
+      timeoutId.current = setTimeout(() => setHide(true), hideDuration)
+    }
+
     window.addEventListener("mousemove", resetTimer)
     window.addEventListener("keydown", resetTimer)
 
     return () => {
-      clearTimeout(timeoutId)
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current)
+      }
       window.removeEventListener("mousemove", resetTimer)
       window.removeEventListener("keydown", resetTimer)
     }
