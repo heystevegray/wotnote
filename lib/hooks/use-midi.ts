@@ -90,7 +90,17 @@ type ActiveChord = {
   inversion: Inversion
 } & ChordType
 
-const NOTES: Record<number, { name: string; sharp?: string; flat?: string }> = {
+type NoteInfo = {
+  name: string
+  sharp?: string
+  flat?: string
+}
+
+type AccidentalPreference = {
+  useFlats?: boolean
+}
+
+const NOTES: Record<number, NoteInfo> = {
   0: { name: "C", sharp: "C♯" },
   1: { name: "C♯", flat: "D♭" },
   2: { name: "D", sharp: "D♯" },
@@ -157,17 +167,21 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   min7_2: [0, 10], // Minor 7th (two-note)
 }
 
-const generateChordDictionary = (): Record<string, ChordType> => {
+const generateChordDictionary = ({
+  useFlats = true,
+}: AccidentalPreference): Record<string, ChordType> => {
   const chordDict: Record<string, ChordType> = {}
 
   for (let root = 0; root < 12; root++) {
-    const tonic = NOTES[root].name
+    // Dynamically select tonic name based on useFlats preference
+    const noteInfo = NOTES[root]
+    const tonic = getNoteName({ noteInfo, useFlats })
 
     for (const [quality, intervals] of Object.entries(CHORD_INTERVALS)) {
-      const pitchClasses = intervals
+      const semitones = intervals
         .map((interval) => (root + interval) % 12)
         .sort((a, b) => a - b)
-      const key = pitchClasses.join(",")
+      const key = semitones.join(",")
 
       chordDict[key] = {
         tonic,
@@ -179,10 +193,6 @@ const generateChordDictionary = (): Record<string, ChordType> => {
   return chordDict
 }
 
-// Generate all permutations dynamically
-const CHORD_PERMUTATIONS = generateChordDictionary()
-console.log(CHORD_PERMUTATIONS)
-
 /**
  * Get the inversion of a chord.
  */
@@ -190,10 +200,10 @@ const getInversion = (midiNotes: Set<number>): Inversion => {
   if (midiNotes.size < 3) return "root" // Inversions only apply to triads+
 
   // Convert MIDI notes to pitch classes while keeping the played order
-  const pitchClasses = [...midiNotes].map((note) => note % 12)
+  const semitones = [...midiNotes].map((note) => note % 12)
 
   // Compute the intervals **based on the played order**
-  const intervals = pitchClasses.map((note, index, arr) =>
+  const intervals = semitones.map((note, index, arr) =>
     index === 0 ? 0 : (note - arr[0] + 12) % 12
   )
 
@@ -210,9 +220,25 @@ const getInversion = (midiNotes: Set<number>): Inversion => {
 }
 
 /**
- * Convert MIDI notes to sorted, unique pitch classes (0-11).
+ * Get the correct note name based on whether flats or sharps are preferred.
  */
-const getPitchClasses = (midiNotes: Set<number>) => {
+const getNoteName = ({
+  noteInfo,
+  useFlats,
+}: {
+  noteInfo: NoteInfo
+} & AccidentalPreference): string => {
+  if (useFlats && noteInfo.flat) return noteInfo.flat // Use flat if available
+  return noteInfo.sharp ?? noteInfo.name // Default to sharp or natural
+}
+
+/**
+ * Convert MIDI notes to sorted, unique semi-tone intervals (0-11).
+ *
+ * @example getSemitones(new Set([60, 64, 67])) // [0, 4, 7]
+ * @example getSemitones(new Set([60, 64, 67, 71])) // [0, 4, 7, 11]
+ */
+const getSemitones = (midiNotes: Set<number>) => {
   return [...new Set([...midiNotes].map((midiNote) => midiNote % 12))].sort(
     (a, b) => a - b
   )
@@ -221,15 +247,21 @@ const getPitchClasses = (midiNotes: Set<number>) => {
 /**
  * Detect the chord from active MIDI notes.
  */
-const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
+const detectChord = ({
+  midiNotes,
+  useFlats = true,
+}: {
+  midiNotes: Set<number>
+  useFlats?: boolean
+}): ActiveChord | null => {
   if (!midiNotes.size) return null
 
   // Preserve order and convert to pitch classes
-  const pitchClasses = getPitchClasses(midiNotes)
-  const key = [...new Set(pitchClasses)].join(",") // Unique pitch classes but ordered
+  const semitones = getSemitones(midiNotes)
+  const key = [...new Set(semitones)].join(",") // Unique pitch classes but ordered
 
   // Lookup chord quality from precomputed dictionary
-  const chord = CHORD_PERMUTATIONS[key] ?? null
+  const chord = generateChordDictionary({ useFlats })[key] ?? null
   if (!chord) return null
 
   // Determine inversion **using played order**
@@ -246,7 +278,9 @@ const initialNote: MidiNote = {
   on: false,
 }
 
-const useMidi = (): MIDInterface => {
+const useMidi = ({
+  useFlats = true,
+}: AccidentalPreference = {}): MIDInterface => {
   const [activeNotes, setActiveNotes] = useState<Key[]>([])
   const [midiConfig, setMidiConfig] = useState<MIDInterface>({
     midiSupported: undefined,
@@ -354,7 +388,10 @@ const useMidi = (): MIDInterface => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const chord = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
+  const chord = detectChord({
+    midiNotes: new Set(activeNotes.map((key) => key.midiNote)),
+    useFlats,
+  })
 
   return {
     ...midiConfig,

@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation"
 import { urlParams } from "@/lib/config"
 import useMidi from "@/lib/hooks/use-midi"
 import { cn } from "@/lib/utils"
-import Container from "@/components/container"
 import Inversion from "@/components/inversion"
 import MidiKeyboard from "@/components/midi-keyboard"
 
@@ -23,7 +22,9 @@ const Detail = ({ label, value }: { label: string; value?: string | null }) => {
 }
 
 const Play = () => {
-  const midiConfig = useMidi()
+  const midiConfig = useMidi({
+    useFlats: true,
+  })
 
   const searchParams = useSearchParams()
   const color =
@@ -31,7 +32,7 @@ const Play = () => {
 
   return (
     <div className="flex h-[calc(100svh-64px)] flex-col">
-      <Container className="relative flex-1 flex-col text-center">
+      <div className="relative flex-1 flex-col p-4 text-center">
         <div className="absolute left-0 top-0 p-4 text-start">
           <Detail
             label="Alias"
@@ -68,7 +69,7 @@ const Play = () => {
             <Inversion value={midiConfig.chords.chord?.inversion} />
           </div>
         </div>
-      </Container>
+      </div>
       <div className="">
         <MidiKeyboard disableScale />
       </div>

@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { useTheme } from "next-themes"
+import { toast } from "sonner"
 
 import { urlParams } from "@/lib/config"
 import { baseConfig, Key, Piano, Scale } from "@/lib/core/Piano"
@@ -19,6 +20,20 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
   const midiConfig = useMidi()
   const { theme } = useTheme()
   const isDark = theme === "dark"
+
+  useEffect(() => {
+    if (midiConfig.midiSupported) {
+      midiConfig.inputs.forEach((input) => {
+        toast.success("MIDI connected", {
+          description: input.deviceName,
+        })
+      })
+    } else {
+      toast.error("MIDI not supported", {
+        description: "Please use a supported browser",
+      })
+    }
+  }, [midiConfig.inputs, midiConfig.midiSupported])
 
   const searchParams = useSearchParams()
   const key: Key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
