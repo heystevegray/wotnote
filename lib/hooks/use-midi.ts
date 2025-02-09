@@ -1,128 +1,110 @@
+// https://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
+
 import { useEffect, useRef, useState } from "react"
 import { Chord, chord } from "@tonaljs/chord"
 
-// https://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
-
-type ChordDictionary = Record<string, string>
-
-const CHORD_DICTIONARY: ChordDictionary = {
-  // **Triads**
-  "0,4,7": "C Major",
-  "0,3,7": "C Minor",
-  "0,4,8": "C Augmented",
-  "0,3,6": "C Diminished",
-
-  "2,6,9": "D Major",
-  "2,5,9": "D Minor",
-  "2,6,10": "D Augmented",
-  "2,5,8": "D Diminished",
-
-  "4,8,11": "E Major",
-  "4,7,11": "E Minor",
-  "4,8,0": "E Augmented",
-  "4,7,10": "E Diminished",
-
-  "5,9,0": "F Major",
-  "5,8,0": "F Minor",
-  "5,9,1": "F Augmented",
-  "5,8,11": "F Diminished",
-
-  "7,11,2": "G Major",
-  "7,10,2": "G Minor",
-  "7,11,3": "G Augmented",
-  "7,10,1": "G Diminished",
-
-  "9,1,4": "A Major",
-  "9,0,4": "A Minor",
-  "9,1,5": "A Augmented",
-  "9,0,3": "A Diminished",
-
-  "11,3,6": "B Major",
-  "11,2,6": "B Minor",
-  "11,3,7": "B Augmented",
-  "11,2,5": "B Diminished",
-
-  // **6th Chords**
-  "0,4,7,9": "C6",
-  "0,3,7,9": "Cmin6",
-  "2,6,9,11": "D6",
-  "2,5,9,11": "Dmin6",
-  "4,8,11,1": "E6",
-  "4,7,11,1": "Emin6",
-  "5,9,0,2": "F6",
-  "5,8,0,2": "Fmin6",
-  "7,11,2,4": "G6",
-  "7,10,2,4": "Gmin6",
-  "9,1,4,6": "A6",
-  "9,0,4,6": "Amin6",
-  "11,3,6,8": "B6",
-  "11,2,6,8": "Bmin6",
-
-  // **7th Chords**
-  "0,4,7,10": "C7",
-  "0,4,7,11": "Cmaj7",
-  "0,3,7,10": "Cmin7",
-  "0,3,6,10": "Cdim7",
-
-  "2,6,9,0": "D7",
-  "2,5,9,0": "Dmaj7",
-  "2,5,9,11": "Dmin7",
-  "2,5,8,11": "Ddim7",
-
-  "4,8,11,2": "E7",
-  "4,7,11,2": "Emaj7",
-  "4,7,10,2": "Emin7",
-  "4,7,10,1": "Edim7",
-
-  "5,9,0,2": "F7",
-  "5,9,0,4": "Fmaj7",
-  "5,8,0,4": "Fmin7",
-  "5,8,11,2": "Fdim7",
-
-  "7,11,2,4": "G7",
-  "7,11,2,5": "Gmaj7",
-  "7,10,2,5": "Gmin7",
-  "7,10,1,5": "Gdim7",
-
-  "9,1,4,6": "A7",
-  "9,1,4,7": "Amaj7",
-  "9,0,4,7": "Amin7",
-  "9,0,3,7": "Adim7",
-
-  "11,3,6,8": "B7",
-  "11,3,6,9": "Bmaj7",
-  "11,2,6,9": "Bmin7",
-  "11,2,5,8": "Bdim7",
-
-  // **Extended Chords**
-  "0,4,7,10,2": "C9",
-  "0,4,7,11,2": "Cmaj9",
-  "0,3,7,10,2": "Cmin9",
-
-  "2,6,9,0,4": "D9",
-  "2,5,9,0,4": "Dmaj9",
-  "2,5,9,11,4": "Dmin9",
-
-  "4,8,11,2,6": "E9",
-  "4,7,11,2,6": "Emaj9",
-  "4,7,10,2,6": "Emin9",
-
-  "5,9,0,2,7": "F9",
-  "5,9,0,4,7": "Fmaj9",
-  "5,8,0,4,7": "Fmin9",
-
-  "7,11,2,4,9": "G9",
-  "7,11,2,5,9": "Gmaj9",
-  "7,10,2,5,9": "Gmin9",
-
-  "9,1,4,6,11": "A9",
-  "9,1,4,7,11": "Amaj9",
-  "9,0,4,7,11": "Amin9",
-
-  "11,3,6,8,1": "B9",
-  "11,3,6,9,1": "Bmaj9",
-  "11,2,6,9,1": "Bmin9",
+const NOTES: Record<number, { name: string; sharp?: string; flat?: string }> = {
+  0: { name: "C", sharp: "C♯" },
+  1: { name: "C♯", flat: "D♭" },
+  2: { name: "D", sharp: "D♯" },
+  3: { name: "D♯", flat: "E♭" },
+  4: { name: "E", flat: "F♭" }, // F♭ is enharmonic to E
+  5: { name: "F", sharp: "F♯" },
+  6: { name: "F♯", flat: "G♭" },
+  7: { name: "G", sharp: "G♯" },
+  8: { name: "G♯", flat: "A♭" },
+  9: { name: "A", sharp: "A♯" },
+  10: { name: "A♯", flat: "B♭" },
+  11: { name: "B", flat: "C♭" }, // C♭ is enharmonic to B
 }
+
+type ChordQuality =
+  | "Major" // Major
+  | "min" // Minor
+  | "dim" // Diminished
+  | "aug" // Augmented
+  | "Maj7" // Major 7
+  | "min7" // Minor 7
+  | "7" // Dominant 7 (C7)
+  | "dim7" // Diminished 7
+  | "m7♭5" // Half-Diminished 7 (also written as "ø7")
+  | "6" // Major 6
+  | "m6" // Minor 6
+  | "sus2" // Suspended 2
+  | "sus4" // Suspended 4
+  | "9" // 9th
+  | "Maj9" // Major 9
+  | "min9" // Minor 9
+  | "11" // 11th
+  | "Maj11" // Major 11
+  | "min11" // Minor 11
+  | "13" // 13th
+  | "Maj13" // Major 13
+  | "min13" // Minor 13
+  | "add9" // Add 9
+  | "add11" // Add 11
+  | "add13" // Add 13
+  | "5" // Power Chord (C5)
+
+// Intervals for different chords
+const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
+  Major: [0, 4, 7], // Major
+  min: [0, 3, 7], // Minor
+  dim: [0, 3, 6], // Diminished
+  aug: [0, 4, 8], // Augmented
+  Maj7: [0, 4, 7, 11], // Major 7
+  min7: [0, 3, 7, 10], // Minor 7
+  "7": [0, 4, 7, 10], // Dominant 7 (C7)
+  dim7: [0, 3, 6, 9], // Diminished 7
+  "m7♭5": [0, 3, 6, 10], // Half-Diminished 7 (Cm7♭5 / Cø7)
+  "6": [0, 4, 7, 9], // Major 6
+  m6: [0, 3, 7, 9], // Minor 6
+  sus2: [0, 2, 7], // Suspended 2
+  sus4: [0, 5, 7], // Suspended 4
+  "9": [0, 4, 7, 10, 14], // 9th
+  Maj9: [0, 4, 7, 11, 14], // Major 9
+  min9: [0, 3, 7, 10, 14], // Minor 9
+  "11": [0, 4, 7, 10, 14, 17], // 11th
+  Maj11: [0, 4, 7, 11, 14, 17], // Major 11
+  min11: [0, 3, 7, 10, 14, 17], // Minor 11
+  "13": [0, 4, 7, 10, 14, 17, 21], // 13th
+  Maj13: [0, 4, 7, 11, 14, 17, 21], // Major 13
+  min13: [0, 3, 7, 10, 14, 17, 21], // Minor 13
+  add9: [0, 4, 7, 14], // Add 9
+  add11: [0, 4, 7, 17], // Add 11
+  add13: [0, 4, 7, 21], // Add 13
+  "5": [0, 7], // Power Chord (C5)
+}
+
+type ChordType = {
+  tonic: string
+  quality: string
+}
+
+const generateChordDictionary = (): Record<string, ChordType> => {
+  const chordDict: Record<string, ChordType> = {}
+
+  for (let root = 0; root < 12; root++) {
+    const tonic = NOTES[root].name
+
+    for (const [quality, intervals] of Object.entries(CHORD_INTERVALS)) {
+      const pitchClasses = intervals
+        .map((interval) => (root + interval) % 12)
+        .sort((a, b) => a - b)
+      const key = pitchClasses.join(",")
+
+      chordDict[key] = {
+        tonic,
+        quality,
+      }
+    }
+  }
+
+  return chordDict
+}
+
+// Generate all permutations dynamically
+const CHORD_PERMUTATIONS = generateChordDictionary()
 
 /**
  * Convert a MIDI note to its pitch class (0-11).
@@ -138,9 +120,12 @@ const getPitchClasses = (notes: Set<number>): number[] =>
 /**
  * Detect the chord name from active MIDI notes.
  */
-const detectChord = (activeNotes: Set<number>): string => {
-  const pitchClassKey = getPitchClasses(activeNotes).join(",")
-  return CHORD_DICTIONARY[pitchClassKey] || ""
+const detectChord = (midiNotes: Set<number>) => {
+  const pitchClasses = getPitchClasses(midiNotes)
+  const key = pitchClasses.join(",")
+  return CHORD_PERMUTATIONS[key]
+    ? `${CHORD_PERMUTATIONS[key].tonic} ${CHORD_PERMUTATIONS[key].quality}`
+    : undefined
 }
 
 export interface MIDInterface extends ChordProps {
@@ -161,7 +146,7 @@ interface ChordProps {
 }
 
 interface Key {
-  value: number
+  midiNote: number
   name: string
   octave: number
 }
@@ -182,23 +167,8 @@ interface Device {
   version: string
 }
 
-const noteName: string[] = [
-  "C",
-  "C#",
-  "D",
-  "D#",
-  "E",
-  "F",
-  "F#",
-  "G",
-  "G#",
-  "A",
-  "A#",
-  "B",
-]
-
 const initialNote: MidiNote = {
-  value: 0,
+  midiNote: 0,
   octave: 0,
   name: "N/a",
   velocity: 0,
@@ -231,8 +201,8 @@ const useMidi = (): MIDInterface => {
   const getKey = (midiNote: number): Key => {
     const octave: number = Math.floor(midiNote / 12 - 1)
     const noteIndex: number = midiNote % 12
-    const name = noteName[noteIndex]
-    return { value: midiNote, octave, name }
+    const name = NOTES[noteIndex].name
+    return { midiNote, octave, name }
   }
 
   const getInputName = (input: WebMidi.MIDIInput): string => {
@@ -297,7 +267,7 @@ const useMidi = (): MIDInterface => {
         break
       case 128: // note off
         update({ midi: { ...getKey(note), velocity, on: false } })
-        setActiveNotes((prev) => prev.filter((key) => key.value !== note))
+        setActiveNotes((prev) => prev.filter((key) => key.midiNote !== note))
         // onNoteEndCallback
         break
     }
@@ -317,14 +287,14 @@ const useMidi = (): MIDInterface => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const chordName = detectChord(new Set(activeNotes.map((key) => key.value)))
+  const chordName = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
 
   return {
     ...midiConfig,
     chords: {
       activeNotes: activeNotes?.length > 1 ? activeNotes : [],
       chordName,
-      details: chord(chordName),
+      details: chordName ? chord(chordName) : undefined,
     },
   }
 }

@@ -115,7 +115,7 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
 
   useEffect(() => {
     if (midiConfig) {
-      const key = document.getElementById(`${midiConfig.midi.value}`)
+      const key = document.getElementById(`${midiConfig.midi.midiNote}`)
 
       if (key) {
         if (midiConfig.midi.on) {
