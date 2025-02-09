@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { Chord, chord } from "@tonaljs/chord"
 
 // https://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
 
@@ -155,6 +156,7 @@ interface ChordProps {
   chords: {
     activeNotes: Key[]
     chordName?: string
+    details?: Chord
   }
 }
 
@@ -214,6 +216,7 @@ const useMidi = (): MIDInterface => {
     chords: {
       activeNotes: [],
       chordName: "",
+      details: undefined,
     },
   })
 
@@ -314,11 +317,14 @@ const useMidi = (): MIDInterface => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const chordName = detectChord(new Set(activeNotes.map((key) => key.value)))
+
   return {
     ...midiConfig,
     chords: {
       activeNotes: activeNotes?.length > 1 ? activeNotes : [],
-      chordName: detectChord(new Set(activeNotes.map((key) => key.value))),
+      chordName,
+      details: chord(chordName),
     },
   }
 }
