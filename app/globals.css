@@ -119,3 +119,13 @@
       "calt" 1;
   }
 }
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 1s;
+}
