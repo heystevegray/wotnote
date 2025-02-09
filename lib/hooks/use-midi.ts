@@ -1,7 +1,7 @@
 // https://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
 
 import { useEffect, useRef, useState } from "react"
-import { Chord, chord } from "@tonaljs/chord"
+import { Chord, chord as tonalChord } from "@tonaljs/chord"
 
 const NOTES: Record<number, { name: string; sharp?: string; flat?: string }> = {
   0: { name: "C", sharp: "C♯" },
@@ -109,8 +109,14 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
 
 type ChordType = {
   tonic: string
-  quality: string
+  quality: ChordQuality
 }
+
+type Inversion = "root" | "first" | "second" | "third"
+
+type ActiveChord = {
+  inversion: Inversion
+} & ChordType
 
 const generateChordDictionary = (): Record<string, ChordType> => {
   const chordDict: Record<string, ChordType> = {}
@@ -126,7 +132,7 @@ const generateChordDictionary = (): Record<string, ChordType> => {
 
       chordDict[key] = {
         tonic,
-        quality,
+        quality: quality as ChordQuality,
       }
     }
   }
@@ -138,31 +144,51 @@ const generateChordDictionary = (): Record<string, ChordType> => {
 const CHORD_PERMUTATIONS = generateChordDictionary()
 
 /**
- * Convert a MIDI note to its pitch class (0-11).
+ * Get the inversion of a chord.
  */
-const getPitchClass = (midiNote: number): number => midiNote % 12
+const getInversion = (
+  pitchClasses: number[],
+  rootPitchClass: number
+): Inversion => {
+  const lowestNote = pitchClasses[0] // First note in sorted order
+
+  if (lowestNote === rootPitchClass) return "root"
+  if (lowestNote === (rootPitchClass + 4) % 12) return "first" // Third is in bass
+  if (lowestNote === (rootPitchClass + 7) % 12) return "second" // Fifth is in bass
+  if (lowestNote === (rootPitchClass + 10) % 12) return "third" // Seventh is in bass
+
+  return "root"
+}
 
 /**
- * Get unique pitch classes from active MIDI notes.
+ * Convert MIDI notes to sorted, unique pitch classes (0-11).
  */
-const getPitchClasses = (notes: Set<number>): number[] =>
-  [...new Set([...notes].map(getPitchClass))].sort((a, b) => a - b)
+const getPitchClasses = (midiNotes: Set<number>) => {
+  return [...new Set([...midiNotes].map((midiNote) => midiNote % 12))].sort(
+    (a, b) => a - b
+  )
+}
 
 /**
- * Detect the chord name from active MIDI notes.
+ * Detect the chord from active MIDI notes.
  */
-const detectChord = (midiNotes: Set<number>): ChordType | null => {
-  if (midiNotes.size === 0) {
-    return null
-  }
+const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
+  if (!midiNotes.size) return null
 
   const pitchClasses = getPitchClasses(midiNotes)
   const key = pitchClasses.join(",")
 
-  // Use precomputed lookup table to find chord quality
-  const chord = CHORD_PERMUTATIONS[key]
+  // Lookup chord quality from precomputed dictionary
+  const chordType = CHORD_PERMUTATIONS[key] ?? null
+  if (!chordType) return null
 
-  return chord ?? null
+  // Extract the root pitch class from the first MIDI note
+  const rootPitchClass = [...midiNotes][0] % 12
+
+  // Get the inversion based on the detected root
+  const inversion = getInversion(pitchClasses, rootPitchClass)
+
+  return { ...chordType, inversion }
 }
 
 export interface MIDInterface extends ChordProps {
@@ -177,7 +203,7 @@ export interface MIDInterface extends ChordProps {
 interface ChordProps {
   chords: {
     activeNotes: Key[]
-    chordType: ChordType | null
+    chord: ActiveChord | null
     details?: Chord
   }
 }
@@ -222,7 +248,7 @@ const useMidi = (): MIDInterface => {
     inputs: [],
     chords: {
       activeNotes: [],
-      chordType: null,
+      chord: null,
       details: undefined,
     },
   })
@@ -278,12 +304,10 @@ const useMidi = (): MIDInterface => {
   }
 
   const getStateChange = (message: WebMidi.MIDIConnectionEvent): void => {
-    // console.log({ message });
     update({ midiConnectionEvent: message, midiPort: message.port })
   }
 
   const getMIDIMessage = (message: WebMidi.MIDIMessageEvent): void => {
-    // console.log({ message })
     const command = message.data[0]
     const note = message.data[1]
     // a velocity value might not be included with a noteOff command
@@ -293,8 +317,6 @@ const useMidi = (): MIDInterface => {
       case 144: // note on
         if (velocity > 0) {
           update({ midi: { ...getKey(note), velocity, on: true } })
-
-          console.log({ chords: activeNotes })
 
           // At least two notes to make a chord
           setActiveNotes((prev) => [...prev, getKey(note)])
@@ -324,16 +346,14 @@ const useMidi = (): MIDInterface => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const chordType = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
+  const chord = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
 
   return {
     ...midiConfig,
     chords: {
       activeNotes: activeNotes?.length > 1 ? activeNotes : [],
-      chordType,
-      details: chordType
-        ? chord(`${chordType.tonic}${chordType.quality}`)
-        : undefined,
+      chord,
+      details: chord ? tonalChord(`${chord.tonic}${chord.quality}`) : undefined,
     },
   }
 }

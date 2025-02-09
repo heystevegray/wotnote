@@ -51,19 +51,20 @@ const Play = () => {
           <Detail label="Tonic" value={midiConfig.chords.details?.tonic} />
           <Detail label="Type" value={midiConfig.chords.details?.type} />
         </div>
-        {/* {JSON.stringify(midiConfig.chords.activeNotes, null, 2)} */}
-        <h2
-          className={cn(
-            "flex h-full flex-col items-center justify-center text-[10rem] text-muted-foreground"
-          )}
-          style={{
-            color,
-          }}
-        >
-          {midiConfig.chords.chordType?.tonic}{" "}
-          {midiConfig.chords.chordType?.quality}
-          {/* // "Play at least two notes simultaneously..."} */}
-        </h2>
+        <div className={cn("flex h-full flex-col items-center justify-center")}>
+          <h2
+            className="text-[10rem]"
+            style={{
+              color,
+            }}
+          >
+            {midiConfig.chords.chord?.tonic} {midiConfig.chords.chord?.quality}
+          </h2>
+          <Detail
+            label="Inversion"
+            value={midiConfig.chords.chord?.inversion}
+          />
+        </div>
       </Container>
       <div className="">
         <MidiKeyboard disableScale />
