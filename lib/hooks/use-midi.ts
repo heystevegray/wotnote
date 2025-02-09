@@ -45,22 +45,40 @@ type ChordQuality =
   | "add11" // Add 11
   | "add13" // Add 13
   | "5" // Power Chord (C5)
+  | "Maj3" // Major 3rd
+  | "min3" // Minor 3rd
+  | "4" // Perfect 4th
+  | "aug5" // Augmented 5th
+  | "dim5" // Diminished 5th
+  | "Maj6" // Major 6th
+  | "min6" // Minor 6th
+  | "Maj7_2" // Major 7th (two-note)
+  | "min7_2" // Minor 7th (two-note)
 
 // Intervals for different chords
 const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
+  // **Basic Triads**
   Major: [0, 4, 7], // Major
   min: [0, 3, 7], // Minor
   dim: [0, 3, 6], // Diminished
   aug: [0, 4, 8], // Augmented
+
+  // **Seventh Chords**
   Maj7: [0, 4, 7, 11], // Major 7
   min7: [0, 3, 7, 10], // Minor 7
   "7": [0, 4, 7, 10], // Dominant 7 (C7)
   dim7: [0, 3, 6, 9], // Diminished 7
   "m7♭5": [0, 3, 6, 10], // Half-Diminished 7 (Cm7♭5 / Cø7)
+
+  // **Sixth Chords**
   "6": [0, 4, 7, 9], // Major 6
   m6: [0, 3, 7, 9], // Minor 6
+
+  // **Suspended Chords**
   sus2: [0, 2, 7], // Suspended 2
   sus4: [0, 5, 7], // Suspended 4
+
+  // **Extended Chords**
   "9": [0, 4, 7, 10, 14], // 9th
   Maj9: [0, 4, 7, 11, 14], // Major 9
   min9: [0, 3, 7, 10, 14], // Minor 9
@@ -70,10 +88,23 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   "13": [0, 4, 7, 10, 14, 17, 21], // 13th
   Maj13: [0, 4, 7, 11, 14, 17, 21], // Major 13
   min13: [0, 3, 7, 10, 14, 17, 21], // Minor 13
+
+  // **Added-Tone Chords**
   add9: [0, 4, 7, 14], // Add 9
   add11: [0, 4, 7, 17], // Add 11
   add13: [0, 4, 7, 21], // Add 13
-  "5": [0, 7], // Power Chord (C5)
+
+  // **All Two-Note Chords (Dyads)**
+  Maj3: [0, 4], // Major 3rd
+  min3: [0, 3], // Minor 3rd
+  "4": [0, 5], // Perfect 4th
+  "5": [0, 7], // Perfect 5th
+  aug5: [0, 8], // Augmented 5th
+  dim5: [0, 6], // Diminished 5th
+  Maj6: [0, 9], // Major 6th
+  min6: [0, 8], // Minor 6th
+  Maj7_2: [0, 11], // Major 7th (two-note)
+  min7_2: [0, 10], // Minor 7th (two-note)
 }
 
 type ChordType = {
@@ -120,12 +151,18 @@ const getPitchClasses = (notes: Set<number>): number[] =>
 /**
  * Detect the chord name from active MIDI notes.
  */
-const detectChord = (midiNotes: Set<number>) => {
+const detectChord = (midiNotes: Set<number>): ChordType | null => {
+  if (midiNotes.size === 0) {
+    return null
+  }
+
   const pitchClasses = getPitchClasses(midiNotes)
   const key = pitchClasses.join(",")
-  return CHORD_PERMUTATIONS[key]
-    ? `${CHORD_PERMUTATIONS[key].tonic} ${CHORD_PERMUTATIONS[key].quality}`
-    : undefined
+
+  // Use precomputed lookup table to find chord quality
+  const chord = CHORD_PERMUTATIONS[key]
+
+  return chord ?? null
 }
 
 export interface MIDInterface extends ChordProps {
@@ -140,7 +177,7 @@ export interface MIDInterface extends ChordProps {
 interface ChordProps {
   chords: {
     activeNotes: Key[]
-    chordName?: string
+    chordType: ChordType | null
     details?: Chord
   }
 }
@@ -185,7 +222,7 @@ const useMidi = (): MIDInterface => {
     inputs: [],
     chords: {
       activeNotes: [],
-      chordName: "",
+      chordType: null,
       details: undefined,
     },
   })
@@ -287,14 +324,16 @@ const useMidi = (): MIDInterface => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const chordName = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
+  const chordType = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
 
   return {
     ...midiConfig,
     chords: {
       activeNotes: activeNotes?.length > 1 ? activeNotes : [],
-      chordName,
-      details: chordName ? chord(chordName) : undefined,
+      chordType,
+      details: chordType
+        ? chord(`${chordType.tonic}${chordType.quality}`)
+        : undefined,
     },
   }
 }

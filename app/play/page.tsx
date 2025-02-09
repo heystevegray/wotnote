@@ -60,7 +60,8 @@ const Play = () => {
             color,
           }}
         >
-          {midiConfig.chords.chordName}
+          {midiConfig.chords.chordType?.tonic}{" "}
+          {midiConfig.chords.chordType?.quality}
           {/* // "Play at least two notes simultaneously..."} */}
         </h2>
       </Container>
