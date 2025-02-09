@@ -1,4 +1,4 @@
-import { Sparkle } from "lucide-react"
+import { KeyboardMusic, Sparkle } from "lucide-react"
 
 import { Icons } from "@/components/icons"
 
@@ -16,6 +16,11 @@ export const siteConfig = {
       title: "Home",
       href: "/",
       hideMain: true,
+    },
+    {
+      icon: KeyboardMusic,
+      title: "Play",
+      href: "/play",
     },
     {
       icon: Sparkle,

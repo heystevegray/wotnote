@@ -1,11 +1,12 @@
 import "@/app/globals.css"
+
 import { Metadata, Viewport } from "next"
 import { cookies } from "next/headers"
 import { Analytics } from "@vercel/analytics/react"
 import { Toaster } from "sonner"
 
 import { siteConfig } from "@/lib/config"
-import { fontSans } from "@/lib/fonts"
+import { siteFont } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -48,7 +49,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          siteFont.variable
         )}
       >
         <SidebarProvider defaultOpen={defaultOpen}>

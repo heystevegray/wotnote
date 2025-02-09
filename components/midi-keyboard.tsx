@@ -24,10 +24,10 @@ interface KeyProperties {
 
 const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
   const midiConfig = useMidi()
-  const searchParams = useSearchParams()
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
+  const searchParams = useSearchParams()
   const key: Key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
   const scale: Scale =
     (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
@@ -100,7 +100,7 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
   }
 
   useEffect(() => {
-    resetKeys()
+    // resetKeys()
 
     if (key) {
       notes.forEach((keyboardCode) => {
@@ -118,14 +118,10 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
       const key = document.getElementById(`${midiConfig.midi.value}`)
 
       if (key) {
-        const previousColor = isDark
-          ? "hsl(var(--key-dark))"
-          : "hsl(var(--key))"
-
         if (midiConfig.midi.on) {
           keyOn(key)
         } else {
-          keyOff(key, previousColor)
+          keyOff(key, "")
         }
       }
     }
