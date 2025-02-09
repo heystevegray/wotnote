@@ -9,10 +9,18 @@ const Inversion = ({
 }) => {
   return (
     <ToggleGroup type="single" value={value} size="sm">
-      <ToggleGroupItem value="root">root</ToggleGroupItem>
-      <ToggleGroupItem value="first">1st</ToggleGroupItem>
-      <ToggleGroupItem value="second">2nd</ToggleGroupItem>
-      <ToggleGroupItem value="third">3rd</ToggleGroupItem>
+      <ToggleGroupItem disabled={value !== "root"} value="root">
+        root
+      </ToggleGroupItem>
+      <ToggleGroupItem disabled={value !== "first"} value="first">
+        1st
+      </ToggleGroupItem>
+      <ToggleGroupItem disabled={value !== "second"} value="second">
+        2nd
+      </ToggleGroupItem>
+      <ToggleGroupItem disabled={value !== "third"} value="third">
+        3rd
+      </ToggleGroupItem>
     </ToggleGroup>
   )
 }
