@@ -6,12 +6,12 @@ import { useTheme } from "next-themes"
 
 import { urlParams } from "@/lib/config"
 import {
+  baseConfig,
   Key,
   MAX_KEY,
   MIN_KEY,
   Piano,
   Scale,
-  baseConfig,
 } from "@/lib/core/Piano"
 import useMidi from "@/lib/hooks/use-midi"
 
@@ -22,7 +22,7 @@ interface KeyProperties {
   previousColor: string
 }
 
-const MidiKeyboard = () => {
+const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
   const midiConfig = useMidi()
   const searchParams = useSearchParams()
   const { theme } = useTheme()
@@ -34,8 +34,14 @@ const MidiKeyboard = () => {
   const color =
     (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
 
-  const selectedScale = new Piano({ key, scale })
-  const notes = selectedScale.getNotes()
+  const selectedScale = React.useMemo(
+    () => new Piano({ key, scale }),
+    [key, scale]
+  )
+  const notes = React.useMemo(
+    () => (disableScale ? [] : selectedScale.getNotes()),
+    [disableScale, selectedScale]
+  )
 
   const mapRange = (
     [in_min, in_max]: [number, number],
