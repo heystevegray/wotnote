@@ -7,6 +7,7 @@ import { urlParams } from "@/lib/config"
 import useMidi from "@/lib/hooks/use-midi"
 import { cn } from "@/lib/utils"
 import Container from "@/components/container"
+import Inversion from "@/components/inversion"
 import MidiKeyboard from "@/components/midi-keyboard"
 
 const Detail = ({ label, value }: { label: string; value?: string | null }) => {
@@ -51,19 +52,21 @@ const Play = () => {
           <Detail label="Tonic" value={midiConfig.chords.details?.tonic} />
           <Detail label="Type" value={midiConfig.chords.details?.type} />
         </div>
-        <div className={cn("flex h-full flex-col items-center justify-center")}>
-          <h2
-            className="text-[10rem]"
-            style={{
-              color,
-            }}
-          >
-            {midiConfig.chords.chord?.tonic} {midiConfig.chords.chord?.quality}
-          </h2>
-          <Detail
-            label="Inversion"
-            value={midiConfig.chords.chord?.inversion}
-          />
+        <div className={cn("flex h-full flex-col")}>
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <h2
+              className="text-[10rem]"
+              style={{
+                color,
+              }}
+            >
+              {midiConfig.chords.chord?.tonic}{" "}
+              {midiConfig.chords.chord?.quality}
+            </h2>
+          </div>
+          <div className="flex w-full justify-end">
+            <Inversion value={midiConfig.chords.chord?.inversion} />
+          </div>
         </div>
       </Container>
       <div className="">

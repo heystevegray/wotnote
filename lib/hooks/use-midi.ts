@@ -3,21 +3,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Chord, chord as tonalChord } from "@tonaljs/chord"
 
-const NOTES: Record<number, { name: string; sharp?: string; flat?: string }> = {
-  0: { name: "C", sharp: "C♯" },
-  1: { name: "C♯", flat: "D♭" },
-  2: { name: "D", sharp: "D♯" },
-  3: { name: "D♯", flat: "E♭" },
-  4: { name: "E", flat: "F♭" }, // F♭ is enharmonic to E
-  5: { name: "F", sharp: "F♯" },
-  6: { name: "F♯", flat: "G♭" },
-  7: { name: "G", sharp: "G♯" },
-  8: { name: "G♯", flat: "A♭" },
-  9: { name: "A", sharp: "A♯" },
-  10: { name: "A♯", flat: "B♭" },
-  11: { name: "B", flat: "C♭" }, // C♭ is enharmonic to B
-}
-
 type ChordQuality =
   | "Major" // Major
   | "min" // Minor
@@ -54,6 +39,71 @@ type ChordQuality =
   | "min6" // Minor 6th
   | "Maj7_2" // Major 7th (two-note)
   | "min7_2" // Minor 7th (two-note)
+
+export interface MIDInterface extends ChordProps {
+  midiAccess: WebMidi.MIDIAccess | undefined
+  midiConnectionEvent: WebMidi.MIDIConnectionEvent | undefined
+  midiSupported: boolean | undefined
+  midiPort?: WebMidi.MIDIPort | undefined
+  midi: MidiNote
+  inputs: Device[]
+}
+
+interface ChordProps {
+  chords: {
+    activeNotes: Key[]
+    chord: ActiveChord | null
+    details?: Chord
+  }
+}
+
+interface Key {
+  midiNote: number
+  name: string
+  octave: number
+}
+
+interface MidiNote extends Key {
+  velocity: number
+  on: boolean
+}
+
+interface Device {
+  deviceName: string
+  id: string
+  connection: string
+  name: string
+  manufacturer: string
+  state: string
+  type: string
+  version: string
+}
+
+type ChordType = {
+  tonic: string
+  quality: ChordQuality
+}
+
+type Inversion = "root" | "first" | "second" | "third"
+
+type ActiveChord = {
+  inversion: Inversion
+} & ChordType
+
+const NOTES: Record<number, { name: string; sharp?: string; flat?: string }> = {
+  0: { name: "C", sharp: "C♯" },
+  1: { name: "C♯", flat: "D♭" },
+  2: { name: "D", sharp: "D♯" },
+  3: { name: "D♯", flat: "E♭" },
+  4: { name: "E", flat: "F♭" }, // F♭ is enharmonic to E
+  5: { name: "F", sharp: "F♯" },
+  6: { name: "F♯", flat: "G♭" },
+  7: { name: "G", sharp: "G♯" },
+  8: { name: "G♯", flat: "A♭" },
+  9: { name: "A", sharp: "A♯" },
+  10: { name: "A♯", flat: "B♭" },
+  11: { name: "B", flat: "C♭" }, // C♭ is enharmonic to B
+}
 
 // Intervals for different chords
 const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
@@ -107,17 +157,6 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   min7_2: [0, 10], // Minor 7th (two-note)
 }
 
-type ChordType = {
-  tonic: string
-  quality: ChordQuality
-}
-
-type Inversion = "root" | "first" | "second" | "third"
-
-type ActiveChord = {
-  inversion: Inversion
-} & ChordType
-
 const generateChordDictionary = (): Record<string, ChordType> => {
   const chordDict: Record<string, ChordType> = {}
 
@@ -142,22 +181,32 @@ const generateChordDictionary = (): Record<string, ChordType> => {
 
 // Generate all permutations dynamically
 const CHORD_PERMUTATIONS = generateChordDictionary()
+console.log(CHORD_PERMUTATIONS)
 
 /**
  * Get the inversion of a chord.
  */
-const getInversion = (
-  pitchClasses: number[],
-  rootPitchClass: number
-): Inversion => {
-  const lowestNote = pitchClasses[0] // First note in sorted order
+const getInversion = (midiNotes: Set<number>): Inversion => {
+  if (midiNotes.size < 3) return "root" // Inversions only apply to triads+
 
-  if (lowestNote === rootPitchClass) return "root"
-  if (lowestNote === (rootPitchClass + 4) % 12) return "first" // Third is in bass
-  if (lowestNote === (rootPitchClass + 7) % 12) return "second" // Fifth is in bass
-  if (lowestNote === (rootPitchClass + 10) % 12) return "third" // Seventh is in bass
+  // Convert MIDI notes to pitch classes while keeping the played order
+  const pitchClasses = [...midiNotes].map((note) => note % 12)
 
-  return "root"
+  // Compute the intervals **based on the played order**
+  const intervals = pitchClasses.map((note, index, arr) =>
+    index === 0 ? 0 : (note - arr[0] + 12) % 12
+  )
+
+  // Convert to interval pattern string
+  const pattern = intervals.join(",")
+
+  // Recognizing inversion patterns based on **played order**
+  if (pattern === "0,4,7" || pattern === "0,3,7" || pattern === "0,3,6")
+    return "root" // Root position
+  if (pattern === "0,3,8" || pattern === "0,4,9") return "first" // First inversion
+  if (pattern === "0,5,9" || pattern === "0,6,10") return "second" // Second inversion
+
+  return "root" // Default if unknown pattern
 }
 
 /**
@@ -175,59 +224,18 @@ const getPitchClasses = (midiNotes: Set<number>) => {
 const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
   if (!midiNotes.size) return null
 
+  // Preserve order and convert to pitch classes
   const pitchClasses = getPitchClasses(midiNotes)
-  const key = pitchClasses.join(",")
+  const key = [...new Set(pitchClasses)].join(",") // Unique pitch classes but ordered
 
   // Lookup chord quality from precomputed dictionary
-  const chordType = CHORD_PERMUTATIONS[key] ?? null
-  if (!chordType) return null
+  const chord = CHORD_PERMUTATIONS[key] ?? null
+  if (!chord) return null
 
-  // Extract the root pitch class from the first MIDI note
-  const rootPitchClass = [...midiNotes][0] % 12
+  // Determine inversion **using played order**
+  const inversion = getInversion(midiNotes)
 
-  // Get the inversion based on the detected root
-  const inversion = getInversion(pitchClasses, rootPitchClass)
-
-  return { ...chordType, inversion }
-}
-
-export interface MIDInterface extends ChordProps {
-  midiAccess: WebMidi.MIDIAccess | undefined
-  midiConnectionEvent: WebMidi.MIDIConnectionEvent | undefined
-  midiSupported: boolean | undefined
-  midiPort?: WebMidi.MIDIPort | undefined
-  midi: MidiNote
-  inputs: Device[]
-}
-
-interface ChordProps {
-  chords: {
-    activeNotes: Key[]
-    chord: ActiveChord | null
-    details?: Chord
-  }
-}
-
-interface Key {
-  midiNote: number
-  name: string
-  octave: number
-}
-
-interface MidiNote extends Key {
-  velocity: number
-  on: boolean
-}
-
-interface Device {
-  deviceName: string
-  id: string
-  connection: string
-  name: string
-  manufacturer: string
-  state: string
-  type: string
-  version: string
+  return { ...chord, inversion }
 }
 
 const initialNote: MidiNote = {
