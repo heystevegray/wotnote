@@ -22,9 +22,7 @@ const Detail = ({ label, value }: { label: string; value?: string | null }) => {
 }
 
 const Play = () => {
-  const midiConfig = useMidi({
-    useFlats: true,
-  })
+  const midiConfig = useMidi()
 
   const searchParams = useSearchParams()
   const color =
@@ -68,6 +66,9 @@ const Play = () => {
           <div className="flex w-full justify-end">
             <Inversion value={midiConfig.chords.chord?.inversion} />
           </div>
+          <pre className="text-left text-sm text-muted-foreground">
+            {JSON.stringify(midiConfig.chords.details, null, 2)}
+          </pre>
         </div>
       </div>
       <div className="">

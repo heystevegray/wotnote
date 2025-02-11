@@ -8,8 +8,8 @@ type ChordQuality =
   | "min" // Minor
   | "dim" // Diminished
   | "aug" // Augmented
-  | "Maj7" // Major 7
-  | "min7" // Minor 7
+  | "Maj 7th" // Major 7
+  | "min 7th" // Minor 7
   | "7" // Dominant 7 (C7)
   | "dim7" // Diminished 7
   | "m7♭5" // Half-Diminished 7 (also written as "ø7")
@@ -18,27 +18,27 @@ type ChordQuality =
   | "sus2" // Suspended 2
   | "sus4" // Suspended 4
   | "9" // 9th
-  | "Maj9" // Major 9
+  | "Maj 9th" // Major 9
   | "min9" // Minor 9
   | "11" // 11th
-  | "Maj11" // Major 11
-  | "min11" // Minor 11
+  | "Maj 11th" // Major 11
+  | "min 11th" // Minor 11
   | "13" // 13th
   | "Maj13" // Major 13
   | "min13" // Minor 13
   | "add9" // Add 9
   | "add11" // Add 11
   | "add13" // Add 13
-  | "5" // Power Chord (C5)
-  | "Maj3" // Major 3rd
-  | "min3" // Minor 3rd
-  | "4" // Perfect 4th
+  | "Maj 3rd" // Major 3rd
+  | "min 3rd" // Minor 3rd
+  | "perfect 4" // Perfect 4th
+  | "tritone" // tritone
+  | "perfect 5" // Power Chord (C5)
   | "aug5" // Augmented 5th
   | "dim5" // Diminished 5th
-  | "Maj6" // Major 6th
-  | "min6" // Minor 6th
-  | "Maj7_2" // Major 7th (two-note)
-  | "min7_2" // Minor 7th (two-note)
+  | "Maj 6th" // Major 6th
+  | "min 6th" // Minor 6th
+  | "octave" // Octave
 
 export interface MIDInterface extends ChordProps {
   midiAccess: WebMidi.MIDIAccess | undefined
@@ -96,10 +96,6 @@ type NoteInfo = {
   flat?: string
 }
 
-type AccidentalPreference = {
-  useFlats?: boolean
-}
-
 const NOTES: Record<number, NoteInfo> = {
   0: { name: "C", sharp: "C♯" },
   1: { name: "C♯", flat: "D♭" },
@@ -124,8 +120,8 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   aug: [0, 4, 8], // Augmented
 
   // **Seventh Chords**
-  Maj7: [0, 4, 7, 11], // Major 7
-  min7: [0, 3, 7, 10], // Minor 7
+  "Maj 7th": [0, 4, 7, 11], // Major 7
+  "min 7th": [0, 3, 7, 10], // Minor 7
   "7": [0, 4, 7, 10], // Dominant 7 (C7)
   dim7: [0, 3, 6, 9], // Diminished 7
   "m7♭5": [0, 3, 6, 10], // Half-Diminished 7 (Cm7♭5 / Cø7)
@@ -140,11 +136,11 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
 
   // **Extended Chords**
   "9": [0, 4, 7, 10, 14], // 9th
-  Maj9: [0, 4, 7, 11, 14], // Major 9
+  "Maj 9th": [0, 4, 7, 11, 14], // Major 9
   min9: [0, 3, 7, 10, 14], // Minor 9
   "11": [0, 4, 7, 10, 14, 17], // 11th
-  Maj11: [0, 4, 7, 11, 14, 17], // Major 11
-  min11: [0, 3, 7, 10, 14, 17], // Minor 11
+  "Maj 11th": [0, 4, 7, 11, 14, 17], // Major 11
+  "min 11th": [0, 3, 7, 10, 14, 17], // Minor 11
   "13": [0, 4, 7, 10, 14, 17, 21], // 13th
   Maj13: [0, 4, 7, 11, 14, 17, 21], // Major 13
   min13: [0, 3, 7, 10, 14, 17, 21], // Minor 13
@@ -155,27 +151,46 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   add13: [0, 4, 7, 21], // Add 13
 
   // **All Two-Note Chords (Dyads)**
-  Maj3: [0, 4], // Major 3rd
-  min3: [0, 3], // Minor 3rd
-  "4": [0, 5], // Perfect 4th
-  "5": [0, 7], // Perfect 5th
+  "Maj 3rd": [0, 4], // Major 3rd
+  "min 3rd": [0, 3], // Minor 3rd
+  "perfect 4": [0, 5], // Perfect 4th
+  tritone: [0, 6], // Perfect 4th
+  "perfect 5": [0, 7], // Perfect 5th
   aug5: [0, 8], // Augmented 5th
   dim5: [0, 6], // Diminished 5th
-  Maj6: [0, 9], // Major 6th
-  min6: [0, 8], // Minor 6th
-  Maj7_2: [0, 11], // Major 7th (two-note)
-  min7_2: [0, 10], // Minor 7th (two-note)
+  "Maj 6th": [0, 9], // Major 6th
+  "min 6th": [0, 8], // Minor 6th
+
+  octave: [0, 12], // Octave
 }
 
-const generateChordDictionary = ({
-  useFlats = true,
-}: AccidentalPreference): Record<string, ChordType> => {
-  const chordDict: Record<string, ChordType> = {}
+/**
+ * Generate all possible chord permutations for all 12 roots.
+ * @example
+  '0,4,7': [
+    {
+      tonic: 'C',
+      quality: 'Major',
+    },
+    {
+      tonic: 'C♯',
+      quality: 'Major',
+    },
+  ]
+ * @example 
+ '0,3': [
+    { tonic: 'C', quality: 'min3' },
+    { tonic: 'C♯', quality: 'min3' },
+    { tonic: 'D♯', quality: 'Maj6' },
+    { tonic: 'E♭', quality: 'Maj6' }
+  ]
+ * 
+ */
+const generateChordDictionary = (): Record<string, ChordType[]> => {
+  const chordDict: Record<string, ChordType[]> = {}
 
   for (let root = 0; root < 12; root++) {
-    // Dynamically select tonic name based on useFlats preference
-    const noteInfo = NOTES[root]
-    const tonic = getNoteName({ noteInfo, useFlats })
+    const noteInfo = NOTES[root] // Get note info (C, C♯, D♭, etc.)
 
     for (const [quality, intervals] of Object.entries(CHORD_INTERVALS)) {
       const semitones = intervals
@@ -183,15 +198,27 @@ const generateChordDictionary = ({
         .sort((a, b) => a - b)
       const key = semitones.join(",")
 
-      chordDict[key] = {
-        tonic,
-        quality: quality as ChordQuality,
-      }
+      if (!chordDict[key]) chordDict[key] = []
+
+      // Store both sharp and flat spellings for selection later
+      chordDict[key].push(
+        { tonic: noteInfo.name, quality: quality as ChordQuality }, // Default spelling
+        ...(noteInfo.flat
+          ? [{ tonic: noteInfo.flat, quality: quality as ChordQuality }]
+          : []), // Flat version if available
+        ...(noteInfo.sharp
+          ? [{ tonic: noteInfo.sharp, quality: quality as ChordQuality }]
+          : []) // Sharp version if available
+      )
     }
   }
 
   return chordDict
 }
+
+// ✅ Precompute permutations at startup
+const CHORD_PERMUTATIONS = generateChordDictionary()
+console.log(CHORD_PERMUTATIONS)
 
 /**
  * Get the inversion of a chord.
@@ -220,19 +247,6 @@ const getInversion = (midiNotes: Set<number>): Inversion => {
 }
 
 /**
- * Get the correct note name based on whether flats or sharps are preferred.
- */
-const getNoteName = ({
-  noteInfo,
-  useFlats,
-}: {
-  noteInfo: NoteInfo
-} & AccidentalPreference): string => {
-  if (useFlats && noteInfo.flat) return noteInfo.flat // Use flat if available
-  return noteInfo.sharp ?? noteInfo.name // Default to sharp or natural
-}
-
-/**
  * Convert MIDI notes to sorted, unique semi-tone intervals (0-11).
  *
  * @example getSemitones(new Set([60, 64, 67])) // [0, 4, 7]
@@ -244,30 +258,55 @@ const getSemitones = (midiNotes: Set<number>) => {
   )
 }
 
+// Flat keys (more common in flats)
+const FLAT_KEYS = new Set([1, 3, 5, 6, 8, 10]) // D♭, E♭, F, G♭, A♭, B♭
+
+// Sharp keys (more common in sharps)
+const SHARP_KEYS = new Set([1, 4, 6, 8, 9, 11]) // C♯, E, F♯, G♯, A, B
+
+/**
+ * Get the best enharmonic spelling based on common key signatures.
+ */
+const getBestEnharmonicName = (rootSemitone: number): "flat" | "sharp" => {
+  if (FLAT_KEYS.has(rootSemitone)) return "flat"
+  if (SHARP_KEYS.has(rootSemitone)) return "sharp"
+  return "flat" // Default to flats if unclear
+}
+
 /**
  * Detect the chord from active MIDI notes.
  */
-const detectChord = ({
-  midiNotes,
-  useFlats = true,
-}: {
-  midiNotes: Set<number>
-  useFlats?: boolean
-}): ActiveChord | null => {
+const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
   if (!midiNotes.size) return null
 
-  // Preserve order and convert to pitch classes
+  // Convert MIDI notes to semitones
   const semitones = getSemitones(midiNotes)
-  const key = [...new Set(semitones)].join(",") // Unique pitch classes but ordered
+  console.log({ semitones })
 
-  // Lookup chord quality from precomputed dictionary
-  const chord = generateChordDictionary({ useFlats })[key] ?? null
-  if (!chord) return null
+  const key = semitones.join(",") // Match CHORD_PERMUTATIONS key format
 
-  // Determine inversion **using played order**
-  const inversion = getInversion(midiNotes)
+  // Lookup possible chords
+  const possibleChords = CHORD_PERMUTATIONS[key] ?? null
+  if (!possibleChords) return null
 
-  return { ...chord, inversion }
+  // Extract the lowest semitone to determine the root
+  const rootSemitone = semitones[0]
+
+  // Determine the best notation (flats or sharps)
+  const preferredAccidental = getBestEnharmonicName(rootSemitone)
+  const noteInfo = NOTES[rootSemitone]
+
+  // Select the correct spelling dynamically
+  const rootName =
+    preferredAccidental === "flat" && noteInfo.flat
+      ? noteInfo.flat
+      : (noteInfo.sharp ?? noteInfo.name)
+
+  return {
+    tonic: rootName,
+    quality: possibleChords[0].quality, // Use the first match (assuming same quality for different spellings)
+    inversion: getInversion(midiNotes),
+  }
 }
 
 const initialNote: MidiNote = {
@@ -278,9 +317,7 @@ const initialNote: MidiNote = {
   on: false,
 }
 
-const useMidi = ({
-  useFlats = true,
-}: AccidentalPreference = {}): MIDInterface => {
+const useMidi = (): MIDInterface => {
   const [activeNotes, setActiveNotes] = useState<Key[]>([])
   const [midiConfig, setMidiConfig] = useState<MIDInterface>({
     midiSupported: undefined,
@@ -388,10 +425,7 @@ const useMidi = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const chord = detectChord({
-    midiNotes: new Set(activeNotes.map((key) => key.midiNote)),
-    useFlats,
-  })
+  const chord = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
 
   return {
     ...midiConfig,

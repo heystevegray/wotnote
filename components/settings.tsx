@@ -5,11 +5,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
 import {
+  defaultConfig,
   Key,
   PIANO_KEYS,
   PIANO_SCALES,
   Scale,
-  baseConfig,
 } from "@/lib/core/Piano"
 import { capitalizeFirstLetter } from "@/lib/utils"
 
@@ -29,9 +29,9 @@ const Settings = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const defaultKey: Key =
-    (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
+    (searchParams.get(urlParams.key) as Key) ?? defaultConfig.key
   const defaultSacale: Scale =
-    (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
+    (searchParams.get(urlParams.scale) as Scale) ?? defaultConfig.scale
   const defaultColor = searchParams.get(urlParams.color) as string
 
   // Get a new searchParams string by merging the current

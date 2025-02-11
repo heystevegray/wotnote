@@ -6,7 +6,7 @@ import { useTheme } from "next-themes"
 import { toast } from "sonner"
 
 import { urlParams } from "@/lib/config"
-import { baseConfig, Key, Piano, Scale } from "@/lib/core/Piano"
+import { defaultConfig, Key, Piano, Scale } from "@/lib/core/Piano"
 import useMidi from "@/lib/hooks/use-midi"
 
 import PianoRoll from "./piano/piano-roll"
@@ -36,9 +36,9 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
   }, [midiConfig.inputs, midiConfig.midiSupported])
 
   const searchParams = useSearchParams()
-  const key: Key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
+  const key: Key = (searchParams.get(urlParams.key) as Key) ?? defaultConfig.key
   const scale: Scale =
-    (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
+    (searchParams.get(urlParams.scale) as Scale) ?? defaultConfig.scale
   const color =
     (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
 

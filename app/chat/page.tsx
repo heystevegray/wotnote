@@ -8,10 +8,10 @@ import { Sparkle } from "lucide-react"
 import { urlParams } from "@/lib/config"
 import {
   ChordProps,
+  convertToFlat,
+  defaultConfig,
   Key,
   Scale,
-  baseConfig,
-  convertToFlat,
 } from "@/lib/core/Piano"
 import useUserAgent from "@/lib/hooks/use-user-agent"
 import { capitalizeFirstLetter } from "@/lib/utils"
@@ -54,7 +54,7 @@ export default function Home() {
   const { optionKey, isMobile } = useUserAgent()
   const searchParams = useSearchParams()
   const query = searchParams.get(urlParams.query) ?? ""
-  const key = (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
+  const key = (searchParams.get(urlParams.key) as Key) ?? defaultConfig.key
   const [open, setOpen] = useState(false)
   const [generation, setGeneration] = useState<Generation>()
 
