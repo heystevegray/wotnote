@@ -3,44 +3,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Chord, chord as tonalChord } from "@tonaljs/chord"
 
-type ChordQuality =
-  | "Major" // Major
-  | "min" // Minor
-  | "dim" // Diminished
-  | "aug" // Augmented
-  | "Maj 7th" // Major and 7th interval
-  | "Maj7" // Major 7
-  | "min 7th" // Minor 7
-  | "7" // Dominant 7 (C7)
-  | "dim7" // Diminished 7
-  | "m7♭5" // Half-Diminished 7 (also written as "ø7")
-  | "6" // Major 6
-  | "m6" // Minor 6
-  | "sus2" // Suspended 2
-  | "sus4" // Suspended 4
-  | "9" // 9th
-  | "Maj 9th" // Major 9
-  | "min9" // Minor 9
-  | "11" // 11th
-  | "Maj 11th" // Major 11
-  | "min 11th" // Minor 11
-  | "13" // 13th
-  | "Maj13" // Major 13
-  | "min13" // Minor 13
-  | "add9" // Add 9
-  | "add11" // Add 11
-  | "add13" // Add 13
-  | "Maj 2nd" // Major 2rd
-  | "min 2nd" // Minor 2rd
-  | "Maj 3rd" // Major 3rd
-  | "min 3rd" // Minor 3rd
-  | "perfect 4" // Perfect 4th
-  | "tritone" // tritone
-  | "perfect 5" // Power Chord (C5)
-  | "Maj 6th" // Major 6th
-  | "min 6th" // Minor 6th
-  | "octave" // Octave
-
 export interface MIDInterface extends ChordProps {
   midiAccess: WebMidi.MIDIAccess | undefined
   midiConnectionEvent: WebMidi.MIDIConnectionEvent | undefined
@@ -97,20 +59,43 @@ type NoteInfo = {
   flat?: string
 }
 
-const NOTES: Record<number, NoteInfo> = {
-  0: { name: "C", sharp: "C♯" },
-  1: { name: "D♭", sharp: "C♯" }, // Default to flat
-  2: { name: "D", sharp: "D♯" },
-  3: { name: "E♭", sharp: "D♯" }, // Default to flat
-  4: { name: "E", flat: "F♭" },
-  5: { name: "F", sharp: "F♯" },
-  6: { name: "G♭", sharp: "F♯" }, // Default to flat
-  7: { name: "G", sharp: "G♯" },
-  8: { name: "A♭", sharp: "G♯" }, // Default to flat
-  9: { name: "A", sharp: "A♯" },
-  10: { name: "B♭", sharp: "A♯" }, // Default to flat
-  11: { name: "B", flat: "C♭" },
-}
+type ChordQuality =
+  | "Major" // Major
+  | "min" // Minor
+  | "dim" // Diminished
+  | "aug" // Augmented
+  | "Maj 7th" // Major and 7th interval
+  | "Maj7" // Major 7
+  | "min 7th" // Minor 7
+  | "7" // Dominant 7 (C7)
+  | "dim7" // Diminished 7
+  | "m7♭5" // Half-Diminished 7 (also written as "ø7")
+  | "6" // Major 6
+  | "m6" // Minor 6
+  | "sus2" // Suspended 2
+  | "sus4" // Suspended 4
+  | "9" // 9th
+  | "Maj 9th" // Major 9
+  | "min9" // Minor 9
+  | "11" // 11th
+  | "Maj 11th" // Major 11
+  | "min 11th" // Minor 11
+  | "13" // 13th
+  | "Maj13" // Major 13
+  | "min13" // Minor 13
+  | "add9" // Add 9
+  | "add11" // Add 11
+  | "add13" // Add 13
+  | "Maj 2nd" // Major 2rd
+  | "min 2nd" // Minor 2rd
+  | "Maj 3rd" // Major 3rd
+  | "min 3rd" // Minor 3rd
+  | "perfect 4" // Perfect 4th
+  | "tritone" // tritone
+  | "perfect 5" // Power Chord (C5)
+  | "Maj 6th" // Major 6th
+  | "min 6th" // Minor 6th
+  | "octave" // Octave
 
 // Intervals for different chords
 const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
@@ -164,6 +149,21 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   "Maj 7th": [0, 11], // Major 7th
 
   octave: [0, 12], // Octave
+}
+
+const NOTES: Record<number, NoteInfo> = {
+  0: { name: "C", sharp: "C♯" },
+  1: { name: "D♭", sharp: "C♯" }, // Default to flat
+  2: { name: "D", sharp: "D♯" },
+  3: { name: "E♭", sharp: "D♯" }, // Default to flat
+  4: { name: "E", flat: "F♭" },
+  5: { name: "F", sharp: "F♯" },
+  6: { name: "G♭", sharp: "F♯" }, // Default to flat
+  7: { name: "G", sharp: "G♯" },
+  8: { name: "A♭", sharp: "G♯" }, // Default to flat
+  9: { name: "A", sharp: "A♯" },
+  10: { name: "B♭", sharp: "A♯" }, // Default to flat
+  11: { name: "B", flat: "C♭" },
 }
 
 /**
