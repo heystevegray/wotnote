@@ -229,11 +229,12 @@ console.log(CHORD_PERMUTATIONS)
  * Get the inversion of a chord.
  */
 const getInversion = (midiNotes: Set<number>): InversionOutput => {
+  // Inversions only apply to triads+
   if (midiNotes.size < 3) {
     return {
       inversion: "root",
     }
-  } // Inversions only apply to triads+
+  }
 
   // Convert MIDI notes to pitch classes while keeping the played order
   const semitones = [...midiNotes].map((note) => note % 12)
@@ -313,8 +314,6 @@ const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
 
   // Determine inversion **using played order**
   const inversion = getInversion(midiNotes)
-
-  console.log(inversion)
 
   return {
     ...inversion,
