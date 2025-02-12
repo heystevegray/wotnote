@@ -29,12 +29,13 @@ type ChordQuality =
   | "add9" // Add 9
   | "add11" // Add 11
   | "add13" // Add 13
+  | "Maj 2nd" // Major 2rd
+  | "min 2nd" // Minor 2rd
   | "Maj 3rd" // Major 3rd
   | "min 3rd" // Minor 3rd
   | "perfect 4" // Perfect 4th
   | "tritone" // tritone
   | "perfect 5" // Power Chord (C5)
-  | "aug5" // Augmented 5th
   | "dim5" // Diminished 5th
   | "Maj 6th" // Major 6th
   | "min 6th" // Minor 6th
@@ -98,17 +99,17 @@ type NoteInfo = {
 
 const NOTES: Record<number, NoteInfo> = {
   0: { name: "C", sharp: "C♯" },
-  1: { name: "C♯", flat: "D♭" },
+  1: { name: "D♭", sharp: "C♯" }, // Default to flat
   2: { name: "D", sharp: "D♯" },
-  3: { name: "D♯", flat: "E♭" },
-  4: { name: "E", flat: "F♭" }, // F♭ is enharmonic to E
+  3: { name: "E♭", sharp: "D♯" }, // Default to flat
+  4: { name: "E", flat: "F♭" },
   5: { name: "F", sharp: "F♯" },
-  6: { name: "F♯", flat: "G♭" },
+  6: { name: "G♭", sharp: "F♯" }, // Default to flat
   7: { name: "G", sharp: "G♯" },
-  8: { name: "G♯", flat: "A♭" },
+  8: { name: "A♭", sharp: "G♯" }, // Default to flat
   9: { name: "A", sharp: "A♯" },
-  10: { name: "A♯", flat: "B♭" },
-  11: { name: "B", flat: "C♭" }, // C♭ is enharmonic to B
+  10: { name: "B♭", sharp: "A♯" }, // Default to flat
+  11: { name: "B", flat: "C♭" },
 }
 
 // Intervals for different chords
@@ -151,12 +152,13 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   add13: [0, 4, 7, 21], // Add 13
 
   // **All Two-Note Chords (Dyads)**
+  "Maj 2nd": [0, 2], // Major 2nd
+  "min 2nd": [0, 1], // Minor 2nd
   "Maj 3rd": [0, 4], // Major 3rd
   "min 3rd": [0, 3], // Minor 3rd
   "perfect 4": [0, 5], // Perfect 4th
   tritone: [0, 6], // Perfect 4th
   "perfect 5": [0, 7], // Perfect 5th
-  aug5: [0, 8], // Augmented 5th
   dim5: [0, 6], // Diminished 5th
   "Maj 6th": [0, 9], // Major 6th
   "min 6th": [0, 8], // Minor 6th
@@ -258,54 +260,27 @@ const getSemitones = (midiNotes: Set<number>) => {
   )
 }
 
-// Flat keys (more common in flats)
-const FLAT_KEYS = new Set([1, 3, 5, 6, 8, 10]) // D♭, E♭, F, G♭, A♭, B♭
-
-// Sharp keys (more common in sharps)
-const SHARP_KEYS = new Set([1, 4, 6, 8, 9, 11]) // C♯, E, F♯, G♯, A, B
-
-/**
- * Get the best enharmonic spelling based on common key signatures.
- */
-const getBestEnharmonicName = (rootSemitone: number): "flat" | "sharp" => {
-  if (FLAT_KEYS.has(rootSemitone)) return "flat"
-  if (SHARP_KEYS.has(rootSemitone)) return "sharp"
-  return "flat" // Default to flats if unclear
-}
-
 /**
  * Detect the chord from active MIDI notes.
  */
 const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
   if (!midiNotes.size) return null
 
-  // Convert MIDI notes to semitones
+  // Preserve order and convert to pitch classes
   const semitones = getSemitones(midiNotes)
-  console.log({ semitones })
+  const key = [...new Set(semitones)].join(",") // Unique pitch classes but ordered
 
-  const key = semitones.join(",") // Match CHORD_PERMUTATIONS key format
+  // Lookup chord quality from precomputed dictionary
+  const chord = CHORD_PERMUTATIONS[key] ?? null
+  if (!chord) return null
 
-  // Lookup possible chords
-  const possibleChords = CHORD_PERMUTATIONS[key] ?? null
-  if (!possibleChords) return null
-
-  // Extract the lowest semitone to determine the root
-  const rootSemitone = semitones[0]
-
-  // Determine the best notation (flats or sharps)
-  const preferredAccidental = getBestEnharmonicName(rootSemitone)
-  const noteInfo = NOTES[rootSemitone]
-
-  // Select the correct spelling dynamically
-  const rootName =
-    preferredAccidental === "flat" && noteInfo.flat
-      ? noteInfo.flat
-      : (noteInfo.sharp ?? noteInfo.name)
+  // Determine inversion **using played order**
+  const inversion = getInversion(midiNotes)
 
   return {
-    tonic: rootName,
-    quality: possibleChords[0].quality, // Use the first match (assuming same quality for different spellings)
-    inversion: getInversion(midiNotes),
+    inversion,
+    quality: chord[0].quality,
+    tonic: chord[0].tonic,
   }
 }
 

@@ -54,7 +54,7 @@ const Play = () => {
         <div className={cn("flex h-full flex-col")}>
           <div className="flex flex-1 flex-col items-center justify-center">
             <h2
-              className="text-[10rem]"
+              className="text-6xl md:text-9xl lg:text-[10rem]"
               style={{
                 color,
               }}

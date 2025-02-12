@@ -169,7 +169,7 @@ export type Accidental = "sharp" | "flat"
 
 export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental }
 
-export const baseConfig: DefaultConfig = {
+export const defaultConfig: DefaultConfig = {
   key: "c",
   scale: "major",
   accidental: "flat",
