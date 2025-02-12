@@ -8,7 +8,8 @@ type ChordQuality =
   | "min" // Minor
   | "dim" // Diminished
   | "aug" // Augmented
-  | "Maj 7th" // Major 7
+  | "Maj 7th" // Major and 7th interval
+  | "Maj7" // Major 7
   | "min 7th" // Minor 7
   | "7" // Dominant 7 (C7)
   | "dim7" // Diminished 7
@@ -36,7 +37,6 @@ type ChordQuality =
   | "perfect 4" // Perfect 4th
   | "tritone" // tritone
   | "perfect 5" // Power Chord (C5)
-  | "dim5" // Diminished 5th
   | "Maj 6th" // Major 6th
   | "min 6th" // Minor 6th
   | "octave" // Octave
@@ -121,8 +121,7 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   aug: [0, 4, 8], // Augmented
 
   // **Seventh Chords**
-  "Maj 7th": [0, 4, 7, 11], // Major 7
-  "min 7th": [0, 3, 7, 10], // Minor 7
+  Maj7: [0, 4, 7, 11], // Major 7
   "7": [0, 4, 7, 10], // Dominant 7 (C7)
   dim7: [0, 3, 6, 9], // Diminished 7
   "m7♭5": [0, 3, 6, 10], // Half-Diminished 7 (Cm7♭5 / Cø7)
@@ -152,16 +151,17 @@ const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   add13: [0, 4, 7, 21], // Add 13
 
   // **All Two-Note Chords (Dyads)**
-  "Maj 2nd": [0, 2], // Major 2nd
   "min 2nd": [0, 1], // Minor 2nd
-  "Maj 3rd": [0, 4], // Major 3rd
+  "Maj 2nd": [0, 2], // Major 2nd
   "min 3rd": [0, 3], // Minor 3rd
+  "Maj 3rd": [0, 4], // Major 3rd
   "perfect 4": [0, 5], // Perfect 4th
   tritone: [0, 6], // Perfect 4th
   "perfect 5": [0, 7], // Perfect 5th
-  dim5: [0, 6], // Diminished 5th
-  "Maj 6th": [0, 9], // Major 6th
   "min 6th": [0, 8], // Minor 6th
+  "Maj 6th": [0, 9], // Major 6th
+  "min 7th": [0, 10], // Minor 7th
+  "Maj 7th": [0, 11], // Major 7th
 
   octave: [0, 12], // Octave
 }
