@@ -49,9 +49,12 @@ type ChordType = {
 
 type Inversion = "root" | "first" | "second" | "third"
 
-type ActiveChord = {
+type InversionOutput = {
   inversion: Inversion
-} & ChordType
+  bassNote?: string
+}
+
+type ActiveChord = InversionOutput & ChordType
 
 type NoteInfo = {
   name: string
@@ -225,8 +228,12 @@ console.log(CHORD_PERMUTATIONS)
 /**
  * Get the inversion of a chord.
  */
-const getInversion = (midiNotes: Set<number>): Inversion => {
-  if (midiNotes.size < 3) return "root" // Inversions only apply to triads+
+const getInversion = (midiNotes: Set<number>): InversionOutput => {
+  if (midiNotes.size < 3) {
+    return {
+      inversion: "root",
+    }
+  } // Inversions only apply to triads+
 
   // Convert MIDI notes to pitch classes while keeping the played order
   const semitones = [...midiNotes].map((note) => note % 12)
@@ -239,13 +246,43 @@ const getInversion = (midiNotes: Set<number>): Inversion => {
   // Convert to interval pattern string
   const pattern = intervals.join(",")
 
-  // Recognizing inversion patterns based on **played order**
-  if (pattern === "0,4,7" || pattern === "0,3,7" || pattern === "0,3,6")
-    return "root" // Root position
-  if (pattern === "0,3,8" || pattern === "0,4,9") return "first" // First inversion
-  if (pattern === "0,5,9" || pattern === "0,6,10") return "second" // Second inversion
+  // Root position
+  if (pattern === "0,4,7" || pattern === "0,3,7" || pattern === "0,3,6") {
+    return {
+      inversion: "root",
+    }
+  }
 
-  return "root" // Default if unknown pattern
+  // Identify the lowest note in the played order
+  const bassSemitone = semitones[0] // The first played note is the bass
+
+  // First Inversion (3rd in the bass)
+  if (pattern === "0,3,8" || pattern === "0,4,9") {
+    return {
+      inversion: "first",
+      bassNote: NOTES[bassSemitone].name,
+    }
+  }
+
+  // Second Inversion (5th in the bass)
+  if (pattern === "0,5,9" || pattern === "0,6,10") {
+    return {
+      inversion: "second",
+      bassNote: NOTES[bassSemitone].name,
+    }
+  }
+
+  // Third Inversion (7th in the bass, for 7th chords)
+  if (pattern === "0,4,8" || pattern === "0,3,9" || pattern === "0,6,9") {
+    return {
+      inversion: "third",
+      bassNote: NOTES[bassSemitone].name,
+    }
+  }
+
+  return {
+    inversion: "root",
+  }
 }
 
 /**
@@ -277,8 +314,10 @@ const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
   // Determine inversion **using played order**
   const inversion = getInversion(midiNotes)
 
+  console.log(inversion)
+
   return {
-    inversion,
+    ...inversion,
     quality: chord[0].quality,
     tonic: chord[0].tonic,
   }

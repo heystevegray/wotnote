@@ -28,6 +28,10 @@ const Play = () => {
   const color =
     (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
 
+  const bassNote = midiConfig.chords.chord?.bassNote
+    ? `/ ${midiConfig.chords.chord?.bassNote}`
+    : ""
+
   return (
     <div className="flex h-[calc(100svh-64px)] flex-col">
       <div className="relative flex-1 flex-col p-4 text-center">
@@ -60,15 +64,15 @@ const Play = () => {
               }}
             >
               {midiConfig.chords.chord?.tonic}{" "}
-              {midiConfig.chords.chord?.quality}
+              {midiConfig.chords.chord?.quality} {bassNote}
             </h2>
           </div>
           <div className="flex w-full justify-end">
             <Inversion value={midiConfig.chords.chord?.inversion} />
           </div>
-          <pre className="text-left text-sm text-muted-foreground">
+          {/* <pre className="text-left text-sm text-muted-foreground">
             {JSON.stringify(midiConfig.chords.details, null, 2)}
-          </pre>
+          </pre> */}
         </div>
       </div>
       <div className="">
