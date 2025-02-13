@@ -1,4 +1,5 @@
 import "@/app/globals.css"
+
 import { Metadata, Viewport } from "next"
 import { cookies } from "next/headers"
 import { Analytics } from "@vercel/analytics/react"
@@ -44,7 +45,13 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <script
+          defer
+          src="https://analytics.jfay.dev/script.js"
+          data-website-id="70799b6a-0adc-4d93-baff-423766a9efab"
+        ></script>
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
