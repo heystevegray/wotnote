@@ -6,7 +6,7 @@ import { Toaster } from "sonner"
 
 import { siteConfig } from "@/lib/config"
 import { fontSans } from "@/lib/fonts"
-import { cn } from "@/lib/utils"
+import { cn, isDevelopment } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import Footer from "@/components/footer"
@@ -44,7 +44,15 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        {isDevelopment ? null : (
+          <script
+            defer
+            src="https://analytics.jfay.dev/script.js"
+            data-website-id="70799b6a-0adc-4d93-baff-423766a9efab"
+          ></script>
+        )}
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",

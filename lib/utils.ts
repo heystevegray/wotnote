@@ -7,6 +7,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const isDevelopment = process.env.NODE_ENV === "development"
+
 export const capitalizeFirstLetter = (value: string) => {
   if (!value) {
     return ""
