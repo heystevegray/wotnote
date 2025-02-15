@@ -5,18 +5,25 @@ import { useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
 import useMidi from "@/lib/hooks/use-midi"
-import { cn } from "@/lib/utils"
+import { camelCaseToTitleCase, capitalizeFirstLetter, cn } from "@/lib/utils"
 import Inversion from "@/components/inversion"
 import MidiKeyboard from "@/components/midi-keyboard"
 
-const Detail = ({ label, value }: { label: string; value?: string | null }) => {
+const Detail = ({
+  label,
+  value,
+}: {
+  label: string
+  value?: string | string[] | number[] | null
+}) => {
   if (!value) {
     return null
   }
 
   return (
     <p className="text-muted-foreground">
-      {label}: <span className="text-foreground">{value}</span>
+      {camelCaseToTitleCase(label)}:{" "}
+      <span className="text-foreground">{String(value)}</span>
     </p>
   )
 }
@@ -28,50 +35,34 @@ const Play = () => {
   const color =
     (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
 
-  const bassNote = midiConfig.chords.chord?.bassNote
-    ? `/ ${midiConfig.chords.chord?.bassNote}`
+  const bassNote = midiConfig.chord?.bassNote
+    ? `/ ${midiConfig.chord?.bassNote}`
     : ""
 
   return (
     <div className="flex h-[calc(100svh-64px)] flex-col">
       <div className="relative flex-1 flex-col p-4 text-center">
         <div className="absolute left-0 top-0 p-4 text-start">
-          <Detail
-            label="Alias"
-            value={midiConfig.chords.details?.aliases.join(", ")}
-          />
-          <Detail
-            label="Notes"
-            value={midiConfig.chords.details?.notes.join(", ")}
-          />
-          <Detail
-            label="Quality"
-            value={
-              midiConfig.chords.details?.quality === "Unknown"
-                ? ""
-                : midiConfig.chords.details?.quality
-            }
-          />
-          <Detail label="Tonic" value={midiConfig.chords.details?.tonic} />
-          <Detail label="Type" value={midiConfig.chords.details?.type} />
+          {Object.entries(midiConfig?.chord ?? {}).map(([key, value]) => (
+            <Detail key={key} label={key} value={value} />
+          ))}
         </div>
         <div className={cn("flex h-full flex-col")}>
           <div className="flex flex-1 flex-col items-center justify-center">
             <h2
-              className="text-6xl md:text-9xl lg:text-[10rem]"
+              className="text-6xl md:text-9xl"
               style={{
                 color,
               }}
             >
-              {midiConfig.chords.chord?.tonic}{" "}
-              {midiConfig.chords.chord?.quality} {bassNote}
+              {midiConfig.chord?.tonic} {midiConfig.chord?.quality} {bassNote}
             </h2>
           </div>
           <div className="flex w-full justify-end">
-            <Inversion value={midiConfig.chords.chord?.inversion} />
+            <Inversion value={midiConfig.chord?.inversion} />
           </div>
           {/* <pre className="text-left text-sm text-muted-foreground">
-            {JSON.stringify(midiConfig.chords.details, null, 2)}
+            {JSON.stringify(midiConfig.details, null, 2)}
           </pre> */}
         </div>
       </div>

@@ -18,6 +18,12 @@ export const capitalizeFirstLetter = (value: string) => {
     .join(" ")
 }
 
+export const camelCaseToTitleCase = (value: string) => {
+  return value
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+}
+
 export const exampleQuestions = [
   "Hotline Bling by Drake",
   "Bohemian Rhapsody by Queen",

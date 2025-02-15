@@ -1,23 +1,27 @@
 // https://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
 
 import { useEffect, useRef, useState } from "react"
-import { Chord, chord as tonalChord } from "@tonaljs/chord"
 
-export interface MIDInterface extends ChordProps {
+import {
+  Chord,
+  CHORD_TYPES,
+  getChordNotes,
+  getInversion,
+  getSemitones,
+  NOTES,
+} from "../core/keyboard"
+
+interface MIDIChordProps {
+  chord?: Chord | null
+}
+
+export interface MIDInterface extends MIDIChordProps {
   midiAccess: WebMidi.MIDIAccess | undefined
   midiConnectionEvent: WebMidi.MIDIConnectionEvent | undefined
   midiSupported: boolean | undefined
   midiPort?: WebMidi.MIDIPort | undefined
   midi: MidiNote
   inputs: Device[]
-}
-
-interface ChordProps {
-  chords: {
-    activeNotes: Key[]
-    chord: ActiveChord | null
-    details?: Chord
-  }
 }
 
 interface Key {
@@ -42,284 +46,46 @@ interface Device {
   version: string
 }
 
-type ChordType = {
-  tonic: string
-  quality: ChordQuality
-}
-
-type Inversion = "root" | "first" | "second" | "third"
-
-type InversionOutput = {
-  inversion: Inversion
-  bassNote?: string
-}
-
-type ActiveChord = InversionOutput & ChordType
-
-type NoteInfo = {
-  name: string
-  sharp?: string
-  flat?: string
-}
-
-type ChordQuality =
-  | "Major" // Major
-  | "min" // Minor
-  | "dim" // Diminished
-  | "aug" // Augmented
-  | "Maj 7th" // Major and 7th interval
-  | "Maj7" // Major 7
-  | "min 7th" // Minor 7
-  | "7" // Dominant 7 (C7)
-  | "dim7" // Diminished 7
-  | "m7♭5" // Half-Diminished 7 (also written as "ø7")
-  | "6" // Major 6
-  | "m6" // Minor 6
-  | "sus2" // Suspended 2
-  | "sus4" // Suspended 4
-  | "9" // 9th
-  | "Maj 9th" // Major 9
-  | "min9" // Minor 9
-  | "11" // 11th
-  | "Maj 11th" // Major 11
-  | "min 11th" // Minor 11
-  | "13" // 13th
-  | "Maj13" // Major 13
-  | "min13" // Minor 13
-  | "add9" // Add 9
-  | "add11" // Add 11
-  | "add13" // Add 13
-  | "Maj 2nd" // Major 2rd
-  | "min 2nd" // Minor 2rd
-  | "Maj 3rd" // Major 3rd
-  | "min 3rd" // Minor 3rd
-  | "perfect 4" // Perfect 4th
-  | "tritone" // tritone
-  | "perfect 5" // Power Chord (C5)
-  | "Maj 6th" // Major 6th
-  | "min 6th" // Minor 6th
-  | "octave" // Octave
-
-// Intervals for different chords
-const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
-  // **Basic Triads**
-  Major: [0, 4, 7], // Major
-  min: [0, 3, 7], // Minor
-  dim: [0, 3, 6], // Diminished
-  aug: [0, 4, 8], // Augmented
-
-  // **Seventh Chords**
-  Maj7: [0, 4, 7, 11], // Major 7
-  "7": [0, 4, 7, 10], // Dominant 7 (C7)
-  dim7: [0, 3, 6, 9], // Diminished 7
-  "m7♭5": [0, 3, 6, 10], // Half-Diminished 7 (Cm7♭5 / Cø7)
-
-  // **Sixth Chords**
-  "6": [0, 4, 7, 9], // Major 6
-  m6: [0, 3, 7, 9], // Minor 6
-
-  // **Suspended Chords**
-  sus2: [0, 2, 7], // Suspended 2
-  sus4: [0, 5, 7], // Suspended 4
-
-  // **Extended Chords**
-  "9": [0, 4, 7, 10, 14], // 9th
-  "Maj 9th": [0, 4, 7, 11, 14], // Major 9
-  min9: [0, 3, 7, 10, 14], // Minor 9
-  "11": [0, 4, 7, 10, 14, 17], // 11th
-  "Maj 11th": [0, 4, 7, 11, 14, 17], // Major 11
-  "min 11th": [0, 3, 7, 10, 14, 17], // Minor 11
-  "13": [0, 4, 7, 10, 14, 17, 21], // 13th
-  Maj13: [0, 4, 7, 11, 14, 17, 21], // Major 13
-  min13: [0, 3, 7, 10, 14, 17, 21], // Minor 13
-
-  // **Added-Tone Chords**
-  add9: [0, 4, 7, 14], // Add 9
-  add11: [0, 4, 7, 17], // Add 11
-  add13: [0, 4, 7, 21], // Add 13
-
-  // **All Two-Note Chords (Dyads)**
-  "min 2nd": [0, 1], // Minor 2nd
-  "Maj 2nd": [0, 2], // Major 2nd
-  "min 3rd": [0, 3], // Minor 3rd
-  "Maj 3rd": [0, 4], // Major 3rd
-  "perfect 4": [0, 5], // Perfect 4th
-  tritone: [0, 6], // Perfect 4th
-  "perfect 5": [0, 7], // Perfect 5th
-  "min 6th": [0, 8], // Minor 6th
-  "Maj 6th": [0, 9], // Major 6th
-  "min 7th": [0, 10], // Minor 7th
-  "Maj 7th": [0, 11], // Major 7th
-
-  octave: [0, 12], // Octave
-}
-
-const NOTES: Record<number, NoteInfo> = {
-  0: { name: "C", sharp: "C♯" },
-  1: { name: "D♭", sharp: "C♯" }, // Default to flat
-  2: { name: "D", sharp: "D♯" },
-  3: { name: "E♭", sharp: "D♯" }, // Default to flat
-  4: { name: "E", flat: "F♭" },
-  5: { name: "F", sharp: "F♯" },
-  6: { name: "G♭", sharp: "F♯" }, // Default to flat
-  7: { name: "G", sharp: "G♯" },
-  8: { name: "A♭", sharp: "G♯" }, // Default to flat
-  9: { name: "A", sharp: "A♯" },
-  10: { name: "B♭", sharp: "A♯" }, // Default to flat
-  11: { name: "B", flat: "C♭" },
-}
-
 /**
- * Generate all possible chord permutations for all 12 roots.
- * @example
-  '0,4,7': [
-    {
-      tonic: 'C',
-      quality: 'Major',
-    },
-    {
-      tonic: 'C♯',
-      quality: 'Major',
-    },
-  ]
- * @example 
- '0,3': [
-    { tonic: 'C', quality: 'min3' },
-    { tonic: 'C♯', quality: 'min3' },
-    { tonic: 'D♯', quality: 'Maj6' },
-    { tonic: 'E♭', quality: 'Maj6' }
-  ]
- * 
+ * Detects a chord from a set of MIDI notes.
  */
-const generateChordDictionary = (): Record<string, ChordType[]> => {
-  const chordDict: Record<string, ChordType[]> = {}
-
-  for (let root = 0; root < 12; root++) {
-    const noteInfo = NOTES[root] // Get note info (C, C♯, D♭, etc.)
-
-    for (const [quality, intervals] of Object.entries(CHORD_INTERVALS)) {
-      const semitones = intervals
-        .map((interval) => (root + interval) % 12)
-        .sort((a, b) => a - b)
-      const key = semitones.join(",")
-
-      if (!chordDict[key]) chordDict[key] = []
-
-      // Store both sharp and flat spellings for selection later
-      chordDict[key].push(
-        { tonic: noteInfo.name, quality: quality as ChordQuality }, // Default spelling
-        ...(noteInfo.flat
-          ? [{ tonic: noteInfo.flat, quality: quality as ChordQuality }]
-          : []), // Flat version if available
-        ...(noteInfo.sharp
-          ? [{ tonic: noteInfo.sharp, quality: quality as ChordQuality }]
-          : []) // Sharp version if available
-      )
-    }
+export const detectChord = (midiNotes: Set<number>): Chord | null => {
+  // Need at least two notes to form a chord
+  if (midiNotes.size < 2) {
+    return null
   }
 
-  return chordDict
-}
-
-// ✅ Precompute permutations at startup
-const CHORD_PERMUTATIONS = generateChordDictionary()
-console.log(CHORD_PERMUTATIONS)
-
-/**
- * Get the inversion of a chord.
- */
-const getInversion = (midiNotes: Set<number>): InversionOutput => {
-  // Inversions only apply to triads+
-  if (midiNotes.size < 3) {
-    return {
-      inversion: "root",
-    }
-  }
-
-  // Convert MIDI notes to pitch classes while keeping the played order
-  const semitones = [...midiNotes].map((note) => note % 12)
-
-  // Compute the intervals **based on the played order**
-  const intervals = semitones.map((note, index, arr) =>
-    index === 0 ? 0 : (note - arr[0] + 12) % 12
-  )
-
-  // Convert to interval pattern string
-  const pattern = intervals.join(",")
-
-  // Root position
-  if (pattern === "0,4,7" || pattern === "0,3,7" || pattern === "0,3,6") {
-    return {
-      inversion: "root",
-    }
-  }
-
-  // Identify the lowest note in the played order
-  const bassSemitone = semitones[0] // The first played note is the bass
-
-  // First Inversion (3rd in the bass)
-  if (pattern === "0,3,8" || pattern === "0,4,9") {
-    return {
-      inversion: "first",
-      bassNote: NOTES[bassSemitone].name,
-    }
-  }
-
-  // Second Inversion (5th in the bass)
-  if (pattern === "0,5,9" || pattern === "0,6,10") {
-    return {
-      inversion: "second",
-      bassNote: NOTES[bassSemitone].name,
-    }
-  }
-
-  // Third Inversion (7th in the bass, for 7th chords)
-  if (pattern === "0,4,8" || pattern === "0,3,9" || pattern === "0,6,9") {
-    return {
-      inversion: "third",
-      bassNote: NOTES[bassSemitone].name,
-    }
-  }
-
-  return {
-    inversion: "root",
-  }
-}
-
-/**
- * Convert MIDI notes to sorted, unique semi-tone intervals (0-11).
- *
- * @example getSemitones(new Set([60, 64, 67])) // [0, 4, 7]
- * @example getSemitones(new Set([60, 64, 67, 71])) // [0, 4, 7, 11]
- */
-const getSemitones = (midiNotes: Set<number>) => {
-  return [...new Set([...midiNotes].map((midiNote) => midiNote % 12))].sort(
-    (a, b) => a - b
-  )
-}
-
-/**
- * Detect the chord from active MIDI notes.
- */
-const detectChord = (midiNotes: Set<number>): ActiveChord | null => {
-  if (!midiNotes.size) return null
-
-  // Preserve order and convert to pitch classes
+  // Convert MIDI notes to semitone intervals (0-11)
   const semitones = getSemitones(midiNotes)
-  const key = [...new Set(semitones)].join(",") // Unique pitch classes but ordered
 
-  // Lookup chord quality from precomputed dictionary
-  const chord = CHORD_PERMUTATIONS[key] ?? null
-  if (!chord) return null
+  // Find the most probable root (not necessarily the lowest note)
+  const probableRoots = semitones.map((root) => ({
+    rootNote: NOTES[root].name,
+    intervals: semitones
+      .map((note) => (note - root + 12) % 12)
+      .sort((a, b) => a - b),
+  }))
 
-  // Determine inversion **using played order**
-  const inversion = getInversion(midiNotes)
+  for (const { rootNote, intervals } of probableRoots) {
+    // Search for a matching chord type
+    const matchingChord = CHORD_TYPES.find(
+      (chord) => JSON.stringify(chord.intervals) === JSON.stringify(intervals)
+    )
 
-  return {
-    ...inversion,
-    quality: chord[0].quality,
-    tonic: chord[0].tonic,
+    if (matchingChord) {
+      return {
+        ...getInversion(midiNotes),
+        tonic: rootNote,
+        notes: getChordNotes(rootNote, matchingChord),
+        quality: matchingChord.quality,
+        symbol: matchingChord.symbol,
+        alias: matchingChord.alias,
+        intervals,
+      }
+    }
   }
+
+  return null // No matching chord found
 }
 
 const initialNote: MidiNote = {
@@ -338,11 +104,7 @@ const useMidi = (): MIDInterface => {
     midiConnectionEvent: undefined,
     midi: initialNote,
     inputs: [],
-    chords: {
-      activeNotes: [],
-      chord: null,
-      details: undefined,
-    },
+    chord: null,
   })
 
   const midiConfigRef = useRef(midiConfig)
@@ -442,11 +204,7 @@ const useMidi = (): MIDInterface => {
 
   return {
     ...midiConfig,
-    chords: {
-      activeNotes: activeNotes?.length > 1 ? activeNotes : [],
-      chord,
-      details: chord ? tonalChord(`${chord.tonic}${chord.quality}`) : undefined,
-    },
+    chord,
   }
 }
 
