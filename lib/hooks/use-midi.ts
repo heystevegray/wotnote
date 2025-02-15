@@ -69,18 +69,18 @@ export const detectChord = (midiNotes: Set<number>): Chord | null => {
   for (const { rootNote, intervals } of probableRoots) {
     // Search for a matching chord type
     const matchingChord = CHORD_TYPES.find(
-      (chord) => JSON.stringify(chord.intervals) === JSON.stringify(intervals)
+      (chord) => JSON.stringify(chord.semitones) === JSON.stringify(intervals)
     )
 
     if (matchingChord) {
       return {
         ...getInversion(midiNotes),
+        ...getChordNotes(rootNote, matchingChord),
         tonic: rootNote,
-        notes: getChordNotes(rootNote, matchingChord),
         quality: matchingChord.quality,
         symbol: matchingChord.symbol,
         alias: matchingChord.alias,
-        intervals,
+        semitones: matchingChord.semitones,
       }
     }
   }

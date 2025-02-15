@@ -29,15 +29,37 @@ type NoteInfo = {
 }
 
 export type ChordProps = {
+  /**
+   * Name of the chord quality.
+   *
+   * @example "Major", "minor", "Dominant 7th"
+   */
   quality: string
+  /**
+   * Optional symbol for the chord.
+   *
+   * @example "maj7", "m7", "7"
+   */
   symbol?: string
+  /**
+   * Optional alias for the chord.
+   *
+   * @example "△7", "m△7", "ø"
+   */
   alias?: string
-  intervals: number[] // Semitone distances from root
+  /**
+   * Semitone distance from the root note.
+   */
+  semitones: number[]
 }
 
 export type Chord = {
   notes: string[]
   tonic: Key
+  /**
+   * Diatonic intervals from the root note.
+   */
+  degrees?: number[]
 } & ChordProps &
   InversionOutput
 
@@ -63,100 +85,154 @@ export const NOTES: Record<number, NoteInfo> = {
   11: { name: "B", flat: "C♭" },
 }
 
-export const getChordNotes = (root: Key, chord: ChordProps): string[] => {
+export const getChordNotes = (
+  root: Key,
+  chord: ChordProps
+): {
+  notes: string[]
+  degrees: number[]
+} => {
   const rootIndex = Object.values(NOTES).findIndex((note) => note.name === root)
   if (rootIndex === -1) throw new Error(`Invalid root note: ${root}`)
 
-  return chord.intervals.map((interval) => {
+  const notes = chord.semitones.map((interval) => {
     const noteIndex = (rootIndex + interval) % 12
     return Object.values(NOTES)[noteIndex].name
   })
+
+  // Convert intervals to diatonic degrees example 1 3 5
+  const degrees = convertToScaleDegrees(chord.semitones)
+
+  return { notes, degrees }
 }
 
 export const CHORD_TYPES: ChordProps[] = [
   // Two-Note Chords (Dyads)
-  { quality: "Octave", symbol: "1", intervals: [0] },
-  { quality: "minor 2nd", symbol: "♭2", intervals: [0, 1] },
-  { quality: "Major 2nd", symbol: "2", intervals: [0, 2] },
-  { quality: "minor 3rd", symbol: "♭3", intervals: [0, 3] },
-  { quality: "Major 3rd", symbol: "3", intervals: [0, 4] },
-  { quality: "Perfect 4th", symbol: "4", intervals: [0, 5] },
-  { quality: "Tritone", symbol: "♯4 / ♭5", intervals: [0, 6] },
-  { quality: "Perfect 5th", symbol: "5", intervals: [0, 7] },
-  { quality: "minor 6th", symbol: "♭6", intervals: [0, 8] },
-  { quality: "Major 6th", symbol: "6", intervals: [0, 9] },
-  { quality: "minor 7th", symbol: "♭7", intervals: [0, 10] },
-  { quality: "Major 7th", symbol: "7", intervals: [0, 11] },
-  { quality: "Octave", symbol: "8", intervals: [0, 12] },
+  { quality: "Octave", symbol: "1", semitones: [0] },
+  { quality: "minor 2nd", symbol: "♭2", semitones: [0, 1] },
+  { quality: "Major 2nd", symbol: "2", semitones: [0, 2] },
+  { quality: "minor 3rd", symbol: "♭3", semitones: [0, 3] },
+  { quality: "Major 3rd", symbol: "3", semitones: [0, 4] },
+  { quality: "Perfect 4th", symbol: "4", semitones: [0, 5] },
+  { quality: "Tritone", symbol: "♯4 / ♭5", semitones: [0, 6] },
+  { quality: "Perfect 5th", symbol: "5", semitones: [0, 7] },
+  { quality: "minor 6th", symbol: "♭6", semitones: [0, 8] },
+  { quality: "Major 6th", symbol: "6", semitones: [0, 9] },
+  { quality: "minor 7th", symbol: "♭7", semitones: [0, 10] },
+  { quality: "Major 7th", symbol: "7", semitones: [0, 11] },
+  { quality: "Octave", symbol: "8", semitones: [0, 12] },
 
   // Triads
-  { quality: "Major", symbol: undefined, intervals: [0, 4, 7] },
-  { quality: "minor", symbol: "m", intervals: [0, 3, 7] },
-  { quality: "Diminished", symbol: "°", intervals: [0, 3, 6] },
-  { quality: "Augmented", symbol: "+", intervals: [0, 4, 8] },
-  { quality: "Suspended 2nd", symbol: "sus2", intervals: [0, 2, 7] },
-  { quality: "Suspended 4th", symbol: "sus4", intervals: [0, 5, 7] },
+  { quality: "Major", symbol: undefined, semitones: [0, 4, 7] },
+  { quality: "minor", symbol: "m", semitones: [0, 3, 7] },
+  { quality: "Diminished", symbol: "°", semitones: [0, 3, 6] },
+  { quality: "Augmented", symbol: "+", semitones: [0, 4, 8] },
+  { quality: "Suspended 2nd", symbol: "sus2", semitones: [0, 2, 7] },
+  { quality: "Suspended 4th", symbol: "sus4", semitones: [0, 5, 7] },
 
   // Seventh Chords
   {
     quality: "Major 7th",
     symbol: "maj7",
     alias: "△7",
-    intervals: [0, 4, 7, 11],
+    semitones: [0, 4, 7, 11],
   },
-  { quality: "minor 7th", symbol: "m7", intervals: [0, 3, 7, 10] },
-  { quality: "Dominant 7th", symbol: "7", intervals: [0, 4, 7, 10] },
+  { quality: "minor 7th", symbol: "m7", semitones: [0, 3, 7, 10] },
+  { quality: "Dominant 7th", symbol: "7", semitones: [0, 4, 7, 10] },
   {
     quality: "minor Major 7th",
     symbol: "m(maj7)",
     alias: "m△7",
-    intervals: [0, 3, 7, 11],
+    semitones: [0, 3, 7, 11],
   },
   {
     quality: "Half-Diminished",
     symbol: "m7♭5",
     alias: "ø",
-    intervals: [0, 3, 6, 10],
+    semitones: [0, 3, 6, 10],
   },
-  { quality: "Fully Diminished 7th", symbol: "°7", intervals: [0, 3, 6, 9] },
+  {
+    quality: "Fully Diminished 7th",
+    symbol: "°7",
+    semitones: [0, 3, 6, 9],
+  },
 
   // Extended Chords
-  { quality: "Dominant 9th", symbol: "9", intervals: [0, 4, 7, 10, 14] },
+  {
+    quality: "Dominant 9th",
+    symbol: "9",
+    semitones: [0, 4, 7, 10, 14],
+  },
   {
     quality: "Major 9th",
     symbol: "maj9",
     alias: "△9",
-    intervals: [0, 4, 7, 11, 14],
+    semitones: [0, 4, 7, 11, 14],
   },
-  { quality: "minor 9th", symbol: "m9", intervals: [0, 3, 7, 10, 14] },
-  { quality: "Dominant 11th", symbol: "11", intervals: [0, 4, 7, 10, 14, 17] },
-  { quality: "Dominant 13th", symbol: "13", intervals: [0, 4, 7, 10, 14, 21] },
+  { quality: "minor 9th", symbol: "m9", semitones: [0, 3, 7, 10, 14] },
+  {
+    quality: "Dominant 11th",
+    symbol: "11",
+    semitones: [0, 4, 7, 10, 14, 17],
+  },
+  {
+    quality: "Dominant 13th",
+    symbol: "13",
+    semitones: [0, 4, 7, 10, 14, 21],
+  },
 
   // Altered Chords
-  { quality: "Dominant 7♭9", symbol: "7♭9", intervals: [0, 4, 7, 10, 13] },
-  { quality: "Dominant 7♯9", symbol: "7♯9", intervals: [0, 4, 7, 10, 15] },
+  {
+    quality: "Dominant 7♭9",
+    symbol: "7♭9",
+    semitones: [0, 4, 7, 10, 13],
+  },
+  {
+    quality: "Dominant 7♯9",
+    symbol: "7♯9",
+    semitones: [0, 4, 7, 10, 15],
+  },
   {
     quality: "Dominant 7♯11",
     symbol: "7♯11",
-    intervals: [0, 4, 7, 10, 14, 18],
+    semitones: [0, 4, 7, 10, 14, 18],
   },
   {
     quality: "Dominant 7♭13",
     symbol: "7♭13",
-    intervals: [0, 4, 7, 10, 14, 20],
+    semitones: [0, 4, 7, 10, 14, 20],
   },
 
   // Special Chords
-  { quality: "Major 6th", symbol: "6", intervals: [0, 4, 7, 9] },
-  { quality: "Major 6/9", symbol: "6/9", intervals: [0, 4, 7, 9, 14] },
-  { quality: "minor 6th", symbol: "m6", intervals: [0, 3, 7, 9] },
-  { quality: "minor 6/9", symbol: "m6/9", intervals: [0, 3, 7, 9, 14] },
+  { quality: "Major 6th", symbol: "6", semitones: [0, 4, 7, 9] },
+  { quality: "Major 6/9", symbol: "6/9", semitones: [0, 4, 7, 9, 14] },
+  { quality: "minor 6th", symbol: "m6", semitones: [0, 3, 7, 9] },
+  { quality: "minor 6/9", symbol: "m6/9", semitones: [0, 3, 7, 9, 14] },
   {
     quality: "Dominant 7 Suspended 4th",
     symbol: "7sus4",
-    intervals: [0, 5, 7, 10],
+    semitones: [0, 5, 7, 10],
   },
 ]
+
+// Mapping of semitone intervals to scale degrees
+const SEMITONE_TO_DEGREE: Record<number, number> = {
+  0: 1, // Root
+  2: 2, // Major 2nd
+  3: 3, // Minor 3rd
+  4: 3, // Major 3rd
+  5: 4, // Perfect 4th
+  6: 5, // Augmented 4th / Diminished 5th
+  7: 5, // Perfect 5th
+  8: 6, // Minor 6th
+  9: 6, // Major 6th
+  10: 7, // Minor 7th
+  11: 7, // Major 7th
+}
+
+const convertToScaleDegrees = (semitones: number[]): number[] => {
+  return semitones.map((semitone) => SEMITONE_TO_DEGREE[semitone] || -1)
+}
 
 /**
  * Get the inversion of a chord.
@@ -232,11 +308,11 @@ export const getSemitones = (midiNotes: Set<number>) => {
 }
 
 const root = "C"
-const allChords = CHORD_TYPES.map((chord) => ({
+const allChords: ChordProps[] = CHORD_TYPES.map((chord) => ({
+  ...chord,
+  // Add 1 to the intervals to make them 1-indexed
   name: `${root}${chord.symbol}`,
   alias: chord.alias ? `${root}${chord.alias}` : undefined,
-  notes: getChordNotes(root, chord).join(", "),
-  ...chord,
 }))
 
 console.table(allChords)
