@@ -1,6 +1,8 @@
 import "@/app/globals.css"
+
 import { Metadata, Viewport } from "next"
 import { cookies } from "next/headers"
+import Script from "next/script"
 import { Analytics } from "@vercel/analytics/react"
 import { Toaster } from "sonner"
 
@@ -75,6 +77,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <TailwindIndicator />
           </ThemeProvider>
         </SidebarProvider>
+        <Script
+          src="https://umami.stevegray.io/script.js"
+          data-website-id="9c7d6c10-2115-4fc5-a58b-427f602f64af"
+        />
       </body>
     </html>
   )
