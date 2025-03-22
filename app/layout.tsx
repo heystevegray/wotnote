@@ -7,6 +7,7 @@ import { Toaster } from "sonner"
 
 import { siteConfig } from "@/lib/config"
 import { siteFont } from "@/lib/fonts"
+import { PitchProvider } from "@/lib/hooks/pitch/pitch-context"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -55,17 +56,19 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="relative flex min-h-screen w-full flex-col">
-              <SiteHeader />
-              <main className="flex-1">
-                {/* <MidiKeyboard /> */}
-                {children}
-              </main>
-              <Footer />
-            </div>
-            <Toaster />
-            <Analytics />
-            <TailwindIndicator />
+            <PitchProvider>
+              <div className="relative flex min-h-screen w-full flex-col">
+                <SiteHeader />
+                <main className="flex-1">
+                  {/* <MidiKeyboard /> */}
+                  {children}
+                </main>
+                <Footer />
+              </div>
+              <Toaster />
+              <Analytics />
+              <TailwindIndicator />
+            </PitchProvider>
           </ThemeProvider>
         </SidebarProvider>
       </body>

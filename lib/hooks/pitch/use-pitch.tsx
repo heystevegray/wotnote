@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { toast } from "sonner"
 
 // Helper function to convert a detected frequency to a musical note.
@@ -75,10 +75,7 @@ const usePitch = () => {
   const streamRef = useRef<MediaStream | null>(null)
 
   const startRecording = async () => {
-    if (recording) {
-      return
-    }
-
+    if (recording) return
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       toast.success("Microphone access granted")
@@ -104,6 +101,7 @@ const usePitch = () => {
           audioContext.sampleRate
         )
         console.log({ detectedFrequency, clarity })
+
         if (clarity > 0.9) {
           setFrequency(detectedFrequency)
           setPitch(detectedFrequencyToNote(detectedFrequency))
@@ -111,6 +109,7 @@ const usePitch = () => {
           setFrequency(null)
           setPitch(null)
         }
+
         requestAnimationFrame(detectPitch)
       }
 

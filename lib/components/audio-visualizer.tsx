@@ -1,14 +1,24 @@
 import React, { useEffect, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import Detail from "@/components/detail"
 
-import usePitch from "../hooks/pitch/use-pitch"
+import { UNAVAILABLE } from "../config"
+import { usePitchContext } from "../hooks/pitch/pitch-context"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationIdRef = useRef<number | null>(null)
 
-  const { analyserRef, recording, startRecording, stopRecording } = usePitch()
+  const {
+    analyserRef,
+    recording,
+    pitch,
+    frequency,
+    startRecording,
+    stopRecording,
+  } = usePitchContext()
 
   useEffect(() => {
     if (!recording || !analyserRef.current) {
@@ -65,20 +75,29 @@ const AudioVisualizer = () => {
   }, [recording, analyserRef])
 
   return (
-    <div>
+    <div className="space-y-4">
       <h2>Audio Visualizer</h2>
-      <canvas ref={canvasRef} width={500} height={200} />
-      <Button
-        onClick={() => {
-          if (recording) {
-            stopRecording()
-          } else {
-            startRecording()
-          }
-        }}
-      >
-        {recording ? "Stop" : "Start"} Recording
-      </Button>
+      <Card className="overflow-hidden">
+        <CardContent className="p-0 pb-6">
+          <canvas className="" ref={canvasRef} width={500} height={200} />
+          <Detail label="Pitch" value={pitch ?? UNAVAILABLE} />
+          <Detail label="Frequency" value={frequency ?? UNAVAILABLE} />
+        </CardContent>
+        <CardFooter>
+          <Button
+            className="w-full"
+            onClick={() => {
+              if (recording) {
+                stopRecording()
+              } else {
+                startRecording()
+              }
+            }}
+          >
+            {recording ? "Stop" : "Start"} Recording
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

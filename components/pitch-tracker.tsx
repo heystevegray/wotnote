@@ -1,25 +1,13 @@
 "use client"
 
-import { useEffect } from "react"
-import { PitchDetector } from "pitchy"
-
 import AudioVisualizer from "@/lib/components/audio-visualizer"
-import { UNAVAILABLE } from "@/lib/config"
-import usePitch from "@/lib/hooks/pitch/use-pitch"
+import { usePitchContext } from "@/lib/hooks/pitch/pitch-context"
 import { cn } from "@/lib/utils"
 
-// import { UNAVAILABLE } from "@/lib/config"
-
 import Container from "./container"
-import Detail from "./detail"
-import { Button } from "./ui/button"
-
-// import Detail from "./detail"
-// import { Button } from "./ui/button"
 
 const PitchTracker = () => {
-  const { recording, pitch, frequency, startRecording, stopRecording } =
-    usePitch()
+  const { recording } = usePitchContext()
 
   return (
     <Container className="flex flex-col items-center justify-center space-y-4">
@@ -31,20 +19,7 @@ const PitchTracker = () => {
         />
         <p>{recording ? "Recording" : "Not Recording"}</p>
       </div>
-      {/* <Button
-        onClick={() => {
-          if (recording) {
-            stopRecording()
-          } else {
-            startRecording()
-          }
-        }}
-      >
-        {recording ? "Stop" : "Start"} Recording
-      </Button> */}
       <AudioVisualizer />
-      <Detail label="Pitch" value={pitch ?? UNAVAILABLE} />
-      <Detail label="Frequency" value={frequency ?? UNAVAILABLE} />
     </Container>
   )
 }
