@@ -1,9 +1,11 @@
-import { KeyboardMusic, Sparkle } from "lucide-react"
+import { AudioLines, KeyboardMusic, Sparkle } from "lucide-react"
 
 import { Icons } from "@/components/icons"
 
 export const MY_WEBSITE_URL = "https://www.stevegray.io/"
 export const MY_NAME = "Steve Gray"
+
+export const UNAVAILABLE = "N/a"
 
 export type SiteConfig = typeof siteConfig
 
@@ -21,6 +23,11 @@ export const siteConfig = {
       icon: KeyboardMusic,
       title: "Play",
       href: "/play",
+    },
+    {
+      icon: AudioLines,
+      title: "Pitch",
+      href: "/pitch",
     },
     {
       icon: Sparkle,
