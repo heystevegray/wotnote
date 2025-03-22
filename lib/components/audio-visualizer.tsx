@@ -9,7 +9,7 @@ import { Icons } from "@/components/icons"
 
 import { UNAVAILABLE, urlParams } from "../config"
 import { useMeyda } from "../hooks/use-meyda"
-import { cn } from "../utils"
+import { cn, hslToHex } from "../utils"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -27,9 +27,7 @@ const AudioVisualizer = () => {
   } = useMeyda()
 
   const searchParams = useSearchParams()
-  const color =
-    (searchParams?.get(urlParams.color) as string) ??
-    "hsl(var(--key-highlight))"
+  const color = searchParams?.get(urlParams.color) as string
 
   useEffect(() => {
     if (!recording || !analyzerNode) {
@@ -67,7 +65,7 @@ const AudioVisualizer = () => {
       canvasCtx.fillStyle = "transparent"
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
       canvasCtx.lineWidth = 4
-      canvasCtx.strokeStyle = color
+      canvasCtx.strokeStyle = color ?? "green"
       canvasCtx.beginPath()
 
       const sliceWidth = canvas.width / bufferLength
