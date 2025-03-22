@@ -1,13 +1,13 @@
 "use client"
 
 import AudioVisualizer from "@/lib/components/audio-visualizer"
-import { usePitchContext } from "@/lib/hooks/pitch/pitch-context"
+import { usePitch } from "@/lib/hooks/pitch/use-pitch"
 import { cn } from "@/lib/utils"
 
 import Container from "./container"
 
 const PitchTracker = () => {
-  const { recording } = usePitchContext()
+  const { recording } = usePitch()
 
   return (
     <Container className="flex flex-col items-center justify-center space-y-4">

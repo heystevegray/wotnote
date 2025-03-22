@@ -1,4 +1,12 @@
-import { useRef, useState } from "react"
+"use client"
+
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useRef,
+  useState,
+} from "react"
 import { toast } from "sonner"
 
 // Helper function to convert a detected frequency to a musical note.
@@ -65,14 +73,15 @@ function autoCorrelate(
   return [-1, 0]
 }
 
-const usePitch = () => {
+// The internal hook logic. We rename your original usePitch hook to usePitchLogic.
+const usePitchLogic = () => {
   const [recording, setRecording] = useState(false)
   const [pitch, setPitch] = useState<string | null>(null)
   const [frequency, setFrequency] = useState<number | null>(null)
-  // Expose the analyser node using a ref.
   const analyserRef = useRef<AnalyserNode | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const pitchAnimationIdRef = useRef<number | null>(null)
 
   const startRecording = async () => {
     if (recording) return
@@ -102,15 +111,15 @@ const usePitch = () => {
         )
         console.log({ detectedFrequency, clarity })
 
-        if (clarity > 0.9) {
+        // Adjust clarity threshold as needed
+        if (clarity > 0.7) {
           setFrequency(detectedFrequency)
           setPitch(detectedFrequencyToNote(detectedFrequency))
         } else {
           setFrequency(null)
           setPitch(null)
         }
-
-        requestAnimationFrame(detectPitch)
+        pitchAnimationIdRef.current = requestAnimationFrame(detectPitch)
       }
 
       detectPitch()
@@ -134,7 +143,12 @@ const usePitch = () => {
       audioContextRef.current = null
     }
     analyserRef.current = null
+    if (pitchAnimationIdRef.current) {
+      cancelAnimationFrame(pitchAnimationIdRef.current)
+      pitchAnimationIdRef.current = null
+    }
     console.log("Recording stopped and audio context closed.")
+    toast.info("Recording stopped")
   }
 
   return {
@@ -147,4 +161,24 @@ const usePitch = () => {
   }
 }
 
-export default usePitch
+// Create a context for the pitch state.
+type PitchContextType = ReturnType<typeof usePitchLogic>
+const PitchContext = createContext<PitchContextType | undefined>(undefined)
+
+// Provider that exposes the pitch state globally.
+export const PitchProvider = ({ children }: { children: ReactNode }) => {
+  const pitchState = usePitchLogic()
+  return (
+    <PitchContext.Provider value={pitchState}>{children}</PitchContext.Provider>
+  )
+}
+
+// Export a hook that provides the global pitch state.
+// Now you can simply import and use `usePitch` throughout your app.
+export const usePitch = () => {
+  const context = useContext(PitchContext)
+  if (context === undefined) {
+    throw new Error("usePitch must be used within a PitchProvider")
+  }
+  return context
+}

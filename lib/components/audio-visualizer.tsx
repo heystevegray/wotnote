@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import Detail from "@/components/detail"
 
 import { UNAVAILABLE } from "../config"
-import { usePitchContext } from "../hooks/pitch/pitch-context"
+import { usePitch } from "../hooks/pitch/use-pitch"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -18,7 +18,7 @@ const AudioVisualizer = () => {
     frequency,
     startRecording,
     stopRecording,
-  } = usePitchContext()
+  } = usePitch()
 
   useEffect(() => {
     if (!recording || !analyserRef.current) {
