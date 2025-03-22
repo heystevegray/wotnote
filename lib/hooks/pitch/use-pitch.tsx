@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
 // Helper function to convert a detected frequency to a musical note.
@@ -35,19 +35,15 @@ function autoCorrelate(
   let bestCorrelation = 0
   let rms = 0
 
-  // Compute root mean square to determine the overall signal level.
   for (let i = 0; i < SIZE; i++) {
     rms += buffer[i] * buffer[i]
   }
   rms = Math.sqrt(rms / SIZE)
   if (rms < 0.01) {
-    return [-1, 0] // Signal too weak (e.g., silence or noise).
+    return [-1, 0] // Signal too weak.
   }
 
-  console.log("RMS value:", rms)
-
   let lastCorrelation = 1
-  // Try different offsets to find the one with the highest correlation.
   for (let offset = 0; offset < MAX_SAMPLES; offset++) {
     let correlation = 0
     for (let i = 0; i < MAX_SAMPLES; i++) {
@@ -55,7 +51,6 @@ function autoCorrelate(
     }
     correlation = correlation / MAX_SAMPLES
 
-    // Use a threshold to determine if a reliable pitch is detected.
     if (correlation > 0.9 && correlation > lastCorrelation) {
       bestCorrelation = correlation
       bestOffset = offset
@@ -67,114 +62,81 @@ function autoCorrelate(
     const detectedFrequency = sampleRate / bestOffset
     return [detectedFrequency, bestCorrelation]
   }
-
-  return [-1, 0] // No clear pitch was detected.
+  return [-1, 0]
 }
 
 const usePitch = () => {
   const [recording, setRecording] = useState(false)
   const [pitch, setPitch] = useState<string | null>(null)
   const [frequency, setFrequency] = useState<number | null>(null)
+  // Expose the analyser node using a ref.
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const streamRef = useRef<MediaStream | null>(null)
 
-  // Request microphone permission.
-  const requestPermission = ({ onSuccess }: { onSuccess: () => void }) => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(() => {
-        toast.success("Microphone access granted")
-        onSuccess()
+  const startRecording = async () => {
+    if (recording) {
+      return
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      toast.success("Microphone access granted")
+      streamRef.current = stream
+      const audioContext = new AudioContext()
+      audioContextRef.current = audioContext
+      const analyser = audioContext.createAnalyser()
+      analyser.fftSize = 2048
+      analyserRef.current = analyser
+      const source = audioContext.createMediaStreamSource(stream)
+      source.connect(analyser)
+      setRecording(true)
+
+      console.log("Audio context and analyser initialized.")
+
+      const buffer = new Float32Array(analyser.fftSize)
+
+      const detectPitch = () => {
+        if (!analyser) return
+        analyser.getFloatTimeDomainData(buffer)
+        const [detectedFrequency, clarity] = autoCorrelate(
+          buffer,
+          audioContext.sampleRate
+        )
+        console.log({ detectedFrequency, clarity })
+        if (clarity > 0.9) {
+          setFrequency(detectedFrequency)
+          setPitch(detectedFrequencyToNote(detectedFrequency))
+        } else {
+          setFrequency(null)
+          setPitch(null)
+        }
+        requestAnimationFrame(detectPitch)
+      }
+
+      detectPitch()
+    } catch (error) {
+      toast.error("Error accessing microphone:", {
+        description: (error as Error).message,
       })
-      .catch((error) => {
-        toast.error("Error accessing microphone:", {
-          description: (error as Error).message,
-        })
-      })
+    }
   }
 
   const stopRecording = () => {
     setRecording(false)
     setPitch(null)
     setFrequency(null)
-    toast.info("Recording stopped")
-  }
-
-  const startRecording = () => {
-    requestPermission({
-      onSuccess: () => {
-        setRecording(true)
-      },
-    })
-  }
-
-  useEffect(() => {
-    let audioContext: AudioContext | null = null
-    let analyser: AnalyserNode | null = null
-    let source: MediaStreamAudioSourceNode | null = null
-    let rafId: number | null = null
-
-    // Function to get microphone access and start processing audio.
-    const getMicrophone = async () => {
-      try {
-        // Only proceed if recording is enabled.
-        if (!recording) return
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        })
-        audioContext = new AudioContext()
-        analyser = audioContext.createAnalyser()
-        source = audioContext.createMediaStreamSource(stream)
-
-        analyser.fftSize = 2048 // FFT size can be adjusted for accuracy.
-        source.connect(analyser)
-
-        const buffer = new Float32Array(analyser.fftSize)
-        console.log("Buffer sample:", buffer.slice(0, 10))
-
-        // Recursive function to continuously detect pitch.
-        const detectPitch = () => {
-          if (!analyser) return
-
-          analyser.getFloatTimeDomainData(buffer)
-
-          // Log the first few samples and computed RMS
-          const currentRMS = Math.sqrt(
-            buffer.reduce((acc, cur) => acc + cur * cur, 0) / buffer.length
-          )
-          console.log("Buffer sample:", buffer.slice(0, 10))
-          console.log("Current RMS:", currentRMS)
-
-          const [detectedFrequency, clarity] = autoCorrelate(
-            buffer,
-            audioContext!.sampleRate
-          )
-
-          console.log({ detectedFrequency, clarity })
-
-          // Update the frequency and pitch state if the detection is clear.
-          if (clarity > 0.9) {
-            setFrequency(detectedFrequency)
-            setPitch(detectedFrequencyToNote(detectedFrequency))
-          }
-          rafId = requestAnimationFrame(detectPitch)
-        }
-
-        detectPitch()
-      } catch (error) {
-        toast.error("Error accessing microphone:", {
-          description: (error as Error).message,
-        })
-      }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop())
+      streamRef.current = null
     }
-
-    getMicrophone()
-
-    // Cleanup: cancel the animation frame and close the audio context.
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId)
-      if (audioContext) audioContext.close()
+    if (audioContextRef.current) {
+      audioContextRef.current.close()
+      audioContextRef.current = null
     }
-  }, [recording])
+    analyserRef.current = null
+    console.log("Recording stopped and audio context closed.")
+  }
 
   return {
     pitch,
@@ -182,6 +144,7 @@ const usePitch = () => {
     recording,
     startRecording,
     stopRecording,
+    analyserRef,
   }
 }
 

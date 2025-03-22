@@ -31,7 +31,7 @@ const PitchTracker = () => {
         />
         <p>{recording ? "Recording" : "Not Recording"}</p>
       </div>
-      <Button
+      {/* <Button
         onClick={() => {
           if (recording) {
             stopRecording()
@@ -41,7 +41,7 @@ const PitchTracker = () => {
         }}
       >
         {recording ? "Stop" : "Start"} Recording
-      </Button>
+      </Button> */}
       <AudioVisualizer />
       <Detail label="Pitch" value={pitch ?? UNAVAILABLE} />
       <Detail label="Frequency" value={frequency ?? UNAVAILABLE} />
