@@ -104,7 +104,7 @@ const AudioVisualizer = () => {
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div
-                className={cn("size-4 rounded-full bg-muted-foreground", {
+                className={cn("size-4 rounded-full bg-foreground", {
                   "animate-pulse bg-red-500": recording,
                 })}
               />

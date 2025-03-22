@@ -223,7 +223,7 @@ const generateChordDictionary = (): Record<string, ChordType[]> => {
 
 // ✅ Precompute permutations at startup
 const CHORD_PERMUTATIONS = generateChordDictionary()
-console.log(CHORD_PERMUTATIONS)
+// console.log(CHORD_PERMUTATIONS)
 
 /**
  * Get the inversion of a chord.
