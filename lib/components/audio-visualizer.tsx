@@ -113,7 +113,6 @@ const AudioVisualizer = () => {
             </div>
             <div>
               <Button
-                variant="ghost"
                 size="icon"
                 aria-label="Toggle recording"
                 onClick={() => {

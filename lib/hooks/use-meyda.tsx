@@ -90,6 +90,17 @@ const useMeydaAudio = () => {
           // Set raw features.
           setFeatures(extractedFeatures)
 
+          console.log({ rms: extractedFeatures.rms })
+
+          // Check the RMS value (volume threshold). Adjust the threshold as needed.
+          const rmsThreshold = 0.02
+          if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
+            // If volume is too low, clear chroma-based detections.
+            setNotes([])
+            setFrequencies([])
+            return
+          }
+
           // Process chroma data for polyphonic (chord) detection.
           if (
             extractedFeatures.chroma &&
@@ -98,7 +109,7 @@ const useMeydaAudio = () => {
             const chroma = extractedFeatures.chroma as number[]
             // Use a relative threshold based on the maximum value in the chroma vector.
             const maxChroma = Math.max(...chroma)
-            const threshold = 0.6 * maxChroma
+            const threshold = 0.4 * maxChroma
             const activeNotes: string[] = []
             const activeFrequencies: Frequency[] = []
             // For each of the 12 pitch classes.
