@@ -19,6 +19,12 @@ const noteNames = [
   "B",
 ]
 
+// Define a type for frequency values.
+export type Frequency = {
+  value: number
+  formatted: string // e.g., "440.00 Hz"
+}
+
 // Helper function to compute frequency from note name with a default octave.
 // For simplicity, we assume the note string is like "C4", "A4", etc.
 const getFrequencyFromNote = (noteWithOctave: string): number => {
@@ -38,9 +44,9 @@ const useMeydaAudio = () => {
   const [features, setFeatures] = useState<MeydaFeaturesObject | undefined>(
     undefined
   )
-  // New states to output arrays based on chroma data.
+  // New states for chroma-based note recognition.
   const [notes, setNotes] = useState<string[]>([])
-  const [frequencies, setFrequencies] = useState<number[]>([])
+  const [frequencies, setFrequencies] = useState<Frequency[]>([])
 
   // Refs to store audio context, source, analyzer node, and Meyda analyzer.
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -67,13 +73,13 @@ const useMeydaAudio = () => {
 
       // Create an AnalyserNode for visualization and smoothing.
       const analyzerNode = audioContext.createAnalyser()
-      // Set the smoothingTimeConstant (range 0 to 1, with higher values smoothing more).
+      // Set the smoothingTimeConstant (range 0 to 1, higher values smooth more).
       analyzerNode.smoothingTimeConstant = 0.8
       analyzerNodeRef.current = analyzerNode
       // Connect the source to the analyzer node.
       source.connect(analyzerNode)
 
-      // Initialize Meyda analyzer using the audio context, source, and explicitly providing the analyzer node.
+      // Initialize Meyda analyzer using the audio context, source, and providing the analyzer node.
       const meydaAnalyzer = Meyda.createMeydaAnalyzer({
         audioContext,
         source,
@@ -94,7 +100,7 @@ const useMeydaAudio = () => {
             const maxChroma = Math.max(...chroma)
             const threshold = 0.6 * maxChroma
             const activeNotes: string[] = []
-            const activeFrequencies: number[] = []
+            const activeFrequencies: Frequency[] = []
             // For each of the 12 pitch classes.
             for (let i = 0; i < chroma.length; i++) {
               if (chroma[i] >= threshold) {
@@ -103,7 +109,10 @@ const useMeydaAudio = () => {
                 activeNotes.push(noteStr)
                 // Compute frequency for the note using the helper.
                 const freq = getFrequencyFromNote(noteStr)
-                activeFrequencies.push(freq)
+                activeFrequencies.push({
+                  value: freq,
+                  formatted: `${freq.toFixed(2)} Hz`,
+                })
               }
             }
             setNotes(activeNotes)
@@ -152,11 +161,9 @@ const useMeydaAudio = () => {
     recording,
     audio: {
       notes,
-      frequencies,
-      // features, // raw features extracted by Meyda
+      frequencies: frequencies.map((freq) => freq.formatted), // Format frequencies for display.
     },
-    analyzerNode: analyzerNodeRef.current, // Expose the AnalyzerNode for visualization
-    // New outputs from chroma analysis:
+    analyzerNode: analyzerNodeRef.current, // Expose the AnalyzerNode for visualization.
     startRecording,
     stopRecording,
   }

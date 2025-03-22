@@ -26,12 +26,18 @@ const AudioVisualizer = () => {
 
   useEffect(() => {
     if (!recording || !analyzerNode) {
-      console.log(
-        "Visualizer not active: recording =",
-        recording,
-        "analyzer =",
-        analyzerNode
-      )
+      const canvas = canvasRef.current
+      if (canvas) {
+        const canvasCtx = canvas.getContext("2d")
+        if (canvasCtx) {
+          canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
+        }
+      }
+      if (animationIdRef.current) {
+        cancelAnimationFrame(animationIdRef.current)
+        animationIdRef.current = null
+      }
+
       return
     }
     const canvas = canvasRef.current
@@ -79,7 +85,9 @@ const AudioVisualizer = () => {
       canvasCtx.lineTo(canvas.width, canvas.height / 2)
       canvasCtx.stroke()
     }
+
     draw()
+
     return () => {
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current)
