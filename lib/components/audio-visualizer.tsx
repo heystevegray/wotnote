@@ -5,10 +5,17 @@ import { useSearchParams } from "next/navigation"
 import { MeydaFeaturesObject } from "meyda"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import Container from "@/components/container"
 import Detail from "@/components/detail"
 import { Icons } from "@/components/icons"
+import PianoRoll from "@/components/piano/piano-roll"
 
 import { urlParams } from "../config"
 import { useMeyda } from "../hooks/use-meyda"
@@ -18,8 +25,18 @@ const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationIdRef = useRef<number | null>(null)
 
-  const { analyzerNode, recording, audio, startRecording, stopRecording } =
-    useMeyda()
+  const {
+    analyzerNode,
+    recording,
+    midi,
+    audio,
+    startRecording,
+    stopRecording,
+  } = useMeyda()
+
+  useEffect(() => {
+    startRecording()
+  }, [])
 
   const searchParams = useSearchParams()
   const color = searchParams?.get(urlParams.color) as string
@@ -96,51 +113,52 @@ const AudioVisualizer = () => {
   }, [recording, analyzerNode, color])
 
   return (
-    <Container>
-      <Card className="w-full max-w-md overflow-hidden">
-        <div className="h-32 border-b border-border">
-          <canvas className="w-full" ref={canvasRef} height={128} width={500} />
-        </div>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div
-                className={cn("size-4 rounded-full bg-foreground", {
-                  "animate-pulse bg-red-500": recording,
-                })}
-              />
-              <p>{recording ? "Recording" : "Not Recording"}</p>
-            </div>
-            <div>
-              <Button
-                size="icon"
-                aria-label="Toggle recording"
-                onClick={() => {
-                  if (recording) {
-                    stopRecording()
-                  } else {
-                    startRecording()
-                  }
-                }}
-              >
-                {recording ? <Icons.mic /> : <Icons.micOff />}
-              </Button>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {Object.entries(audio).map(([key, value]) => {
-            return (
-              <Detail
-                key={key}
-                label={capitalizeFirstLetter(key)}
-                value={value as ReactNode}
-              />
-            )
-          })}
-        </CardContent>
-      </Card>
-    </Container>
+    <Card className="w-full max-w-md overflow-hidden">
+      <div className="h-32 border-b border-border">
+        <canvas className="w-full" ref={canvasRef} height={128} width={500} />
+      </div>
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div
+              className={cn("size-4 rounded-full bg-foreground", {
+                "animate-pulse bg-red-500": recording,
+              })}
+            />
+            <p>{recording ? "Recording" : "Not Recording"}</p>
+          </div>
+          <div>
+            <Button
+              size="icon"
+              aria-label="Toggle recording"
+              onClick={() => {
+                if (recording) {
+                  stopRecording()
+                } else {
+                  startRecording()
+                }
+              }}
+            >
+              {recording ? <Icons.mic /> : <Icons.micOff />}
+            </Button>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {Object.entries(audio).map(([key, value]) => {
+          return (
+            <Detail
+              key={key}
+              label={capitalizeFirstLetter(key)}
+              value={value as ReactNode}
+            />
+          )
+        })}
+      </CardContent>
+      <CardFooter className="bg-background p-0 md:p-0">
+        <PianoRoll chordIndex={0} activeNotes={midi.activeNotes} />
+      </CardFooter>
+    </Card>
   )
 }
 

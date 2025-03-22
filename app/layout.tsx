@@ -2,13 +2,14 @@ import "@/app/globals.css"
 
 import { Metadata, Viewport } from "next"
 import { cookies } from "next/headers"
+import Script from "next/script"
 import { Analytics } from "@vercel/analytics/react"
 import { Toaster } from "sonner"
 
 import { siteConfig } from "@/lib/config"
 import { siteFont } from "@/lib/fonts"
 import { MeydaProvider } from "@/lib/hooks/use-meyda"
-import { cn } from "@/lib/utils"
+import { cn, isDevelopment } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import Footer from "@/components/footer"
@@ -46,7 +47,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -59,10 +59,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <MeydaProvider>
               <div className="relative flex min-h-screen w-full flex-col">
                 <SiteHeader />
-                <main className="flex-1">
-                  {/* <MidiKeyboard /> */}
-                  {children}
-                </main>
+                <main className="flex-1">{children}</main>
                 <Footer />
               </div>
               <Toaster />
@@ -71,6 +68,12 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             </MeydaProvider>
           </ThemeProvider>
         </SidebarProvider>
+        {isDevelopment ? null : (
+          <Script
+            src="https://umami.stevegray.io/script.js"
+            data-website-id="9c7d6c10-2115-4fc5-a58b-427f602f64af"
+          />
+        )}
       </body>
     </html>
   )

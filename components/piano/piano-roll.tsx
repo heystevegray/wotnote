@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation"
 import { urlParams } from "@/lib/config"
 import { Note } from "@/lib/core/Piano"
 import { ClassName } from "@/lib/types"
+import { cn } from "@/lib/utils"
 
 type Props = {
   activeNotes?: Note[]
@@ -52,7 +53,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
 
   return (
     <Suspense>
-      <div className={className}>
+      <div className={cn("w-full", className)}>
         <svg
           id="piano"
           xmlns="http://www.w3.org/2000/svg"
