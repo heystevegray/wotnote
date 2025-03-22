@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { PitchDetector } from "pitchy"
 
+import AudioVisualizer from "@/lib/components/audio-visualizer"
 import { UNAVAILABLE } from "@/lib/config"
 import usePitch from "@/lib/hooks/pitch/use-pitch"
 import { cn } from "@/lib/utils"
@@ -17,14 +18,8 @@ import { Button } from "./ui/button"
 // import { Button } from "./ui/button"
 
 const PitchTracker = () => {
-  const {
-    recording,
-    pitch,
-    frequency,
-    requestPermission,
-    startRecording,
-    stopRecording,
-  } = usePitch()
+  const { recording, pitch, frequency, startRecording, stopRecording } =
+    usePitch()
 
   return (
     <Container className="flex flex-col items-center justify-center space-y-4">
@@ -36,7 +31,6 @@ const PitchTracker = () => {
         />
         <p>{recording ? "Recording" : "Not Recording"}</p>
       </div>
-      <Button onClick={requestPermission}>Request Permission</Button>
       <Button
         onClick={() => {
           if (recording) {
@@ -48,6 +42,7 @@ const PitchTracker = () => {
       >
         {recording ? "Stop" : "Start"} Recording
       </Button>
+      <AudioVisualizer />
       <Detail label="Pitch" value={pitch ?? UNAVAILABLE} />
       <Detail label="Frequency" value={frequency ?? UNAVAILABLE} />
     </Container>
