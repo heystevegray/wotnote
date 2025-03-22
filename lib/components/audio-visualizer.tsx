@@ -1,11 +1,15 @@
 import React, { useEffect, useRef } from "react"
+import { useSearchParams } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import Container from "@/components/container"
 import Detail from "@/components/detail"
+import { Icons } from "@/components/icons"
 
-import { UNAVAILABLE } from "../config"
+import { UNAVAILABLE, urlParams } from "../config"
 import { useMeyda } from "../hooks/use-meyda"
+import { cn } from "../utils"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -15,10 +19,17 @@ const AudioVisualizer = () => {
     analyzerNode,
     recording,
     pitch,
+    features,
+    note,
     frequency,
     startRecording,
     stopRecording,
   } = useMeyda()
+
+  const searchParams = useSearchParams()
+  const color =
+    (searchParams?.get(urlParams.color) as string) ??
+    "hsl(var(--key-highlight))"
 
   useEffect(() => {
     if (!recording || !analyzerNode) {
@@ -42,11 +53,13 @@ const AudioVisualizer = () => {
       animationIdRef.current = requestAnimationFrame(draw)
       analyzerNode.getByteTimeDomainData(dataArray)
 
-      canvasCtx.fillStyle = "rgb(200, 200, 200)"
-      canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
+      // Clear the canvas entirely, resulting in a transparent background.
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
 
+      canvasCtx.fillStyle = "transparent"
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
       canvasCtx.lineWidth = 2
-      canvasCtx.strokeStyle = "rgb(0, 0, 0)"
+      canvasCtx.strokeStyle = color
       canvasCtx.beginPath()
 
       const sliceWidth = canvas.width / bufferLength
@@ -71,33 +84,57 @@ const AudioVisualizer = () => {
         cancelAnimationFrame(animationIdRef.current)
       }
     }
-  }, [recording, analyzerNode])
+  }, [recording, analyzerNode, color])
 
   return (
-    <div className="space-y-4">
-      <h2>Audio Visualizer</h2>
-      <Card className="w-full min-w-64 overflow-hidden">
-        <CardContent className="p-0 pb-6">
-          <canvas className="" ref={canvasRef} width={500} height={200} />
+    <Container>
+      <Card className="w-full max-w-md overflow-hidden">
+        <div className="h-32 bg-muted">
+          <canvas className="w-full" ref={canvasRef} height={128} width={500} />
+        </div>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div
+                className={cn("size-4 rounded-full bg-muted-foreground", {
+                  "animate-pulse bg-red-500": recording,
+                })}
+              />
+              <p>{recording ? "Recording" : "Not Recording"}</p>
+            </div>
+            <div>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Toggle recording"
+                onClick={() => {
+                  if (recording) {
+                    stopRecording()
+                  } else {
+                    startRecording()
+                  }
+                }}
+              >
+                {recording ? <Icons.mic /> : <Icons.micOff />}
+              </Button>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
           <Detail label="Pitch" value={pitch ?? UNAVAILABLE} />
           <Detail label="Frequency" value={frequency ?? UNAVAILABLE} />
+          <Detail label="Note" value={note ?? UNAVAILABLE} />
+          <Detail
+            label="Features"
+            value={
+              <pre className="overflow-x-auto whitespace-pre-wrap">
+                {JSON.stringify(features, null, 2) ?? UNAVAILABLE}
+              </pre>
+            }
+          />
         </CardContent>
-        <CardFooter>
-          <Button
-            className="w-full"
-            onClick={() => {
-              if (recording) {
-                stopRecording()
-              } else {
-                startRecording()
-              }
-            }}
-          >
-            {recording ? "Stop" : "Start"} Recording
-          </Button>
-        </CardFooter>
       </Card>
-    </div>
+    </Container>
   )
 }
 

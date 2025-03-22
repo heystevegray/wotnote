@@ -1,9 +1,11 @@
+import { ReactNode } from "react"
+
 const Detail = ({
   label,
   value,
 }: {
   label: string
-  value?: string | number | null
+  value?: string | number | ReactNode | null
 }) => {
   if (!value) {
     return null

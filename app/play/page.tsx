@@ -26,7 +26,8 @@ const Play = () => {
 
   const searchParams = useSearchParams()
   const color =
-    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
+    (searchParams?.get(urlParams.color) as string) ??
+    "hsl(var(--key-highlight))"
 
   const bassNote = midiConfig.chords.chord?.bassNote
     ? `/ ${midiConfig.chords.chord?.bassNote}`
