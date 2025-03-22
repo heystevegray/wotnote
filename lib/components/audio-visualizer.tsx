@@ -10,7 +10,7 @@ import Container from "@/components/container"
 import Detail from "@/components/detail"
 import { Icons } from "@/components/icons"
 
-import { UNAVAILABLE, urlParams } from "../config"
+import { urlParams } from "../config"
 import { useMeyda } from "../hooks/use-meyda"
 import { capitalizeFirstLetter, cn } from "../utils"
 

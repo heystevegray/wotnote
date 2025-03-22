@@ -90,10 +90,8 @@ const useMeydaAudio = () => {
           // Set raw features.
           setFeatures(extractedFeatures)
 
-          console.log({ rms: extractedFeatures.rms })
-
           // Check the RMS value (volume threshold). Adjust the threshold as needed.
-          const rmsThreshold = 0.02
+          const rmsThreshold = 0.01
           if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
             // If volume is too low, clear chroma-based detections.
             setNotes([])
@@ -173,6 +171,7 @@ const useMeydaAudio = () => {
     audio: {
       notes,
       frequencies: frequencies.map((freq) => freq.formatted), // Format frequencies for display.
+      features,
     },
     analyzerNode: analyzerNodeRef.current, // Expose the AnalyzerNode for visualization.
     startRecording,
