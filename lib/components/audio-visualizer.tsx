@@ -89,7 +89,7 @@ const AudioVisualizer = () => {
   return (
     <Container>
       <Card className="w-full max-w-md overflow-hidden">
-        <div className="h-32 bg-muted">
+        <div className="h-32 border-b border-border">
           <canvas className="w-full" ref={canvasRef} height={128} width={500} />
         </div>
         <CardHeader>
