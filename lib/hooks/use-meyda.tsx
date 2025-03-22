@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, ReactNode, useContext, useRef, useState } from "react"
-import Meyda, { MeydaFeaturesObject } from "meyda" // Make sure to install Meyda via npm/yarn
+import Meyda, { MeydaFeaturesObject } from "meyda"
 import { MeydaAnalyzer } from "meyda/dist/esm/meyda-wa"
 
 const noteNames = [
@@ -19,13 +19,18 @@ const noteNames = [
   "B",
 ]
 
-// Helper function to convert frequency to a note name.
-const detectedFrequencyToNote = (frequency: number) => {
-  const A4 = 440
-  const semitoneOffset = Math.round(12 * Math.log2(frequency / A4))
-  const noteIndex = (semitoneOffset + 69) % 12
-  const octave = Math.floor((semitoneOffset + 69) / 12)
-  return `${noteNames[noteIndex]}${octave}`
+// Helper function to compute frequency from note name with a default octave.
+// For simplicity, we assume the note string is like "C4", "A4", etc.
+const getFrequencyFromNote = (noteWithOctave: string): number => {
+  // Extract note letter(s) and octave.
+  const match = noteWithOctave.match(/^([A-G]#?)(\d)$/)
+  if (!match) return 0
+  const [, notePart, octaveStr] = match
+  const octave = parseInt(octaveStr, 10)
+  // MIDI number: (octave+1)*12 + note index.
+  const noteIndex = noteNames.indexOf(notePart)
+  const midiNumber = (octave + 1) * 12 + noteIndex
+  return 440 * Math.pow(2, (midiNumber - 69) / 12)
 }
 
 const useMeydaAudio = () => {
@@ -33,9 +38,9 @@ const useMeydaAudio = () => {
   const [features, setFeatures] = useState<MeydaFeaturesObject | undefined>(
     undefined
   )
-  const [pitch, setPitch] = useState<number | null>(null)
-  const [frequency, setFrequency] = useState<number | null>(null)
-  const [note, setNote] = useState<string | null>(null)
+  // New states to output arrays based on chroma data.
+  const [notes, setNotes] = useState<string[]>([])
+  const [frequencies, setFrequencies] = useState<number[]>([])
 
   // Refs to store audio context, source, analyzer node, and Meyda analyzer.
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -43,8 +48,6 @@ const useMeydaAudio = () => {
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const meydaAnalyzerRef = useRef<MeydaAnalyzer | null>(null)
   const analyzerNodeRef = useRef<AnalyserNode | null>(null)
-  // Ref to hold our smoothed spectral centroid value.
-  const smoothedCentroidRef = useRef<number>(0)
 
   const startRecording = async () => {
     if (recording) return
@@ -78,29 +81,36 @@ const useMeydaAudio = () => {
         bufferSize: 2048,
         featureExtractors: ["rms", "spectralCentroid", "chroma"],
         callback: (extractedFeatures: MeydaFeaturesObject) => {
-          // Extract features from the callback.
+          // Set raw features.
           setFeatures(extractedFeatures)
-          // Use the spectral centroid as a proxy for the dominant frequency.
-          const currentFrequency = extractedFeatures.spectralCentroid
-          if (currentFrequency) {
-            // Apply a simple low-pass filter to smooth the value.
-            const alpha = 0.2 // Smoothing factor; lower means smoother.
-            // Initialize smoothedCentroidRef if it hasn't been set yet.
-            if (smoothedCentroidRef.current === 0) {
-              smoothedCentroidRef.current = currentFrequency
-            }
-            const newSmoothed =
-              alpha * currentFrequency +
-              (1 - alpha) * smoothedCentroidRef.current
-            smoothedCentroidRef.current = newSmoothed
 
-            setFrequency(newSmoothed)
-            setPitch(newSmoothed) // Using spectral centroid as "pitch" here.
-            setNote(detectedFrequencyToNote(newSmoothed))
+          // Process chroma data for polyphonic (chord) detection.
+          if (
+            extractedFeatures.chroma &&
+            Array.isArray(extractedFeatures.chroma)
+          ) {
+            const chroma = extractedFeatures.chroma as number[]
+            // Use a relative threshold based on the maximum value in the chroma vector.
+            const maxChroma = Math.max(...chroma)
+            const threshold = 0.6 * maxChroma
+            const activeNotes: string[] = []
+            const activeFrequencies: number[] = []
+            // For each of the 12 pitch classes.
+            for (let i = 0; i < chroma.length; i++) {
+              if (chroma[i] >= threshold) {
+                // Append a default octave (e.g., 4) to the note.
+                const noteStr = `${noteNames[i]}4`
+                activeNotes.push(noteStr)
+                // Compute frequency for the note using the helper.
+                const freq = getFrequencyFromNote(noteStr)
+                activeFrequencies.push(freq)
+              }
+            }
+            setNotes(activeNotes)
+            setFrequencies(activeFrequencies)
           } else {
-            setFrequency(null)
-            setPitch(null)
-            setNote(null)
+            setNotes([])
+            setFrequencies([])
           }
         },
       })
@@ -133,19 +143,20 @@ const useMeydaAudio = () => {
     }
     setRecording(false)
     setFeatures(undefined)
-    setPitch(null)
-    setFrequency(null)
-    setNote(null)
+    setNotes([])
+    setFrequencies([])
     console.log("Meyda analyzer stopped and audio context closed.")
   }
 
   return {
     recording,
-    features, // raw features extracted by Meyda
-    pitch, // smoothed spectral centroid used as pitch
-    frequency, // smoothed frequency value
-    note, // converted note name (e.g., "A4")
+    audio: {
+      notes,
+      frequencies,
+      // features, // raw features extracted by Meyda
+    },
     analyzerNode: analyzerNodeRef.current, // Expose the AnalyzerNode for visualization
+    // New outputs from chroma analysis:
     startRecording,
     stopRecording,
   }

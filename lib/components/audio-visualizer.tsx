@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useEffect, useRef } from "react"
+import React, { ReactNode, useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
+import { MeydaFeaturesObject } from "meyda"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,22 +12,14 @@ import { Icons } from "@/components/icons"
 
 import { UNAVAILABLE, urlParams } from "../config"
 import { useMeyda } from "../hooks/use-meyda"
-import { cn } from "../utils"
+import { capitalizeFirstLetter, cn } from "../utils"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationIdRef = useRef<number | null>(null)
 
-  const {
-    analyzerNode,
-    recording,
-    pitch,
-    features,
-    note,
-    frequency,
-    startRecording,
-    stopRecording,
-  } = useMeyda()
+  const { analyzerNode, recording, audio, startRecording, stopRecording } =
+    useMeyda()
 
   const searchParams = useSearchParams()
   const color = searchParams?.get(urlParams.color) as string
@@ -129,17 +122,15 @@ const AudioVisualizer = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Detail label="Pitch" value={pitch ?? UNAVAILABLE} />
-          <Detail label="Frequency" value={frequency ?? UNAVAILABLE} />
-          <Detail label="Note" value={note ?? UNAVAILABLE} />
-          <Detail
-            label="Features"
-            value={
-              <pre className="overflow-x-auto whitespace-pre-wrap">
-                {JSON.stringify(features, null, 2) ?? UNAVAILABLE}
-              </pre>
-            }
-          />
+          {Object.entries(audio).map(([key, value]) => {
+            return (
+              <Detail
+                key={key}
+                label={capitalizeFirstLetter(key)}
+                value={value as ReactNode}
+              />
+            )
+          })}
         </CardContent>
       </Card>
     </Container>
