@@ -4,7 +4,7 @@ import { createContext, ReactNode, useContext, useRef, useState } from "react"
 import Meyda, { MeydaFeaturesObject } from "meyda"
 import { MeydaAnalyzer } from "meyda/dist/esm/meyda-wa"
 
-import { Note } from "../core/Piano"
+import { Note } from "../core/Piano" // Assuming you have a Note type in your project.
 
 const noteNames = [
   "c",
@@ -27,6 +27,27 @@ export type Frequency = {
   formatted: string // e.g., "440.00 Hz"
 }
 
+const getNotesFromFrequencies = (frequencies: Frequency[]): Note["key"][] => {
+  // Convert frequencies to note names.
+  return frequencies.map((freq) => {
+    const midiNumber = Math.round(69 + 12 * Math.log2(freq.value / 440)) // A4 is MIDI note 69
+    const octave = Math.floor(midiNumber / 12) - 1 // Adjust for octave
+    const noteIndex = midiNumber % 12
+    return `${noteNames[noteIndex]}${octave}` as Note["key"] // Return note name with octave.
+  })
+}
+
+// Helper to convert a frequency value to a note name.
+// This function calculates the semitone offset relative to A4 (440 Hz)
+// and returns a note string with an octave determined dynamically.
+const detectedFrequencyToNote = (frequency: number): string => {
+  const A4 = 440
+  const semitoneOffset = Math.round(12 * Math.log2(frequency / A4))
+  const noteIndex = (semitoneOffset + 69) % 12
+  const octave = Math.floor((semitoneOffset + 69) / 12)
+  return `${noteNames[noteIndex]}${octave}`
+}
+
 const getMidiFromFrequencies = (frequencies: Frequency[]): Note[] => {
   // Convert frequencies to MIDI note numbers.
   return frequencies.map((freq) => {
@@ -38,49 +59,17 @@ const getMidiFromFrequencies = (frequencies: Frequency[]): Note[] => {
   })
 }
 
-// Helper function to compute frequency from note name with a default octave.
-// For simplicity, we assume the note string is like "C4", "A4", etc.
-const getFrequencyFromNote = (noteWithOctave: string): number => {
-  // Extract note letter(s) and octave.
-  const match = noteWithOctave.match(/^([a-g]#?)(\d)$/)
-  if (!match) return 0
-  const [, notePart, octaveStr] = match
-  const octave = parseInt(octaveStr, 10)
-  // MIDI number: (octave+1)*12 + note index.
-  const noteIndex = noteNames.indexOf(notePart)
-  const midiNumber = (octave + 1) * 12 + noteIndex
-  return 440 * Math.pow(2, (midiNumber - 69) / 12)
-}
-
-const getFrequencyFromChroma = (chromaValue: number): number => {
-  // Assuming chromaValue is a value from 0 to 1 representing the strength of a note.
-  // Map it to a frequency using a simple linear scale for demonstration.
-  // This is a placeholder; you may want to use a more sophisticated mapping.
-  const baseFrequency = 440 // A4
-  return baseFrequency * (1 + chromaValue) // Adjust as needed.
-}
-
-const getNotesFromFrequencies = (frequencies: Frequency[]): Note["key"][] => {
-  // Convert frequencies to note names.
-  return frequencies.map((freq) => {
-    const midiNumber = Math.round(69 + 12 * Math.log2(freq.value / 440)) // A4 is MIDI note 69
-    const octave = Math.floor(midiNumber / 12) - 1 // Adjust for octave
-    const noteIndex = midiNumber % 12
-    return `${noteNames[noteIndex]}${octave}` as Note["key"] // Return note name with octave.
-  })
-}
-
 const useMeydaAudio = () => {
   const [recording, setRecording] = useState(false)
   const [features, setFeatures] = useState<MeydaFeaturesObject | undefined>(
     undefined
   )
-  // New states for chroma-based note recognition.
+  // States for chord detection.
   const [notes, setNotes] = useState<string[]>([])
   const [frequencies, setFrequencies] = useState<Frequency[]>([])
-  const [activeNotes, setActiveNotes] = useState<Note[]>([])
+  const [activeNotes, setActiveNotes] = useState<Note[]>([]) // For MIDI conversion if needed.
 
-  // Refs to store audio context, source, analyzer node, and Meyda analyzer.
+  // Refs for audio objects.
   const audioContextRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
   const mediaStreamRef = useRef<MediaStream | null>(null)
@@ -90,7 +79,6 @@ const useMeydaAudio = () => {
   const startRecording = async () => {
     if (recording) return
     try {
-      // Request microphone access.
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaStreamRef.current = stream
 
@@ -99,83 +87,80 @@ const useMeydaAudio = () => {
       const audioContext = new AudioContext()
       audioContextRef.current = audioContext
 
-      // Create an audio source from the microphone.
       const source = audioContext.createMediaStreamSource(stream)
       sourceRef.current = source
 
-      // Create an AnalyserNode for visualization and smoothing.
       const analyzerNode = audioContext.createAnalyser()
-      // Set the smoothingTimeConstant (range 0 to 1, higher values smooth more).
       analyzerNode.smoothingTimeConstant = 0.8
       analyzerNodeRef.current = analyzerNode
-      // Connect the source to the analyzer node.
       source.connect(analyzerNode)
 
-      // Initialize Meyda analyzer using the audio context, source, and providing the analyzer node.
+      // Request amplitudeSpectrum along with rms and spectralCentroid.
       const meydaAnalyzer = Meyda.createMeydaAnalyzer({
         audioContext,
         source,
         analyzer: analyzerNode,
         bufferSize: 2048,
-        featureExtractors: ["rms", "spectralCentroid", "chroma"],
+        featureExtractors: ["rms", "spectralCentroid", "amplitudeSpectrum"],
         callback: (extractedFeatures: MeydaFeaturesObject) => {
-          // Set raw features.
           setFeatures(extractedFeatures)
 
-          // Check the RMS value (volume threshold). Adjust the threshold as needed.
-          const rmsThreshold = 0.02
+          // Apply an RMS threshold to filter out low-level noise.
+          const rmsThreshold = 0.01
+
+          // console.log({ rms: extractedFeatures.rms })
+          // console.log({ s: extractedFeatures.amplitudeSpectrum })
+          //
           if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
-            // If volume is too low, clear chroma-based detections.
             setNotes([])
             setFrequencies([])
             return
           }
 
-          // Process chroma data for polyphonic (chord) detection.
-          if (
-            extractedFeatures.chroma &&
-            Array.isArray(extractedFeatures.chroma)
-          ) {
-            const chroma = extractedFeatures.chroma as number[]
-            // Use a relative threshold based on the maximum value in the chroma vector.
-            const maxChroma = Math.max(...chroma)
-            const threshold = 1 * maxChroma
-            const activeFrequencies: Frequency[] = []
-            const notes = []
+          // Use amplitudeSpectrum for chord detection.
+          if (extractedFeatures.amplitudeSpectrum?.length > 0) {
+            const spectrum = extractedFeatures.amplitudeSpectrum
+            console.log({ spectrum })
 
-            // For each of the 12 pitch classes.
-            for (let index = 0; index < chroma.length; index++) {
-              if (chroma[index] >= threshold) {
-                const noteStr = noteNames[index]
-                notes.push(noteStr)
+            // Determine the maximum amplitude in the spectrum.
+            const maxVal = Math.max(...spectrum)
 
-                // const freq = getFrequencyFromChroma(chroma[index])
-                const freq = getFrequencyFromNote(`${noteStr}4`) // Assuming octave 4 for simplicity.
-                activeFrequencies.push({
-                  value: freq,
-                  formatted: `${freq.toFixed(2)} Hz`,
-                })
+            console.log({ maxVal })
+
+            // Set a peak threshold at 50% of the maximum.
+            const peakThreshold = 0.8 * maxVal
+            const peakIndices: number[] = []
+            for (let i = 1; i < spectrum.length - 1; i++) {
+              if (
+                spectrum[i] > peakThreshold &&
+                spectrum[i] > spectrum[i - 1] &&
+                spectrum[i] > spectrum[i + 1]
+              ) {
+                peakIndices.push(i)
               }
             }
-            // console.log("notes", notes)
-            const activeNotes = getMidiFromFrequencies(activeFrequencies)
-            console.log(
-              "activeNotes",
-              activeNotes.map((n) => n.key)
-            )
-            console.log(
-              "activeFrequencies",
-              activeFrequencies.map((f) => f.value)
-            )
+            const sampleRate = audioContextRef.current?.sampleRate || 44100
+            const bufferSize = 2048
+            const detectedNotes: string[] = []
+            const detectedFrequencies: Frequency[] = []
+            for (const bin of peakIndices) {
+              // Compute the frequency for the bin.
+              const freq = (bin * sampleRate) / bufferSize
+              console.log({ freq })
 
-            setNotes(notes)
-            setActiveNotes(activeNotes)
-            // console.log({ activeFrequencies })
-            setFrequencies(activeFrequencies)
+              // Use the detectedFrequencyToNote helper to get a note with the proper octave.
+              detectedNotes.push(detectedFrequencyToNote(freq))
+              detectedFrequencies.push({
+                value: freq,
+                formatted: `${freq.toFixed(2)} Hz`,
+              })
+            }
+            setNotes(detectedNotes)
+            setFrequencies(detectedFrequencies)
+            setActiveNotes(getMidiFromFrequencies(detectedFrequencies))
           } else {
             setNotes([])
             setFrequencies([])
-            setActiveNotes([])
           }
         },
       })
@@ -219,12 +204,11 @@ const useMeydaAudio = () => {
       activeNotes: activeNotes,
     },
     audio: {
-      // rms: features?.rms ?? 0, // Default to 0 if undefined.
-      notes: notes.sort(), // Sort notes for consistent display.
-      frequencies: frequencies.map((freq) => freq.formatted).sort(),
-      // chroma: features?.chroma ?? [], // Default to empty array if undefined.
+      notes,
+      // frequencies: frequencies.map((freq) => freq.formatted),
+      // features,
     },
-    analyzerNode: analyzerNodeRef.current, // Expose the AnalyzerNode for visualization.
+    analyzerNode: analyzerNodeRef.current,
     startRecording,
     stopRecording,
   }
