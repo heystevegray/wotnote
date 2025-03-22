@@ -2,7 +2,7 @@ import { Suspense, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
-import { Note } from "@/lib/core/Piano"
+import { MAX_KEY, MIN_KEY, Note } from "@/lib/core/Piano"
 import { ClassName } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
@@ -25,15 +25,15 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
   }
 
-  // const resetKeys = () => {
-  //   // Reset all keys
-  //   for (let index = MIN_KEY; index < MAX_KEY; index++) {
-  //     const key = getKeyByCode(index)
-  //     if (key) {
-  //       key.style.fill = ""
-  //     }
-  //   }
-  // }
+  const resetKeys = () => {
+    // Reset all keys
+    for (let index = MIN_KEY; index < MAX_KEY; index++) {
+      const key = getKeyByCode(index)
+      if (key) {
+        key.style.fill = ""
+      }
+    }
+  }
 
   const highlightKeys = () => {
     activeNotes?.map((note) => {
@@ -46,7 +46,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
   }
 
   useEffect(() => {
-    // resetKeys()
+    resetKeys()
     highlightKeys()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeNotes])
