@@ -1,13 +1,13 @@
 "use client"
 
 import AudioVisualizer from "@/lib/components/audio-visualizer"
-import { usePitch } from "@/lib/hooks/pitch/use-pitch"
+import { useMeyda } from "@/lib/hooks/use-meyda"
 import { cn } from "@/lib/utils"
 
 import Container from "./container"
 
 const PitchTracker = () => {
-  const { recording } = usePitch()
+  const { recording } = useMeyda()
 
   return (
     <Container className="flex flex-col items-center justify-center space-y-4">

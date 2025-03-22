@@ -8,6 +8,7 @@ import { Toaster } from "sonner"
 import { siteConfig } from "@/lib/config"
 import { siteFont } from "@/lib/fonts"
 import { PitchProvider } from "@/lib/hooks/pitch/use-pitch"
+import { MeydaProvider } from "@/lib/hooks/use-meyda"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -56,7 +57,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <PitchProvider>
+            <MeydaProvider>
               <div className="relative flex min-h-screen w-full flex-col">
                 <SiteHeader />
                 <main className="flex-1">
@@ -68,7 +69,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <Toaster />
               <Analytics />
               <TailwindIndicator />
-            </PitchProvider>
+            </MeydaProvider>
           </ThemeProvider>
         </SidebarProvider>
       </body>
