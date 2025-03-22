@@ -53,12 +53,20 @@ const AudioVisualizer = () => {
       animationIdRef.current = requestAnimationFrame(draw)
       analyzerNode.getByteTimeDomainData(dataArray)
 
+      // Scale the canvas for high-DPI screens.
+      const dpr = window.devicePixelRatio || 1
+      // Set canvas width/height based on its client dimensions.
+      const rect = canvas.getBoundingClientRect()
+
+      canvas.width = rect.width * dpr
+      canvas.height = rect.height * dpr
+
       // Clear the canvas entirely, resulting in a transparent background.
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
 
       canvasCtx.fillStyle = "transparent"
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
-      canvasCtx.lineWidth = 2
+      canvasCtx.lineWidth = 4
       canvasCtx.strokeStyle = color
       canvasCtx.beginPath()
 
