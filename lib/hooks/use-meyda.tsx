@@ -26,18 +26,19 @@ const detectedFrequencyToNote = (frequency: number) => {
   return `${noteNames[noteIndex]}${octave}`
 }
 
-const getMeydaState = () => {
+const useMeydaAudio = () => {
   const [recording, setRecording] = useState(false)
   const [features, setFeatures] = useState<any>({})
   const [pitch, setPitch] = useState<number | null>(null)
   const [frequency, setFrequency] = useState<number | null>(null)
   const [note, setNote] = useState<string | null>(null)
 
-  // Refs to store audio context, source, and Meyda analyzer.
+  // Refs to store audio context, source, analyzer node, and Meyda analyzer.
   const audioContextRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const meydaAnalyzerRef = useRef<any>(null)
+  const analyzerNodeRef = useRef<AnalyserNode | null>(null)
 
   const startRecording = async () => {
     if (recording) return
@@ -55,17 +56,23 @@ const getMeydaState = () => {
       const source = audioContext.createMediaStreamSource(stream)
       sourceRef.current = source
 
-      // Initialize Meyda analyzer.
+      // Create an AnalyserNode for additional visualization needs and store it in a ref.
+      const analyzerNode = audioContext.createAnalyser()
+      analyzerNodeRef.current = analyzerNode
+      // Connect the source to the analyzer node.
+      source.connect(analyzerNode)
+
+      // Initialize Meyda analyzer using the audio context, source, and explicitly providing the analyzer node.
       const meydaAnalyzer = Meyda.createMeydaAnalyzer({
         audioContext,
         source,
+        analyzer: analyzerNode,
         bufferSize: 2048,
         featureExtractors: ["rms", "spectralCentroid", "chroma"],
         callback: (extractedFeatures: any) => {
           // Extract features from the callback.
           setFeatures(extractedFeatures)
-          // Here we use the spectral centroid as a proxy for the dominant frequency.
-          // This is a simplification; for vocals or chords you might want a more robust approach.
+          // Use the spectral centroid as a proxy for the dominant frequency.
           const currentFrequency = extractedFeatures.spectralCentroid
           if (currentFrequency) {
             setFrequency(currentFrequency)
@@ -101,6 +108,10 @@ const getMeydaState = () => {
       audioContextRef.current.close()
       audioContextRef.current = null
     }
+    if (analyzerNodeRef.current) {
+      analyzerNodeRef.current.disconnect()
+      analyzerNodeRef.current = null
+    }
     setRecording(false)
     setFeatures({})
     setPitch(null)
@@ -115,16 +126,20 @@ const getMeydaState = () => {
     pitch, // estimated pitch (in this case, the spectral centroid)
     frequency, // frequency value from the spectral centroid
     note, // converted note name (e.g., "A4")
+    analyzerNode: analyzerNodeRef.current, // Expose the AnalyzerNode for visualization
     startRecording,
     stopRecording,
   }
 }
 
-type MeydaContextType = ReturnType<typeof getMeydaState>
+//
+// Create a context for the Meyda audio state.
+//
+type MeydaContextType = ReturnType<typeof useMeydaAudio>
 const MeydaContext = createContext<MeydaContextType | undefined>(undefined)
 
 export const MeydaProvider = ({ children }: { children: ReactNode }) => {
-  const meydaState = getMeydaState()
+  const meydaState = useMeydaAudio()
   return (
     <MeydaContext.Provider value={meydaState}>{children}</MeydaContext.Provider>
   )
@@ -137,3 +152,5 @@ export const useMeyda = () => {
   }
   return context
 }
+
+export default useMeydaAudio
