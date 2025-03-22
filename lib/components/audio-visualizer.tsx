@@ -119,17 +119,18 @@ const AudioVisualizer = () => {
       </div>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <div
               className={cn("size-4 rounded-full bg-foreground", {
                 "animate-pulse bg-red-500": recording,
               })}
             />
             <p>{recording ? "Recording" : "Not Recording"}</p>
-          </div>
+          </div> */}
+          <div>{audio.notes}</div>
+
           <div>
             <Button
-              size="icon"
               aria-label="Toggle recording"
               onClick={() => {
                 if (recording) {
@@ -140,11 +141,12 @@ const AudioVisualizer = () => {
               }}
             >
               {recording ? <Icons.mic /> : <Icons.micOff />}
+              {recording ? "Recording" : "Not Recording"}
             </Button>
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      {/* <CardContent>
         {Object.entries(audio).map(([key, value]) => {
           return (
             <Detail
@@ -154,7 +156,7 @@ const AudioVisualizer = () => {
             />
           )
         })}
-      </CardContent>
+      </CardContent> */}
       <CardFooter className="bg-background p-0 md:p-0">
         <PianoRoll chordIndex={0} activeNotes={midi.activeNotes} />
       </CardFooter>
