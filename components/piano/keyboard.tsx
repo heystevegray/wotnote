@@ -12,9 +12,10 @@ import Chords from "./chords"
 
 const Keyboard = (): ReactElement => {
   const searchParams = useSearchParams()
-  const key: Key = (searchParams.get(urlParams.key) as Key) ?? defaultConfig.key
+  const key: Key =
+    (searchParams?.get(urlParams.key) as Key) ?? defaultConfig.key
   const scale: Scale =
-    (searchParams.get(urlParams.scale) as Scale) ?? defaultConfig.scale
+    (searchParams?.get(urlParams.scale) as Scale) ?? defaultConfig.scale
 
   const selectedScale = new Piano({ key, scale })
   const chords = selectedScale.getChords()

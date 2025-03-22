@@ -7,7 +7,6 @@ import { Toaster } from "sonner"
 
 import { siteConfig } from "@/lib/config"
 import { siteFont } from "@/lib/fonts"
-import { PitchProvider } from "@/lib/hooks/pitch/use-pitch"
 import { MeydaProvider } from "@/lib/hooks/use-meyda"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"

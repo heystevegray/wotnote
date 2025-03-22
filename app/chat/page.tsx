@@ -53,8 +53,8 @@ const Phrase = ({ phrase }: { phrase: Phrase }) => {
 export default function Home() {
   const { optionKey, isMobile } = useUserAgent()
   const searchParams = useSearchParams()
-  const query = searchParams.get(urlParams.query) ?? ""
-  const key = (searchParams.get(urlParams.key) as Key) ?? defaultConfig.key
+  const query = searchParams?.get(urlParams.query) ?? ""
+  const key = (searchParams?.get(urlParams.key) as Key) ?? defaultConfig.key
   const [open, setOpen] = useState(false)
   const [generation, setGeneration] = useState<Generation>()
 

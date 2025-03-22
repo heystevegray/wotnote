@@ -17,7 +17,8 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
   const searchParams = useSearchParams()
 
   const color =
-    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
+    (searchParams?.get(urlParams.color) as string) ??
+    "hsl(var(--key-highlight))"
 
   const getKeyByCode = (code: number) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement

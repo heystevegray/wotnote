@@ -36,11 +36,13 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
   }, [midiConfig.inputs, midiConfig.midiSupported])
 
   const searchParams = useSearchParams()
-  const key: Key = (searchParams.get(urlParams.key) as Key) ?? defaultConfig.key
+  const key: Key =
+    (searchParams?.get(urlParams.key) as Key) ?? defaultConfig.key
   const scale: Scale =
-    (searchParams.get(urlParams.scale) as Scale) ?? defaultConfig.scale
+    (searchParams?.get(urlParams.scale) as Scale) ?? defaultConfig.scale
   const color =
-    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
+    (searchParams?.get(urlParams.color) as string) ??
+    "hsl(var(--key-highlight))"
 
   const selectedScale = React.useMemo(
     () => new Piano({ key, scale }),

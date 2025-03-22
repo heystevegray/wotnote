@@ -24,7 +24,7 @@
         "@types/meyda": "^4.3.8",
         "@types/webmidi": "^2.1.0",
         "@vercel/analytics": "^1.0.1",
-        "ai": "^4.0.4",
+        "ai": "^4.2.0",
         "class-variance-authority": "^0.4.0",
         "clsx": "^1.2.1",
         "cmdk": "^1.0.0",

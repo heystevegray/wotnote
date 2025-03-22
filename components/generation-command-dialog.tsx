@@ -31,7 +31,7 @@ export function GenerateDialog({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [open, setOpen] = React.useState(false)
-  const query = searchParams.get(urlParams.query) ?? ""
+  const query = searchParams?.get(urlParams.query) ?? ""
   const [input, setInput] = React.useState(query)
 
   const handleClose = () => {
@@ -56,7 +56,7 @@ export function GenerateDialog({
   // searchParams with a provided key/value pair
   const createQueryString = React.useCallback(
     (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString())
+      const params = new URLSearchParams(searchParams?.toString())
       params.set(name, value)
 
       return params.toString()

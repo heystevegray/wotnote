@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 
@@ -9,7 +11,7 @@ import { Icons } from "@/components/icons"
 
 import { UNAVAILABLE, urlParams } from "../config"
 import { useMeyda } from "../hooks/use-meyda"
-import { cn, hslToHex } from "../utils"
+import { cn } from "../utils"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
