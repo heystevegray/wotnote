@@ -127,7 +127,13 @@ const AudioVisualizer = () => {
             />
             <p>{recording ? "Recording" : "Not Recording"}</p>
           </div> */}
-          <div>{audio.notes}</div>
+          <div>
+            {audio.notes
+              .map(
+                (note) => `${capitalizeFirstLetter(note.name)} ${note.octave}`
+              )
+              .join(", ")}
+          </div>
 
           <div>
             <Button

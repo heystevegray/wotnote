@@ -27,6 +27,8 @@ export type Frequency = {
   formatted: string // e.g., "440.00 Hz"
 }
 
+export type DetectedNote = { name: string; octave: number }
+
 const getNotesFromFrequencies = (frequencies: Frequency[]): Note["key"][] => {
   // Convert frequencies to note names.
   return frequencies.map((freq) => {
@@ -40,12 +42,15 @@ const getNotesFromFrequencies = (frequencies: Frequency[]): Note["key"][] => {
 // Helper to convert a frequency value to a note name.
 // This function calculates the semitone offset relative to A4 (440 Hz)
 // and returns a note string with an octave determined dynamically.
-const detectedFrequencyToNote = (frequency: number): string => {
+const detectedFrequencyToNote = (frequency: number): DetectedNote => {
   const A4 = 440
   const semitoneOffset = Math.round(12 * Math.log2(frequency / A4))
   const noteIndex = (semitoneOffset + 69) % 12
   const octave = Math.floor((semitoneOffset + 69) / 12)
-  return `${noteNames[noteIndex]}${octave}`
+  return {
+    name: noteNames[noteIndex],
+    octave: octave - 1, // Adjust for octave (0-based)
+  }
 }
 
 const getMidiFromFrequencies = (frequencies: Frequency[]): Note[] => {
@@ -65,7 +70,7 @@ const useMeydaAudio = () => {
     undefined
   )
   // States for chord detection.
-  const [notes, setNotes] = useState<string[]>([])
+  const [notes, setNotes] = useState<DetectedNote[]>([])
   const [frequencies, setFrequencies] = useState<Frequency[]>([])
   const [activeNotes, setActiveNotes] = useState<Note[]>([]) // For MIDI conversion if needed.
 
@@ -141,7 +146,7 @@ const useMeydaAudio = () => {
             }
             const sampleRate = audioContextRef.current?.sampleRate || 44100
             const bufferSize = 2048
-            const detectedNotes: string[] = []
+            const detectedNotes: DetectedNote[] = []
             const detectedFrequencies: Frequency[] = []
             for (const bin of peakIndices) {
               // Compute the frequency for the bin.
