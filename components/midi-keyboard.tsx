@@ -6,7 +6,8 @@ import { useTheme } from "next-themes"
 import { toast } from "sonner"
 
 import { urlParams } from "@/lib/config"
-import { defaultConfig, Key, Piano, Scale } from "@/lib/core/Piano"
+import { Key } from "@/lib/core/keyboard"
+import { defaultConfig, Piano, Scale } from "@/lib/core/Piano"
 import useMidi from "@/lib/hooks/use-midi"
 
 import PianoRoll from "./piano/piano-roll"

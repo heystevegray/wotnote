@@ -29,7 +29,7 @@ export const MidiNoteSchema = z.object({
 
 export type MidiNote = z.infer<typeof MidiNoteSchema>
 
-export type MidiKey = {
+export type MidiProps = {
   midiNote: number
   name: string
   octave: number
@@ -47,7 +47,7 @@ export type ChordProps = {
    *
    * @example "Major", "minor", "Dominant 7th"
    */
-  quality: string
+  quality?: string
   /**
    * Optional symbol for the chord.
    *
@@ -69,7 +69,7 @@ export type ChordProps = {
 export type Chord = {
   midiNotes: number[]
   notes: string[]
-  tonic: Key
+  tonic?: Key
   /**
    * Diatonic intervals from the root note.
    */
@@ -80,7 +80,7 @@ export type Chord = {
 type Inversion = "root" | "first" | "second" | "third"
 
 type InversionOutput = {
-  inversion: Inversion
+  inversion?: Inversion
   bassNote?: string
 }
 

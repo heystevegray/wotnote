@@ -1,7 +1,7 @@
 "use client"
 
 import { Chord as ChordType } from "@/lib/core/keyboard"
-import useMidi from "@/lib/hooks/use-midi"
+import { MIDIChordProps } from "@/lib/hooks/use-midi"
 import { camelCaseToTitleCase } from "@/lib/utils"
 import ChordName from "@/components/chord-name"
 import Inversion from "@/components/inversion"
@@ -43,11 +43,10 @@ const Detail = ({
   )
 }
 
-const ChordDetection = () => {
-  const midiConfig = useMidi()
+const ChordDetection = ({ chord }: { chord: MIDIChordProps["chord"] }) => {
   const sortedDetails = detailOrder.map((key) => ({
     key,
-    value: midiConfig.chord?.[key],
+    value: chord?.[key],
   }))
 
   return (
@@ -55,15 +54,15 @@ const ChordDetection = () => {
       <div className="relative flex-1 flex-col p-4 text-center">
         <div className="flex h-full flex-col">
           <div className="flex flex-1 flex-col items-center justify-center">
-            <ChordName chord={midiConfig.chord} />
+            <ChordName chord={chord} />
           </div>
-          <div className="flex w-full items-end justify-between">
-            <div className="flex flex-col items-start">
+          <div className="flex w-full items-end justify-end">
+            {/* <div className="flex flex-col items-start">
               {sortedDetails.map(({ key, value }) => (
                 <Detail key={key} label={key} value={value} />
               ))}
-            </div>
-            <Inversion value={midiConfig.chord?.inversion} />
+            </div> */}
+            <Inversion value={chord?.inversion} />
           </div>
         </div>
       </div>

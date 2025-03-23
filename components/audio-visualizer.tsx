@@ -173,9 +173,9 @@ const AudioVisualizer = () => {
           )
         })}
       </CardContent> */}
-      <CardFooter className="bg-background p-0 md:p-0">
+      {/* <CardFooter className="bg-background p-0 md:p-0">
         <PianoRoll chordIndex={0} midiNotes={midi.midiNotes} />
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   )
 }
