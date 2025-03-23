@@ -1,4 +1,3 @@
-import { randomBytes } from "crypto"
 import { z } from "zod"
 
 export const KeyEnum = z.enum([
@@ -22,6 +21,12 @@ export const KeyEnum = z.enum([
 ])
 
 export type Key = z.infer<typeof KeyEnum>
+
+export type MidiKey = {
+  midiNote: number
+  name: string
+  octave: number
+}
 
 type NoteInfo = {
   name: Key
@@ -87,8 +92,9 @@ export const NOTES: Record<number, NoteInfo> = {
 }
 
 export const CHORD_TYPES: ChordProps[] = [
+  // Single Notes
+  { quality: "", symbol: "1", semitones: [0] },
   // Two-Note Chords (Dyads)
-  { quality: "Octave", symbol: "1", semitones: [0] },
   { quality: "minor 2nd", symbol: "♭2", semitones: [0, 1] },
   { quality: "Major 2nd", symbol: "2", semitones: [0, 2] },
   { quality: "minor 3rd", symbol: "♭3", semitones: [0, 3] },
@@ -301,11 +307,6 @@ export const getSemitones = (
  * Detects a chord from a set of MIDI notes.
  */
 export const detectChord = (midiNotes: Set<number>): Chord | null => {
-  // Need at least two notes to form a chord
-  if (midiNotes.size < 2) {
-    return null
-  }
-
   // Convert MIDI notes to semitone intervals (0-11)
   const semitones = getSemitones(midiNotes)
 

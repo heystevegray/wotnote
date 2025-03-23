@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
-import { Chord, detectChord, NOTES } from "../core/keyboard"
+import { Chord, detectChord, MidiKey, NOTES } from "../core/keyboard"
 
 export interface MIDIChordProps {
   chord?: Chord | null
@@ -17,13 +17,7 @@ export interface MIDInterface extends MIDIChordProps {
   inputs: Device[]
 }
 
-interface Key {
-  midiNote: number
-  name: string
-  octave: number
-}
-
-interface MidiNote extends Key {
+interface MidiNote extends MidiKey {
   velocity: number
   on: boolean
 }
@@ -48,7 +42,7 @@ const initialNote: MidiNote = {
 }
 
 const useMidi = (): MIDInterface => {
-  const [activeNotes, setActiveNotes] = useState<Key[]>([])
+  const [activeNotes, setActiveNotes] = useState<MidiKey[]>([])
   const [midiConfig, setMidiConfig] = useState<MIDInterface>({
     midiSupported: undefined,
     midiAccess: undefined,
@@ -66,7 +60,7 @@ const useMidi = (): MIDInterface => {
     setMidiConfig(merged)
   }
 
-  const getKey = (midiNote: number): Key => {
+  const getKey = (midiNote: number): MidiKey => {
     const octave: number = Math.floor(midiNote / 12 - 1)
     const noteIndex: number = midiNote % 12
     const name = NOTES[noteIndex].name

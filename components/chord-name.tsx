@@ -8,7 +8,8 @@ import { MIDIChordProps } from "@/lib/hooks/use-midi"
 const ChordName = ({ chord }: { chord?: MIDIChordProps["chord"] }) => {
   const searchParams = useSearchParams()
   const color =
-    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
+    (searchParams?.get(urlParams.color) as string) ??
+    "hsl(var(--key-highlight))"
 
   if (!chord) {
     return null

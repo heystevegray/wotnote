@@ -3,7 +3,7 @@
 import { Chord as ChordType } from "@/lib/core/keyboard"
 import useMidi from "@/lib/hooks/use-midi"
 import { camelCaseToTitleCase } from "@/lib/utils"
-import ChordName from "@/components/chord"
+import ChordName from "@/components/chord-name"
 import Inversion from "@/components/inversion"
 import MidiKeyboard from "@/components/midi-keyboard"
 
@@ -42,7 +42,7 @@ const Detail = ({
   )
 }
 
-const Play = () => {
+const ChordDetection = () => {
   const midiConfig = useMidi()
   const sortedDetails = detailOrder.map((key) => ({
     key,
@@ -73,4 +73,4 @@ const Play = () => {
   )
 }
 
-export default Play
+export default ChordDetection
