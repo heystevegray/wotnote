@@ -1,6 +1,6 @@
 "use client"
 
-import React, { forwardRef, useEffect, useRef, useState } from "react"
+import React, { forwardRef, PropsWithChildren, useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { cn, hzToLog, logToHz, roundToNearest } from "@/lib/utils"
@@ -12,14 +12,21 @@ import { urlParams } from "../lib/config"
 import { useMeyda } from "../lib/hooks/use-meyda"
 import { Slider } from "./ui/slider"
 
-const Visualizer = forwardRef<HTMLCanvasElement>((_, ref) => {
-  return (
-    <div className="h-32 w-full overflow-hidden rounded-lg border-b border-border bg-background md:h-64">
-      <canvas className="size-full" ref={ref} />
-    </div>
-  )
-})
+const Visualizer = forwardRef<HTMLCanvasElement, PropsWithChildren>(
+  ({ children }, ref) => {
+    return (
+      <div className="relative h-32 w-full overflow-hidden rounded-lg border-b border-border bg-background md:h-64">
+        <canvas className="size-full" ref={ref} />
+        <div className="absolute inset-0 flex items-center justify-center">
+          {children}
+        </div>
+      </div>
+    )
+  }
+)
+
 Visualizer.displayName = "Visualizer"
+
 const AudioVisualizer = () => {
   const frequencyCanvasRef = useRef<HTMLCanvasElement>(null)
   const spectrumCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -181,26 +188,29 @@ const AudioVisualizer = () => {
             />
             <p>{recording ? "Recording" : "Not Recording"}</p>
           </div>
-          <div>{audio.pitchClass}</div>
-          <div>
-            <Button
-              aria-label="Toggle recording"
-              onClick={() => {
-                if (recording) {
-                  stopRecording()
-                } else {
-                  startRecording()
-                }
-              }}
-            >
-              {recording ? <Icons.mic /> : <Icons.micOff />}
-              {recording ? "Recording" : "Not Recording"}
-            </Button>
-          </div>
+          <Button
+            aria-label="Toggle recording"
+            onClick={() => {
+              if (recording) {
+                stopRecording()
+              } else {
+                startRecording()
+              }
+            }}
+          >
+            {recording ? <Icons.micOff /> : <Icons.mic />}
+            {recording ? "Stop Recording" : "Start Recording"}
+          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Visualizer ref={frequencyCanvasRef} />
+        <Visualizer ref={frequencyCanvasRef}>
+          <div className="flex size-16 items-center justify-center rounded-full bg-card backdrop-blur md:size-32">
+            <p className="flex size-full items-center justify-center text-center text-2xl md:text-6xl">
+              {audio.pitchClass}
+            </p>
+          </div>
+        </Visualizer>
         <Slider
           label="Mic Sensitivity"
           description="Small values like 0.001 allow detecting very quiet signals (including noise). Higher values like 0.01–0.05 block out quiet/noisy input and only detect strong signals like speech or instruments."
