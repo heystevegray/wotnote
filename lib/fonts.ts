@@ -1,6 +1,6 @@
-import { Montserrat } from "next/font/google"
+import { Space_Grotesk } from "next/font/google"
 
-export const siteFont = Montserrat({
+export const siteFont = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-sans",
 })

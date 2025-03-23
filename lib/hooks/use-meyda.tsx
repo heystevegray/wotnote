@@ -68,7 +68,7 @@ const useMeydaAudio = () => {
     // Inside your Meyda callback after verifying that RMS > threshold
     const rmsThreshold = 0.01
     if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
-      setPitchClass("")
+      setPitchClass(undefined)
       return
     }
 
