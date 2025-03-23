@@ -1,4 +1,4 @@
-import AudioVisualizer from "@/lib/components/audio-visualizer"
+import AudioVisualizer from "@/components/audio-visualizer"
 
 import ChordDetection from "./chord-detection"
 import Container from "./container"

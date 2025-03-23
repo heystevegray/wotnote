@@ -4,21 +4,19 @@ import { createContext, ReactNode, useContext, useRef, useState } from "react"
 import Meyda, { MeydaFeaturesObject } from "meyda"
 import { MeydaAnalyzer } from "meyda/dist/esm/meyda-wa"
 
-import { Note } from "../core/Piano" // Assuming you have a Note type in your project.
-
 const noteNames = [
-  "c",
-  "c#",
-  "d",
-  "d#",
-  "e",
-  "f",
-  "f#",
-  "g",
-  "g#",
-  "a",
-  "a#",
-  "b",
+  "C",
+  "C♯",
+  "D",
+  "D♯",
+  "E",
+  "F",
+  "F♯",
+  "G",
+  "G♯",
+  "A",
+  "A♯",
+  "B",
 ]
 
 // Define a type for frequency values.
@@ -27,52 +25,10 @@ export type Frequency = {
   formatted: string // e.g., "440.00 Hz"
 }
 
-export type DetectedNote = { name: string; octave: number }
-
-const getNotesFromFrequencies = (frequencies: Frequency[]): Note["key"][] => {
-  // Convert frequencies to note names.
-  return frequencies.map((freq) => {
-    const midiNumber = Math.round(69 + 12 * Math.log2(freq.value / 440)) // A4 is MIDI note 69
-    const octave = Math.floor(midiNumber / 12) - 1 // Adjust for octave
-    const noteIndex = midiNumber % 12
-    return `${noteNames[noteIndex]}${octave}` as Note["key"] // Return note name with octave.
-  })
-}
-
-// Helper to convert a frequency value to a note name.
-// This function calculates the semitone offset relative to A4 (440 Hz)
-// and returns a note string with an octave determined dynamically.
-const detectedFrequencyToNote = (frequency: number): DetectedNote => {
-  const A4 = 440
-  const semitoneOffset = Math.round(12 * Math.log2(frequency / A4))
-  const noteIndex = (semitoneOffset + 69) % 12
-  const octave = Math.floor((semitoneOffset + 69) / 12)
-  return {
-    name: noteNames[noteIndex],
-    octave: octave - 1, // Adjust for octave (0-based)
-  }
-}
-
-const getMidiFromFrequencies = (frequencies: Frequency[]): Note[] => {
-  // Convert frequencies to MIDI note numbers.
-  return frequencies.map((freq) => {
-    const midiNumber = Math.round(69 + 12 * Math.log2(freq.value / 440)) // A4 is MIDI note 69
-    return {
-      key: getNotesFromFrequencies([freq])[0] as Note["key"], // Get the note name from frequency.
-      code: midiNumber,
-    }
-  })
-}
-
 const useMeydaAudio = () => {
   const [recording, setRecording] = useState(false)
-  const [features, setFeatures] = useState<MeydaFeaturesObject | undefined>(
-    undefined
-  )
-  // States for chord detection.
-  const [notes, setNotes] = useState<DetectedNote[]>([])
-  const [frequencies, setFrequencies] = useState<Frequency[]>([])
-  const [activeNotes, setActiveNotes] = useState<Note[]>([]) // For MIDI conversion if needed.
+  const [note, setNote] = useState<string>("")
+  const [, setFeatures] = useState<MeydaFeaturesObject | undefined>(undefined)
 
   // Refs for audio objects.
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -85,57 +41,17 @@ const useMeydaAudio = () => {
     // Inside your Meyda callback after verifying that RMS > threshold
     const rmsThreshold = 0.01
     if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
-      setNotes([])
-      setFrequencies([])
+      setNote("")
       return
     }
 
-    // Apply an RMS threshold to filter out low-level noise.
-
-    // Use amplitudeSpectrum for chord detection.
-    if (extractedFeatures.amplitudeSpectrum?.length > 0) {
-      const spectrum = extractedFeatures.amplitudeSpectrum
-      console.log({ spectrum })
-
-      // Determine the maximum amplitude in the spectrum.
-      const maxVal = Math.max(...spectrum)
-
-      console.log({ maxVal })
-
-      // Set a peak threshold at 50% of the maximum.
-      const peakThreshold = 0.8 * maxVal
-      const peakIndices: number[] = []
-      for (let i = 1; i < spectrum.length - 1; i++) {
-        if (
-          spectrum[i] > peakThreshold &&
-          spectrum[i] > spectrum[i - 1] &&
-          spectrum[i] > spectrum[i + 1]
-        ) {
-          peakIndices.push(i)
-        }
-      }
-      const sampleRate = audioContextRef.current?.sampleRate || 44100
-      const bufferSize = 2048
-      const detectedNotes: DetectedNote[] = []
-      const detectedFrequencies: Frequency[] = []
-      for (const bin of peakIndices) {
-        // Compute the frequency for the bin.
-        const freq = (bin * sampleRate) / bufferSize
-        console.log({ freq })
-
-        // Use the detectedFrequencyToNote helper to get a note with the proper octave.
-        detectedNotes.push(detectedFrequencyToNote(freq))
-        detectedFrequencies.push({
-          value: freq,
-          formatted: `${freq.toFixed(2)} Hz`,
-        })
-      }
-      setNotes(detectedNotes)
-      setFrequencies(detectedFrequencies)
-      setActiveNotes(getMidiFromFrequencies(detectedFrequencies))
+    const chroma = extractedFeatures.chroma
+    if (chroma) {
+      const maxIndex = chroma.indexOf(Math.max(...chroma))
+      const dominantNote = noteNames[maxIndex]
+      setNote(dominantNote)
     } else {
-      setNotes([])
-      setFrequencies([])
+      setNote("")
     }
   }
 
@@ -164,7 +80,7 @@ const useMeydaAudio = () => {
         source,
         analyzer: analyzerNode,
         bufferSize: 2048,
-        featureExtractors: ["rms", "spectralCentroid", "amplitudeSpectrum"],
+        featureExtractors: ["rms", "chroma"],
         callback: (extractedFeatures: MeydaFeaturesObject) => {
           setFeatures(extractedFeatures)
           processAudio(extractedFeatures)
@@ -199,19 +115,14 @@ const useMeydaAudio = () => {
     }
     setRecording(false)
     setFeatures(undefined)
-    setNotes([])
-    setFrequencies([])
+    setNote("")
     console.log("Meyda analyzer stopped and audio context closed.")
   }
 
   return {
     recording,
-    midi: {
-      activeNotes: activeNotes,
-    },
     audio: {
-      notes,
-      // frequencies: frequencies.map((freq) => freq.formatted),
+      note,
       // features,
     },
     analyzerNode: analyzerNodeRef.current,

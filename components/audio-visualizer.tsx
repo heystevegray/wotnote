@@ -1,38 +1,23 @@
 "use client"
 
-import React, { ReactNode, useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
-import { MeydaFeaturesObject } from "meyda"
 
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import Container from "@/components/container"
-import Detail from "@/components/detail"
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Icons } from "@/components/icons"
 import PianoRoll from "@/components/piano/piano-roll"
 
-import { urlParams } from "../config"
-import { useMeyda } from "../hooks/use-meyda"
-import { capitalizeFirstLetter, cn } from "../utils"
+import { urlParams } from "../lib/config"
+import { useMeyda } from "../lib/hooks/use-meyda"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationIdRef = useRef<number | null>(null)
 
-  const {
-    analyzerNode,
-    recording,
-    midi,
-    audio,
-    startRecording,
-    stopRecording,
-  } = useMeyda()
+  const { analyzerNode, recording, audio, startRecording, stopRecording } =
+    useMeyda()
 
   useEffect(() => {
     startRecording()
@@ -113,28 +98,21 @@ const AudioVisualizer = () => {
   }, [recording, analyzerNode, color])
 
   return (
-    <Card className="w-full max-w-md overflow-hidden">
+    <Card className="w-full overflow-hidden">
       <div className="h-32 border-b border-border">
-        <canvas className="w-full" ref={canvasRef} height={128} width={500} />
+        <canvas className="size-full" ref={canvasRef} height={80} width={500} />
       </div>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          {/* <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <div
               className={cn("size-4 rounded-full bg-foreground", {
                 "animate-pulse bg-red-500": recording,
               })}
             />
             <p>{recording ? "Recording" : "Not Recording"}</p>
-          </div> */}
-          <div>
-            {audio.notes
-              .map(
-                (note) => `${capitalizeFirstLetter(note.name)} ${note.octave}`
-              )
-              .join(", ")}
           </div>
-
+          <div>{audio.note}</div>
           <div>
             <Button
               aria-label="Toggle recording"
@@ -164,7 +142,7 @@ const AudioVisualizer = () => {
         })}
       </CardContent> */}
       <CardFooter className="bg-background p-0 md:p-0">
-        <PianoRoll chordIndex={0} activeNotes={midi.activeNotes} />
+        {/* <PianoRoll chordIndex={0} activeNotes={midi.activeNotes} /> */}
       </CardFooter>
     </Card>
   )
