@@ -5,18 +5,11 @@ import { useSearchParams } from "next/navigation"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Icons } from "@/components/icons"
 
 import { urlParams } from "../lib/config"
 import { useMeyda } from "../lib/hooks/use-meyda"
-import PianoRoll from "./piano/piano-roll"
 import { Slider } from "./ui/slider"
 
 const AudioVisualizer = () => {
@@ -27,7 +20,6 @@ const AudioVisualizer = () => {
     analyzerNode,
     recording,
     audio,
-    midi,
     settings,
     startRecording,
     stopRecording,
@@ -35,15 +27,11 @@ const AudioVisualizer = () => {
 
   useEffect(() => {
     startRecording()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const searchParams = useSearchParams()
   const color = searchParams?.get(urlParams.color) as string
-
-  // console.log(
-  //   midi,
-  //   midi.midiNotes.map((note) => `${note.key} ${note.code}`)
-  // )
 
   useEffect(() => {
     if (!recording || !analyzerNode) {
@@ -162,20 +150,6 @@ const AudioVisualizer = () => {
         />
         <p>Sensitivity: {settings?.thresholdRatio}</p>
       </CardContent>
-      {/* <CardContent>
-        {Object.entries(audio).map(([key, value]) => {
-          return (
-            <Detail
-              key={key}
-              label={capitalizeFirstLetter(key)}
-              value={value as ReactNode}
-            />
-          )
-        })}
-      </CardContent> */}
-      {/* <CardFooter className="bg-background p-0 md:p-0">
-        <PianoRoll chordIndex={0} midiNotes={midi.midiNotes} />
-      </CardFooter> */}
     </Card>
   )
 }

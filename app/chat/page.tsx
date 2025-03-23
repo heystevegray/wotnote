@@ -6,11 +6,11 @@ import { readStreamableValue } from "ai/rsc"
 import { Sparkle } from "lucide-react"
 
 import { urlParams } from "@/lib/config"
+import { Key } from "@/lib/core/keyboard"
 import {
   ChordProps,
   convertToFlat,
   defaultConfig,
-  Key,
   Scale,
 } from "@/lib/core/Piano"
 import useUserAgent from "@/lib/hooks/use-user-agent"

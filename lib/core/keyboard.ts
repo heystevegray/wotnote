@@ -29,12 +29,6 @@ export const MidiNoteSchema = z.object({
 
 export type MidiNote = z.infer<typeof MidiNoteSchema>
 
-export type MidiProps = {
-  midiNote: number
-  name: string
-  octave: number
-}
-
 type NoteInfo = {
   name: Key
   sharp?: string

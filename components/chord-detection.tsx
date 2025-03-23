@@ -1,11 +1,12 @@
 "use client"
 
-import { Chord as ChordType } from "@/lib/core/keyboard"
+import { Chord as ChordType, detectChord, MidiNote } from "@/lib/core/keyboard"
 import { MIDIChordProps } from "@/lib/hooks/use-midi"
-import { camelCaseToTitleCase } from "@/lib/utils"
 import ChordName from "@/components/chord-name"
 import Inversion from "@/components/inversion"
-import MidiKeyboard from "@/components/midi-keyboard"
+
+import Detail from "./detail"
+import PianoRoll from "./piano/piano-roll"
 
 const detailOrder: (keyof ChordType)[] = [
   "symbol",
@@ -18,32 +19,11 @@ const detailOrder: (keyof ChordType)[] = [
   "degrees",
 ]
 
-const Detail = ({
-  label,
-  value,
-}: {
-  label: string
-  value?: string | string[] | number[] | null
-}) => {
-  let formattedValue = value
-
-  if (!value) {
-    return null
-  }
-
-  if (Array.isArray(value)) {
-    formattedValue = value.join(", ")
-  }
-
-  return (
-    <p className="text-muted-foreground">
-      {camelCaseToTitleCase(label)}:{" "}
-      <span className="text-foreground">{formattedValue}</span>
-    </p>
+const ChordDetection = ({ midiNotes }: { midiNotes: MidiNote[] }) => {
+  const chord: MIDIChordProps["chord"] = detectChord(
+    new Set(midiNotes.map((note) => note.code))
   )
-}
 
-const ChordDetection = ({ chord }: { chord: MIDIChordProps["chord"] }) => {
   const sortedDetails = detailOrder.map((key) => ({
     key,
     value: chord?.[key],
@@ -56,18 +36,19 @@ const ChordDetection = ({ chord }: { chord: MIDIChordProps["chord"] }) => {
           <div className="flex flex-1 flex-col items-center justify-center">
             <ChordName chord={chord} />
           </div>
-          <div className="flex w-full items-end justify-end">
-            {/* <div className="flex flex-col items-start">
+          <div className="flex w-full items-end justify-between">
+            <div className="flex flex-col items-start">
               {sortedDetails.map(({ key, value }) => (
                 <Detail key={key} label={key} value={value} />
               ))}
-            </div> */}
+            </div>
             <Inversion value={chord?.inversion} />
           </div>
         </div>
       </div>
       <div className="">
-        <MidiKeyboard disableScale />
+        {/* <MidiKeyboard disableScale /> */}
+        <PianoRoll chordIndex={0} midiNotes={midiNotes} />
       </div>
     </div>
   )

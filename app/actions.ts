@@ -5,7 +5,7 @@ import { streamObject } from "ai"
 import { createStreamableValue } from "ai/rsc"
 import { z } from "zod"
 
-import { Key } from "@/lib/core/Piano"
+import { Key } from "@/lib/core/keyboard"
 
 export async function generate({ key, input }: { key: Key; input: string }) {
   "use server"

@@ -1,4 +1,5 @@
-import { ChordProps, Note, convertToFlat } from "@/lib/core/Piano"
+import { MidiNote } from "@/lib/core/keyboard"
+import { ChordProps, convertToFlat } from "@/lib/core/Piano"
 import { capitalizeFirstLetter, cn } from "@/lib/utils"
 import {
   Card,
@@ -58,7 +59,7 @@ const Chord = ({ chord }: Props) => {
         </h2>
         {/* <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} /> */}
         <div className="flex gap-4">
-          {chord.notes.map((note: Note) => (
+          {chord.notes.map((note: MidiNote) => (
             <div key={note.code}>
               <p className="text-xl">
                 {capitalizeFirstLetter(convertToFlat(note.key))}

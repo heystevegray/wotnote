@@ -4,9 +4,9 @@ import React, { useCallback } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
+import { Key } from "@/lib/core/keyboard"
 import {
   defaultConfig,
-  Key,
   PIANO_KEYS,
   PIANO_SCALES,
   Scale,

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
-import { Chord, detectChord, MidiProps, NOTES } from "../core/keyboard"
+import { Chord, detectChord, MidiNote, NOTES } from "../core/keyboard"
 
 export interface MIDIChordProps {
   chord?: Chord | null
@@ -13,11 +13,15 @@ export interface MIDInterface extends MIDIChordProps {
   midiConnectionEvent: WebMidi.MIDIConnectionEvent | undefined
   midiSupported: boolean | undefined
   midiPort?: WebMidi.MIDIPort | undefined
-  midi: MidiNote
+  midi: MidiNoteProps
+  midiNotes: MidiNote[]
   inputs: Device[]
 }
 
-export interface MidiNote extends MidiProps {
+export interface MidiNoteProps {
+  midiNote: number
+  name: string
+  octave: number
   velocity: number
   on: boolean
 }
@@ -33,7 +37,7 @@ interface Device {
   version: string
 }
 
-const initialNote: MidiNote = {
+const initialNote: MidiNoteProps = {
   midiNote: 0,
   octave: 0,
   name: "N/a",
@@ -42,12 +46,13 @@ const initialNote: MidiNote = {
 }
 
 const useMidi = (): MIDInterface => {
-  const [activeNotes, setActiveNotes] = useState<MidiProps[]>([])
+  const [midiNotes, setMidiNotes] = useState<MidiNote[]>([])
   const [midiConfig, setMidiConfig] = useState<MIDInterface>({
     midiSupported: undefined,
     midiAccess: undefined,
     midiConnectionEvent: undefined,
     midi: initialNote,
+    midiNotes: [],
     inputs: [],
     chord: null,
   })
@@ -60,7 +65,7 @@ const useMidi = (): MIDInterface => {
     setMidiConfig(merged)
   }
 
-  const getKey = (midiNote: number): MidiProps => {
+  const getKey = (midiNote: number) => {
     const octave: number = Math.floor(midiNote / 12 - 1)
     const noteIndex: number = midiNote % 12
     const name = NOTES[noteIndex].name
@@ -108,24 +113,32 @@ const useMidi = (): MIDInterface => {
 
   const getMIDIMessage = (message: WebMidi.MIDIMessageEvent): void => {
     const command = message.data[0]
-    const note = message.data[1]
+    const code = message.data[1]
     // a velocity value might not be included with a noteOff command
     const velocity = message.data.length > 2 ? message.data[2] : 0
 
     switch (command) {
       case 144: // note on
         if (velocity > 0) {
-          update({ midi: { ...getKey(note), velocity, on: true } })
+          update({
+            midi: { ...getKey(code), velocity, on: true },
+          })
 
           // At least two notes to make a chord
-          setActiveNotes((prev) => [...prev, getKey(note)])
+          setMidiNotes((prev) => [
+            ...prev,
+            {
+              code: code,
+              key: getKey(code).name,
+            },
+          ])
         } else {
-          update({ midi: { ...getKey(note), velocity, on: false } })
+          update({ midi: { ...getKey(code), velocity, on: false } })
         }
         break
       case 128: // note off
-        update({ midi: { ...getKey(note), velocity, on: false } })
-        setActiveNotes((prev) => prev.filter((key) => key.midiNote !== note))
+        update({ midi: { ...getKey(code), velocity, on: false } })
+        setMidiNotes((prev) => prev.filter((key) => key.code !== code))
         // onNoteEndCallback
         break
     }
@@ -145,7 +158,7 @@ const useMidi = (): MIDInterface => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const chord = detectChord(new Set(activeNotes.map((key) => key.midiNote)))
+  const chord = detectChord(new Set(midiNotes.map((key) => key.code)))
 
   return {
     ...midiConfig,

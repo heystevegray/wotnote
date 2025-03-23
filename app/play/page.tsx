@@ -8,7 +8,7 @@ const Play = () => {
 
   return (
     <div className="h-[calc(100svh-64px)]">
-      <ChordDetection chord={midiConfig.chord} />
+      <ChordDetection midiNotes={midiConfig.midiNotes} />
     </div>
   )
 }

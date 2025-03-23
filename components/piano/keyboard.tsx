@@ -4,7 +4,8 @@ import React, { ReactElement, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
-import { defaultConfig, Key, Piano, Scale } from "@/lib/core/Piano"
+import { Key } from "@/lib/core/keyboard"
+import { defaultConfig, Piano, Scale } from "@/lib/core/Piano"
 
 import Container from "../container"
 import MidiKeyboard from "../midi-keyboard"
