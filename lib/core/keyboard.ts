@@ -60,6 +60,7 @@ export type ChordProps = {
 }
 
 export type Chord = {
+  midiNotes: number[]
   notes: string[]
   tonic: Key
   /**
@@ -94,6 +95,7 @@ export const NOTES: Record<number, NoteInfo> = {
 export const CHORD_TYPES: ChordProps[] = [
   // Single Notes
   { quality: "", symbol: "1", semitones: [0] },
+
   // Two-Note Chords (Dyads)
   { quality: "minor 2nd", symbol: "♭2", semitones: [0, 1] },
   { quality: "Major 2nd", symbol: "2", semitones: [0, 2] },
@@ -231,52 +233,25 @@ export const getInversion = (midiNotes: Set<number>): InversionOutput => {
     }
   }
 
-  const semitones = getSemitones(midiNotes).sorted
+  const sortedMidi = [...midiNotes].sort((a, b) => a - b)
+  const bassNote = sortedMidi[0] % 12 // Actual bass note
+  const { sorted } = getSemitones(midiNotes)
+  const chordRoot = sorted[0] // Detected root of chord (semitone)
 
-  // Compute the intervals **based on the played order**
-  const intervals = semitones.map((note, index, arr) =>
-    index === 0 ? 0 : (note - arr[0] + 12) % 12
-  )
+  const bassInterval = (bassNote - chordRoot + 12) % 12
 
-  // Convert to interval pattern string
-  const pattern = intervals.join(",")
-
-  // Root position
-  if (pattern === "0,4,7" || pattern === "0,3,7" || pattern === "0,3,6") {
-    return {
-      inversion: "root",
-    }
-  }
-
-  // Identify the lowest note in the played order
-  const bassSemitone = semitones[0] // The first played note is the bass
-
-  // First Inversion (3rd in the bass)
-  if (pattern === "0,3,8" || pattern === "0,4,9") {
-    return {
-      inversion: "first",
-      bassNote: NOTES[bassSemitone].name,
-    }
-  }
-
-  // Second Inversion (5th in the bass)
-  if (pattern === "0,5,9" || pattern === "0,6,10") {
-    return {
-      inversion: "second",
-      bassNote: NOTES[bassSemitone].name,
-    }
-  }
-
-  // Third Inversion (7th in the bass, for 7th chords)
-  if (pattern === "0,4,8" || pattern === "0,3,9" || pattern === "0,6,9") {
-    return {
-      inversion: "third",
-      bassNote: NOTES[bassSemitone].name,
-    }
+  let inversion: Inversion = "root"
+  if (bassInterval === 3 || bassInterval === 4) {
+    inversion = "first"
+  } else if (bassInterval === 6 || bassInterval === 7 || bassInterval === 8) {
+    inversion = "second"
+  } else if (bassInterval === 10 || bassInterval === 11) {
+    inversion = "third"
   }
 
   return {
-    inversion: "root",
+    inversion,
+    bassNote: NOTES[bassNote].name,
   }
 }
 
@@ -336,6 +311,7 @@ export const detectChord = (midiNotes: Set<number>): Chord | null => {
         alias: matchingChord.alias,
         semitones: semitones.raw,
         notes: semitones.notes,
+        midiNotes: [...midiNotes],
         degrees: convertToScaleDegrees(semitones.raw),
       }
     }

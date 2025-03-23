@@ -13,6 +13,7 @@ const detailOrder: (keyof ChordType)[] = [
   "quality",
   "alias",
   "notes",
+  "midiNotes",
   "semitones",
   "degrees",
 ]
