@@ -5,12 +5,19 @@ import { useSearchParams } from "next/navigation"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Icons } from "@/components/icons"
 
 import { urlParams } from "../lib/config"
 import { useMeyda } from "../lib/hooks/use-meyda"
 import PianoRoll from "./piano/piano-roll"
+import { Slider } from "./ui/slider"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -21,6 +28,7 @@ const AudioVisualizer = () => {
     recording,
     audio,
     midi,
+    settings,
     startRecording,
     stopRecording,
   } = useMeyda()
@@ -32,10 +40,10 @@ const AudioVisualizer = () => {
   const searchParams = useSearchParams()
   const color = searchParams?.get(urlParams.color) as string
 
-  console.log(
-    midi,
-    midi.midiNotes.map((note) => `${note.key} ${note.code}`)
-  )
+  // console.log(
+  //   midi,
+  //   midi.midiNotes.map((note) => `${note.key} ${note.code}`)
+  // )
 
   useEffect(() => {
     if (!recording || !analyzerNode) {
@@ -142,6 +150,18 @@ const AudioVisualizer = () => {
           </div>
         </CardTitle>
       </CardHeader>
+      <CardContent className="space-y-4">
+        <Slider
+          defaultValue={[settings.thresholdRatio]}
+          min={0}
+          max={1}
+          step={0.1}
+          onValueChange={(values) => {
+            settings.handleSliderChange(values[0])
+          }}
+        />
+        <p>Sensitivity: {settings?.thresholdRatio}</p>
+      </CardContent>
       {/* <CardContent>
         {Object.entries(audio).map(([key, value]) => {
           return (

@@ -55,6 +55,11 @@ const useMeydaAudio = () => {
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const meydaAnalyzerRef = useRef<MeydaAnalyzer | null>(null)
   const analyzerNodeRef = useRef<AnalyserNode | null>(null)
+  const thresholdRef = useRef(0.3)
+
+  const handleSliderChange = (value: number) => {
+    thresholdRef.current = value
+  }
 
   /**
    *  Calculates the how much of each chromatic pitch class (C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B
@@ -75,6 +80,49 @@ const useMeydaAudio = () => {
     } else {
       return undefined
     }
+  }
+
+  const getActiveNotesFromSpectrum = ({
+    extractedFeatures,
+    sampleRate,
+    bufferSize,
+    thresholdRatio,
+  }: {
+    extractedFeatures: MeydaFeaturesObject
+    sampleRate: number
+    bufferSize: number
+    /**
+     * Ratio of max amplitude to use as threshold for peak detection
+     */
+    thresholdRatio: number
+  }): MidiNote[] => {
+    const spectrum = extractedFeatures.amplitudeSpectrum
+    if (!spectrum) return []
+
+    console.log({ thresholdRatio })
+
+    const maxVal = Math.max(...spectrum)
+    const threshold = thresholdRatio * maxVal
+
+    const midiNotes: MidiNote[] = []
+
+    for (let index = 1; index < spectrum.length - 1; index++) {
+      const amp = spectrum[index]
+      const isPeak =
+        amp > threshold &&
+        amp > spectrum[index - 1] &&
+        amp > spectrum[index + 1]
+      if (isPeak) {
+        const freq = (index * sampleRate) / bufferSize
+        const midiCode = Math.round(69 + 12 * Math.log2(freq / 440))
+        const pitchIndex = midiCode % 12
+        const pitchKey = pitchClasses[pitchIndex] as MidiNote["key"]
+
+        midiNotes.push({ code: midiCode, key: pitchKey })
+      }
+    }
+
+    return midiNotes
   }
 
   const startRecording = async () => {
@@ -102,7 +150,7 @@ const useMeydaAudio = () => {
         source,
         analyzer: analyzerNode,
         bufferSize: 2048,
-        featureExtractors: ["rms", "chroma"],
+        featureExtractors: ["rms", "chroma", "amplitudeSpectrum"],
         callback: (extractedFeatures: MeydaFeaturesObject) => {
           setFeatures(extractedFeatures)
 
@@ -114,6 +162,15 @@ const useMeydaAudio = () => {
           }
 
           setPitchClass(getDominantPitchClass(extractedFeatures))
+
+          const sampleRate = audioContextRef.current?.sampleRate ?? 44100
+          const midiNotes = getActiveNotesFromSpectrum({
+            extractedFeatures,
+            sampleRate,
+            bufferSize: 2048,
+            thresholdRatio: thresholdRef.current,
+          })
+          setMidiNotes(midiNotes)
         },
       })
 
@@ -155,6 +212,13 @@ const useMeydaAudio = () => {
     audio: {
       pitchClass,
       // features,
+    },
+    midi: {
+      midiNotes,
+    },
+    settings: {
+      thresholdRatio: thresholdRef.current,
+      handleSliderChange,
     },
     analyzerNode: analyzerNodeRef.current,
     startRecording,
