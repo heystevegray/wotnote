@@ -51,7 +51,7 @@ const ChordDetection = () => {
   }))
 
   return (
-    <div className="flex h-[calc(100svh-64px)] flex-col">
+    <div className="flex size-full flex-col">
       <div className="relative flex-1 flex-col p-4 text-center">
         <div className="flex h-full flex-col">
           <div className="flex flex-1 flex-col items-center justify-center">

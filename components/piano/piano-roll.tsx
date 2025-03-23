@@ -8,28 +8,28 @@ import { ClassName } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 type Props = {
-  activeNotes?: MidiNote[]
+  midiNotes?: MidiNote[]
   chordIndex: number
 } & ClassName
 
 const SVG_WIDTH = 4346.38
 const SVG_HEIGHT = 524.24
 
-const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
+const PianoRoll = ({ midiNotes, chordIndex, className }: Props) => {
   const searchParams = useSearchParams()
 
   const color =
     (searchParams?.get(urlParams.color) as string) ??
     "hsl(var(--key-highlight))"
 
-  const getKeyByCode = (code: number) => {
+  const getSvgPathByMidiCode = (code: number) => {
     return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
   }
 
   const resetKeys = () => {
     // Reset all keys
     for (let index = MIN_KEY; index < MAX_KEY; index++) {
-      const key = getKeyByCode(index)
+      const key = getSvgPathByMidiCode(index)
       if (key) {
         key.style.fill = ""
       }
@@ -37,8 +37,8 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
   }
 
   const highlightKeys = () => {
-    activeNotes?.map((note) => {
-      const key = getKeyByCode(note.code)
+    midiNotes?.map((note) => {
+      const key = getSvgPathByMidiCode(note.code)
 
       if (key) {
         key.style.fill = color
@@ -50,7 +50,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
     resetKeys()
     highlightKeys()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeNotes])
+  }, [midiNotes])
 
   return (
     <Suspense>

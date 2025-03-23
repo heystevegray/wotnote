@@ -137,7 +137,7 @@ const MidiKeyboard = ({ disableScale = false }: { disableScale?: boolean }) => {
     }
   }, [getOpacity, isDark, keyOff, keyOn, midiConfig])
 
-  return <PianoRoll chordIndex={0} activeNotes={notes} />
+  return <PianoRoll chordIndex={0} midiNotes={notes} />
 }
 
 export default MidiKeyboard

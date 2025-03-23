@@ -16,8 +16,14 @@ const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationIdRef = useRef<number | null>(null)
 
-  const { analyzerNode, recording, audio, startRecording, stopRecording } =
-    useMeyda()
+  const {
+    analyzerNode,
+    recording,
+    audio,
+    midi,
+    startRecording,
+    stopRecording,
+  } = useMeyda()
 
   useEffect(() => {
     startRecording()
@@ -25,6 +31,11 @@ const AudioVisualizer = () => {
 
   const searchParams = useSearchParams()
   const color = searchParams?.get(urlParams.color) as string
+
+  console.log(
+    midi,
+    midi.midiNotes.map((note) => `${note.key} ${note.code}`)
+  )
 
   useEffect(() => {
     if (!recording || !analyzerNode) {
@@ -42,6 +53,7 @@ const AudioVisualizer = () => {
 
       return
     }
+
     const canvas = canvasRef.current
     if (!canvas) return
     const canvasCtx = canvas.getContext("2d")
@@ -142,7 +154,7 @@ const AudioVisualizer = () => {
         })}
       </CardContent> */}
       <CardFooter className="bg-background p-0 md:p-0">
-        <PianoRoll chordIndex={0} activeNotes={midi.activeNotes} />
+        <PianoRoll chordIndex={0} midiNotes={midi.midiNotes} />
       </CardFooter>
     </Card>
   )

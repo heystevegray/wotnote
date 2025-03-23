@@ -25,7 +25,7 @@ const ChordName = ({ chord }: { chord?: MIDIChordProps["chord"] }) => {
 
   return (
     <h2
-      className="text-6xl md:text-9xl 2xl:text-[10rem]"
+      className="min-h-[60px] text-6xl md:min-h-[128px] md:text-9xl lg:min-h-[160px] lg:text-[10rem]"
       style={{
         color,
       }}
