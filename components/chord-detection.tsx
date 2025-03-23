@@ -10,7 +10,7 @@ import Detail from "./detail"
 import Inversion from "./inversion"
 import MidiKeyboard from "./midi-keyboard"
 
-const ChordDetection = ({ activeNotes = [] }: { activeNotes?: number[] }) => {
+const ChordDetection = () => {
   const midiConfig = useMidi()
 
   const searchParams = useSearchParams()
