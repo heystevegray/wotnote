@@ -81,6 +81,64 @@ const useMeydaAudio = () => {
   const meydaAnalyzerRef = useRef<MeydaAnalyzer | null>(null)
   const analyzerNodeRef = useRef<AnalyserNode | null>(null)
 
+  const processAudio = (extractedFeatures: MeydaFeaturesObject) => {
+    // Inside your Meyda callback after verifying that RMS > threshold
+    const rmsThreshold = 0.01
+    if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
+      setNotes([])
+      setFrequencies([])
+      return
+    }
+
+    // Apply an RMS threshold to filter out low-level noise.
+
+    // Use amplitudeSpectrum for chord detection.
+    if (extractedFeatures.amplitudeSpectrum?.length > 0) {
+      const spectrum = extractedFeatures.amplitudeSpectrum
+      console.log({ spectrum })
+
+      // Determine the maximum amplitude in the spectrum.
+      const maxVal = Math.max(...spectrum)
+
+      console.log({ maxVal })
+
+      // Set a peak threshold at 50% of the maximum.
+      const peakThreshold = 0.8 * maxVal
+      const peakIndices: number[] = []
+      for (let i = 1; i < spectrum.length - 1; i++) {
+        if (
+          spectrum[i] > peakThreshold &&
+          spectrum[i] > spectrum[i - 1] &&
+          spectrum[i] > spectrum[i + 1]
+        ) {
+          peakIndices.push(i)
+        }
+      }
+      const sampleRate = audioContextRef.current?.sampleRate || 44100
+      const bufferSize = 2048
+      const detectedNotes: DetectedNote[] = []
+      const detectedFrequencies: Frequency[] = []
+      for (const bin of peakIndices) {
+        // Compute the frequency for the bin.
+        const freq = (bin * sampleRate) / bufferSize
+        console.log({ freq })
+
+        // Use the detectedFrequencyToNote helper to get a note with the proper octave.
+        detectedNotes.push(detectedFrequencyToNote(freq))
+        detectedFrequencies.push({
+          value: freq,
+          formatted: `${freq.toFixed(2)} Hz`,
+        })
+      }
+      setNotes(detectedNotes)
+      setFrequencies(detectedFrequencies)
+      setActiveNotes(getMidiFromFrequencies(detectedFrequencies))
+    } else {
+      setNotes([])
+      setFrequencies([])
+    }
+  }
+
   const startRecording = async () => {
     if (recording) return
     try {
@@ -109,64 +167,7 @@ const useMeydaAudio = () => {
         featureExtractors: ["rms", "spectralCentroid", "amplitudeSpectrum"],
         callback: (extractedFeatures: MeydaFeaturesObject) => {
           setFeatures(extractedFeatures)
-
-          // Apply an RMS threshold to filter out low-level noise.
-          const rmsThreshold = 0.01
-
-          // console.log({ rms: extractedFeatures.rms })
-          // console.log({ s: extractedFeatures.amplitudeSpectrum })
-          //
-          if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
-            setNotes([])
-            setFrequencies([])
-            return
-          }
-
-          // Use amplitudeSpectrum for chord detection.
-          if (extractedFeatures.amplitudeSpectrum?.length > 0) {
-            const spectrum = extractedFeatures.amplitudeSpectrum
-            console.log({ spectrum })
-
-            // Determine the maximum amplitude in the spectrum.
-            const maxVal = Math.max(...spectrum)
-
-            console.log({ maxVal })
-
-            // Set a peak threshold at 50% of the maximum.
-            const peakThreshold = 0.8 * maxVal
-            const peakIndices: number[] = []
-            for (let i = 1; i < spectrum.length - 1; i++) {
-              if (
-                spectrum[i] > peakThreshold &&
-                spectrum[i] > spectrum[i - 1] &&
-                spectrum[i] > spectrum[i + 1]
-              ) {
-                peakIndices.push(i)
-              }
-            }
-            const sampleRate = audioContextRef.current?.sampleRate || 44100
-            const bufferSize = 2048
-            const detectedNotes: DetectedNote[] = []
-            const detectedFrequencies: Frequency[] = []
-            for (const bin of peakIndices) {
-              // Compute the frequency for the bin.
-              const freq = (bin * sampleRate) / bufferSize
-              console.log({ freq })
-
-              // Use the detectedFrequencyToNote helper to get a note with the proper octave.
-              detectedNotes.push(detectedFrequencyToNote(freq))
-              detectedFrequencies.push({
-                value: freq,
-                formatted: `${freq.toFixed(2)} Hz`,
-              })
-            }
-            setNotes(detectedNotes)
-            setFrequencies(detectedFrequencies)
-            setActiveNotes(getMidiFromFrequencies(detectedFrequencies))
-          } else {
-            setNotes([])
-            setFrequencies([])
-          }
+          processAudio(extractedFeatures)
         },
       })
       meydaAnalyzer.start()
