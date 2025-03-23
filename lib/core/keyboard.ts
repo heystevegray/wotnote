@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto"
 import { z } from "zod"
 
 export const KeyEnum = z.enum([
@@ -83,27 +84,6 @@ export const NOTES: Record<number, NoteInfo> = {
   9: { name: "A", sharp: "A♯" },
   10: { name: "B♭", sharp: "A♯" }, // Default to flat
   11: { name: "B", flat: "C♭" },
-}
-
-export const getChordNotes = (
-  root: Key,
-  chord: ChordProps
-): {
-  notes: string[]
-  degrees: number[]
-} => {
-  const rootIndex = Object.values(NOTES).findIndex((note) => note.name === root)
-  if (rootIndex === -1) throw new Error(`Invalid root note: ${root}`)
-
-  const notes = chord.semitones.map((interval) => {
-    const noteIndex = (rootIndex + interval) % 12
-    return Object.values(NOTES)[noteIndex].name
-  })
-
-  // Convert intervals to diatonic degrees example 1 3 5
-  const degrees = convertToScaleDegrees(chord.semitones)
-
-  return { notes, degrees }
 }
 
 export const CHORD_TYPES: ChordProps[] = [
@@ -245,8 +225,7 @@ export const getInversion = (midiNotes: Set<number>): InversionOutput => {
     }
   }
 
-  // Convert MIDI notes to pitch classes while keeping the played order
-  const semitones = [...midiNotes].map((note) => note % 12)
+  const semitones = getSemitones(midiNotes).sorted
 
   // Compute the intervals **based on the played order**
   const intervals = semitones.map((note, index, arr) =>
@@ -301,18 +280,75 @@ export const getInversion = (midiNotes: Set<number>): InversionOutput => {
  * @example getSemitones(new Set([60, 64, 67])) // [0, 4, 7]
  * @example getSemitones(new Set([60, 64, 67, 71])) // [0, 4, 7, 11]
  */
-export const getSemitones = (midiNotes: Set<number>) => {
-  return [...new Set([...midiNotes].map((midiNote) => midiNote % 12))].sort(
-    (a, b) => a - b
-  )
+export const getSemitones = (
+  midiNotes: Set<number>
+): {
+  sorted: number[]
+  raw: number[]
+  notes: Key[]
+} => {
+  return {
+    sorted: [...new Set([...midiNotes].map((midiNote) => midiNote % 12))].sort(
+      (a, b) => a - b
+    ),
+    // Convert MIDI notes to pitch classes while keeping the played order
+    raw: [...midiNotes].map((note) => note % 12),
+    notes: [...midiNotes].map((note) => NOTES[note % 12].name),
+  }
 }
 
-const root = "C"
-const allChords: ChordProps[] = CHORD_TYPES.map((chord) => ({
-  ...chord,
-  // Add 1 to the intervals to make them 1-indexed
-  name: `${root}${chord.symbol}`,
-  alias: chord.alias ? `${root}${chord.alias}` : undefined,
-}))
+/**
+ * Detects a chord from a set of MIDI notes.
+ */
+export const detectChord = (midiNotes: Set<number>): Chord | null => {
+  // Need at least two notes to form a chord
+  if (midiNotes.size < 2) {
+    return null
+  }
 
-console.table(allChords)
+  // Convert MIDI notes to semitone intervals (0-11)
+  const semitones = getSemitones(midiNotes)
+
+  // Find the most probable root (not necessarily the lowest note)
+  const probableRoots = semitones.sorted.map((root) => ({
+    rootNote: NOTES[root].name,
+    intervals: semitones.sorted
+      .map((note) => (note - root + 12) % 12)
+      .sort((a, b) => a - b),
+  }))
+
+  for (const { rootNote, intervals } of probableRoots) {
+    // Search for a matching chord type
+    const matchingChord = CHORD_TYPES.find(
+      (chord) => JSON.stringify(chord.semitones) === JSON.stringify(intervals)
+    )
+
+    if (matchingChord) {
+      const { bassNote, inversion } = getInversion(midiNotes)
+
+      return {
+        bassNote,
+        inversion,
+        tonic: rootNote,
+        quality: matchingChord.quality,
+        symbol: matchingChord.symbol,
+        alias: matchingChord.alias,
+        semitones: semitones.raw,
+        notes: semitones.notes,
+        degrees: convertToScaleDegrees(semitones.raw),
+      }
+    }
+  }
+
+  return null // No matching chord found
+}
+
+// const root = "C"
+// const allChords: ChordProps[] = CHORD_TYPES.map((chord) => ({
+//   ...chord,
+//   // Add 1 to the intervals to make them 1-indexed
+//   name: `${root}${chord.symbol}`,
+//   alias: chord.alias ? `${root}${chord.alias}` : undefined,
+// }))
+
+// console.table(allChords)

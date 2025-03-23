@@ -2,16 +2,9 @@
 
 import { useEffect, useRef, useState } from "react"
 
-import {
-  Chord,
-  CHORD_TYPES,
-  getChordNotes,
-  getInversion,
-  getSemitones,
-  NOTES,
-} from "../core/keyboard"
+import { Chord, detectChord, NOTES } from "../core/keyboard"
 
-interface MIDIChordProps {
+export interface MIDIChordProps {
   chord?: Chord | null
 }
 
@@ -44,48 +37,6 @@ interface Device {
   state: string
   type: string
   version: string
-}
-
-/**
- * Detects a chord from a set of MIDI notes.
- */
-export const detectChord = (midiNotes: Set<number>): Chord | null => {
-  // Need at least two notes to form a chord
-  if (midiNotes.size < 2) {
-    return null
-  }
-
-  // Convert MIDI notes to semitone intervals (0-11)
-  const semitones = getSemitones(midiNotes)
-
-  // Find the most probable root (not necessarily the lowest note)
-  const probableRoots = semitones.map((root) => ({
-    rootNote: NOTES[root].name,
-    intervals: semitones
-      .map((note) => (note - root + 12) % 12)
-      .sort((a, b) => a - b),
-  }))
-
-  for (const { rootNote, intervals } of probableRoots) {
-    // Search for a matching chord type
-    const matchingChord = CHORD_TYPES.find(
-      (chord) => JSON.stringify(chord.semitones) === JSON.stringify(intervals)
-    )
-
-    if (matchingChord) {
-      return {
-        ...getInversion(midiNotes),
-        ...getChordNotes(rootNote, matchingChord),
-        tonic: rootNote,
-        quality: matchingChord.quality,
-        symbol: matchingChord.symbol,
-        alias: matchingChord.alias,
-        semitones: matchingChord.semitones,
-      }
-    }
-  }
-
-  return null // No matching chord found
 }
 
 const initialNote: MidiNote = {

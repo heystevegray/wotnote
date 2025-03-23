@@ -1,16 +1,13 @@
 "use client"
 
-import React from "react"
-import { useSearchParams } from "next/navigation"
-
-import { urlParams } from "@/lib/config"
-import { Chord } from "@/lib/core/keyboard"
+import { Chord as ChordType } from "@/lib/core/keyboard"
 import useMidi from "@/lib/hooks/use-midi"
 import { camelCaseToTitleCase } from "@/lib/utils"
+import ChordName from "@/components/chord"
 import Inversion from "@/components/inversion"
 import MidiKeyboard from "@/components/midi-keyboard"
 
-const detailOrder: (keyof Chord)[] = [
+const detailOrder: (keyof ChordType)[] = [
   "symbol",
   "tonic",
   "quality",
@@ -47,15 +44,6 @@ const Detail = ({
 
 const Play = () => {
   const midiConfig = useMidi()
-
-  const searchParams = useSearchParams()
-  const color =
-    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
-
-  const bassNote = midiConfig.chord?.bassNote
-    ? `/ ${midiConfig.chord?.bassNote}`
-    : ""
-
   const sortedDetails = detailOrder.map((key) => ({
     key,
     value: midiConfig.chord?.[key],
@@ -66,14 +54,7 @@ const Play = () => {
       <div className="relative flex-1 flex-col p-4 text-center">
         <div className="flex h-full flex-col">
           <div className="flex flex-1 flex-col items-center justify-center">
-            <h2
-              className="text-6xl md:text-9xl 2xl:text-[10rem]"
-              style={{
-                color,
-              }}
-            >
-              {midiConfig.chord?.tonic} {midiConfig.chord?.quality} {bassNote}
-            </h2>
+            <ChordName chord={midiConfig.chord} />
           </div>
           <div className="flex w-full items-end justify-between">
             <div className="flex flex-col items-start">
@@ -83,9 +64,6 @@ const Play = () => {
             </div>
             <Inversion value={midiConfig.chord?.inversion} />
           </div>
-          {/* <pre className="text-left text-sm text-muted-foreground">
-            {JSON.stringify(midiConfig.details, null, 2)}
-          </pre> */}
         </div>
       </div>
       <div className="">
