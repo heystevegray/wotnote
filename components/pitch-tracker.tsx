@@ -1,6 +1,5 @@
 "use client"
 
-import { detectChord } from "@/lib/core/keyboard"
 import { useMeyda } from "@/lib/hooks/use-meyda"
 import AudioVisualizer from "@/components/audio-visualizer"
 
@@ -10,15 +9,18 @@ import Container from "./container"
 const PitchTracker = () => {
   const { midi } = useMeyda()
 
+  // console.log(
+  //   midi,
+  //   midi.midiNotes.map((note) => `${note.key} ${note.code}`)
+  // )
+
   return (
-    // <div className="h-[calc(100svh-64px)]">
     <Container className="flex flex-col items-center justify-center space-y-4">
       <AudioVisualizer />
-      <ChordDetection
-        chord={detectChord(new Set(midi.midiNotes.map((note) => note.code)))}
-      />
+      <div className="h-[500px] w-full">
+        <ChordDetection midiNotes={midi?.midiNotes ?? []} />
+      </div>
     </Container>
-    // </div>
   )
 }
 

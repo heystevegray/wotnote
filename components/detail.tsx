@@ -1,6 +1,7 @@
 import { ReactNode } from "react"
 
 import { UNAVAILABLE } from "@/lib/config"
+import { camelCaseToTitleCase } from "@/lib/utils"
 
 const Detail = ({ label, value }: { label: string; value?: ReactNode }) => {
   if (!value) {
@@ -24,8 +25,9 @@ const Detail = ({ label, value }: { label: string; value?: ReactNode }) => {
   }
 
   return (
-    <p className="text-muted-foreground">
-      {label}: <span className="text-foreground">{body}</span>
+    <p className="text-sm text-muted-foreground">
+      {camelCaseToTitleCase(label)}:{" "}
+      <span className="text-foreground">{body}</span>
     </p>
   )
 }
