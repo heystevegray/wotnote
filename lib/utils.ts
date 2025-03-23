@@ -26,6 +26,36 @@ export const camelCaseToTitleCase = (value: string) => {
     .replace(/^./, (str) => str.toUpperCase())
 }
 
+/**
+ * Round to the nearest precision.
+ * @param value - The number to round.
+ * @param precision - Number of decimal places.
+ *
+ * @default 2
+ */
+export const roundToNearest = (value: number, precision = 2) => {
+  const factor = Math.pow(10, precision)
+  return Math.round(value * factor) / factor
+}
+
+export const logToHz = (value: number) => {
+  const minHz = 20
+  const maxHz = 20000
+  const logMin = Math.log10(minHz)
+  const logMax = Math.log10(maxHz)
+  const logValue = logMin + value * (logMax - logMin)
+  return Math.pow(10, logValue)
+}
+
+export const hzToLog = (hz: number) => {
+  const minHz = 20
+  const maxHz = 20000
+  const logMin = Math.log10(minHz)
+  const logMax = Math.log10(maxHz)
+  const logValue = Math.log10(hz)
+  return (logValue - logMin) / (logMax - logMin)
+}
+
 export const exampleQuestions = [
   "Bohemian Rhapsody by Queen",
   "Stairway to Heaven by Led Zeppelin",

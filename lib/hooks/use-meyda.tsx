@@ -1,6 +1,13 @@
 "use client"
 
-import { createContext, ReactNode, useContext, useRef, useState } from "react"
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import Meyda, { MeydaFeaturesObject } from "meyda"
 import { MeydaAnalyzer } from "meyda/dist/esm/meyda-wa"
 
@@ -55,11 +62,11 @@ const useMeydaAudio = () => {
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const meydaAnalyzerRef = useRef<MeydaAnalyzer | null>(null)
   const analyzerNodeRef = useRef<AnalyserNode | null>(null)
-  const thresholdRef = useRef(0.3)
-
-  const handleSliderChange = (value: number) => {
-    thresholdRef.current = value
-  }
+  const [thresholdRatio, setThresholdRatio] = useState(0.3)
+  const thresholdRef = useRef(thresholdRatio)
+  const [highPassFilter, setHighPassFilter] = useState(200)
+  const highPassFilterRef = useRef(highPassFilter)
+  const highPassNodeRef = useRef<BiquadFilterNode | null>(null)
 
   /**
    *  Calculates the how much of each chromatic pitch class (C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B
@@ -135,14 +142,20 @@ const useMeydaAudio = () => {
         window.AudioContext || (window as any).webkitAudioContext
       const audioContext = new AudioContext()
       audioContextRef.current = audioContext
-
       const source = audioContext.createMediaStreamSource(stream)
       sourceRef.current = source
-
       const analyzerNode = audioContext.createAnalyser()
+
+      // High pass filter to remove low frequencies
+      const highPassFilterNode = audioContext.createBiquadFilter()
+      highPassFilterNode.type = "highpass"
+      highPassFilterNode.frequency.value = highPassFilterRef.current
+      highPassNodeRef.current = highPassFilterNode
+      source.connect(highPassFilterNode)
+      highPassFilterNode.connect(analyzerNode)
+
       analyzerNode.smoothingTimeConstant = 0.8
       analyzerNodeRef.current = analyzerNode
-      source.connect(analyzerNode)
 
       // Request amplitudeSpectrum along with rms and spectralCentroid.
       const meydaAnalyzer = Meyda.createMeydaAnalyzer({
@@ -207,18 +220,33 @@ const useMeydaAudio = () => {
     console.debug("Meyda analyzer stopped and audio context closed.")
   }
 
+  useEffect(() => {
+    thresholdRef.current = thresholdRatio
+  }, [thresholdRatio])
+
+  useEffect(() => {
+    highPassFilterRef.current = highPassFilter
+    if (highPassNodeRef.current && audioContextRef.current) {
+      highPassNodeRef.current.frequency.setValueAtTime(
+        highPassFilter,
+        audioContextRef.current.currentTime
+      )
+    }
+  }, [highPassFilter])
+
   return {
     recording,
     audio: {
       pitchClass,
-      // features,
     },
     midi: {
       midiNotes,
     },
     settings: {
-      thresholdRatio: thresholdRef.current,
-      handleSliderChange,
+      thresholdRatio,
+      setThresholdRatio,
+      highPassFilter,
+      setHighPassFilter,
     },
     analyzerNode: analyzerNodeRef.current,
     startRecording,

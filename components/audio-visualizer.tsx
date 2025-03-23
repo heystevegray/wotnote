@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useEffect, useRef } from "react"
+import React, { forwardRef, useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 
-import { cn } from "@/lib/utils"
+import { cn, hzToLog, logToHz, roundToNearest } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Icons } from "@/components/icons"
@@ -12,8 +12,17 @@ import { urlParams } from "../lib/config"
 import { useMeyda } from "../lib/hooks/use-meyda"
 import { Slider } from "./ui/slider"
 
+const Visualizer = forwardRef<HTMLCanvasElement>((_, ref) => {
+  return (
+    <div className="h-32 w-full overflow-hidden rounded-lg border-b border-border bg-background md:h-64">
+      <canvas className="size-full" ref={ref} />
+    </div>
+  )
+})
+Visualizer.displayName = "Visualizer"
 const AudioVisualizer = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const frequencyCanvasRef = useRef<HTMLCanvasElement>(null)
+  const spectrumCanvasRef = useRef<HTMLCanvasElement>(null)
   const animationIdRef = useRef<number | null>(null)
 
   const {
@@ -35,7 +44,7 @@ const AudioVisualizer = () => {
 
   useEffect(() => {
     if (!recording || !analyzerNode) {
-      const canvas = canvasRef.current
+      const canvas = frequencyCanvasRef.current
       if (canvas) {
         const canvasCtx = canvas.getContext("2d")
         if (canvasCtx) {
@@ -50,10 +59,10 @@ const AudioVisualizer = () => {
       return
     }
 
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const canvasCtx = canvas.getContext("2d")
-    if (!canvasCtx) return
+    const frequencyCanvas = frequencyCanvasRef.current
+    if (!frequencyCanvas) return
+    const frequencyCanvasCtx = frequencyCanvas.getContext("2d")
+    if (!frequencyCanvasCtx) return
     const bufferLength = analyzerNode.fftSize
     const dataArray = new Uint8Array(bufferLength)
     console.log("Starting drawing loop with buffer length:", bufferLength)
@@ -65,35 +74,90 @@ const AudioVisualizer = () => {
       // Scale the canvas for high-DPI screens.
       const dpr = window.devicePixelRatio || 1
       // Set canvas width/height based on its client dimensions.
-      const rect = canvas.getBoundingClientRect()
+      const rect = frequencyCanvas.getBoundingClientRect()
 
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
+      frequencyCanvas.width = rect.width * dpr
+      frequencyCanvas.height = rect.height * dpr
 
       // Clear the canvas entirely, resulting in a transparent background.
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
+      frequencyCanvasCtx.clearRect(
+        0,
+        0,
+        frequencyCanvas.width,
+        frequencyCanvas.height
+      )
 
-      canvasCtx.fillStyle = "transparent"
-      canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
-      canvasCtx.lineWidth = 4
-      canvasCtx.strokeStyle = color ?? "green"
-      canvasCtx.beginPath()
+      frequencyCanvasCtx.fillStyle = "transparent"
+      frequencyCanvasCtx.fillRect(
+        0,
+        0,
+        frequencyCanvas.width,
+        frequencyCanvas.height
+      )
+      frequencyCanvasCtx.lineWidth = 4
+      frequencyCanvasCtx.strokeStyle = color ?? "green"
+      frequencyCanvasCtx.beginPath()
 
-      const sliceWidth = canvas.width / bufferLength
+      const sliceWidth = frequencyCanvas.width / bufferLength
       let x = 0
 
       for (let i = 0; i < bufferLength; i++) {
         const v = dataArray[i] / 128.0
-        const y = (v * canvas.height) / 2
+        const y = (v * frequencyCanvas.height) / 2
         if (i === 0) {
-          canvasCtx.moveTo(x, y)
+          frequencyCanvasCtx.moveTo(x, y)
         } else {
-          canvasCtx.lineTo(x, y)
+          frequencyCanvasCtx.lineTo(x, y)
         }
         x += sliceWidth
       }
-      canvasCtx.lineTo(canvas.width, canvas.height / 2)
-      canvasCtx.stroke()
+      frequencyCanvasCtx.lineTo(
+        frequencyCanvas.width,
+        frequencyCanvas.height / 2
+      )
+      frequencyCanvasCtx.stroke()
+
+      if (spectrumCanvasRef.current && analyzerNode) {
+        const spectrumCanvas = spectrumCanvasRef.current
+        const spectrumCtx = spectrumCanvas.getContext("2d")
+        if (!spectrumCtx) return
+
+        // High-DPI scaling
+        const dpr = window.devicePixelRatio || 1
+        const rect = spectrumCanvas.getBoundingClientRect()
+        spectrumCanvas.width = rect.width * dpr
+        spectrumCanvas.height = rect.height * dpr
+        spectrumCtx.scale(dpr, dpr)
+
+        const freqData = new Uint8Array(analyzerNode.frequencyBinCount)
+        analyzerNode.getByteFrequencyData(freqData)
+
+        // Zero out low frequencies below the high pass filter threshold
+        const nyquist = analyzerNode.context.sampleRate / 2
+        const thresholdFreq = settings.highPassFilter
+        const thresholdBin = Math.floor(
+          (thresholdFreq / nyquist) * freqData.length
+        )
+
+        for (let i = 0; i < thresholdBin; i++) {
+          freqData[i] = 0
+        }
+
+        const barWidth = rect.width / freqData.length
+        spectrumCtx.clearRect(0, 0, rect.width, rect.height)
+
+        for (let i = 0; i < freqData.length; i++) {
+          const value = freqData[i]
+          const barHeight = (value / 255) * rect.height
+          spectrumCtx.fillStyle = color ?? "green"
+          spectrumCtx.fillRect(
+            i * barWidth,
+            rect.height - barHeight,
+            barWidth,
+            barHeight
+          )
+        }
+      }
     }
 
     draw()
@@ -103,13 +167,10 @@ const AudioVisualizer = () => {
         cancelAnimationFrame(animationIdRef.current)
       }
     }
-  }, [recording, analyzerNode, color])
+  }, [recording, analyzerNode, color, settings.highPassFilter])
 
   return (
     <Card className="w-full overflow-hidden">
-      <div className="h-32 border-b border-border">
-        <canvas className="size-full" ref={canvasRef} height={80} width={500} />
-      </div>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -139,16 +200,33 @@ const AudioVisualizer = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <Visualizer ref={frequencyCanvasRef} />
         <Slider
+          label="Mic Sensitivity"
+          description="Small values like 0.001 allow detecting very quiet signals (including noise). Higher values like 0.01–0.05 block out quiet/noisy input and only detect strong signals like speech or instruments."
           defaultValue={[settings.thresholdRatio]}
           min={0}
           max={1}
           step={0.1}
           onValueChange={(values) => {
-            settings.handleSliderChange(values[0])
+            settings.setThresholdRatio(values[0])
           }}
         />
-        <p>Sensitivity: {settings?.thresholdRatio}</p>
+        <Visualizer ref={spectrumCanvasRef} />
+        <Slider
+          label="High Pass Filter"
+          description="Cuts out low frequencies below the selected value. Helps reduce rumble or mic noise."
+          unit="Hz"
+          defaultValue={[hzToLog(settings.highPassFilter)]}
+          displayValue={roundToNearest(settings.highPassFilter)}
+          min={0}
+          max={1}
+          step={0.01}
+          onValueChange={(values) => {
+            const freq = logToHz(values[0])
+            settings.setHighPassFilter(freq)
+          }}
+        />
       </CardContent>
     </Card>
   )

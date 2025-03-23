@@ -17,9 +17,9 @@ const PitchTracker = () => {
   return (
     <Container className="flex flex-col items-center justify-center space-y-4">
       <AudioVisualizer />
-      <div className="h-[500px] w-full">
+      {/* <div className="h-[500px] w-full">
         <ChordDetection midiNotes={midi?.midiNotes ?? []} />
-      </div>
+      </div> */}
     </Container>
   )
 }
