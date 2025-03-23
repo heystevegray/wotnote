@@ -27,7 +27,6 @@ export const camelCaseToTitleCase = (value: string) => {
 }
 
 export const exampleQuestions = [
-  "Hotline Bling by Drake",
   "Bohemian Rhapsody by Queen",
   "Stairway to Heaven by Led Zeppelin",
   "Hotel California by Eagles",
@@ -64,7 +63,7 @@ export const generationSample: Generation = {
   song: {
     name: "Sister Christian",
     artist: "Night Ranger",
-    key: "g",
+    key: "G",
     error: null,
     scale: "major",
     phrases: [
@@ -76,19 +75,19 @@ export const generationSample: Generation = {
             id: "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
             scaleDegree: 1,
             lyrics: "Sister Christian, oh the time has come",
-            key: "g",
+            key: "G",
             notes: [
               {
                 code: 55,
-                key: "g",
+                key: "G",
               },
               {
                 code: 59,
-                key: "b",
+                key: "B",
               },
               {
                 code: 62,
-                key: "d",
+                key: "D",
               },
             ],
           },
@@ -96,19 +95,19 @@ export const generationSample: Generation = {
             id: "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
             scaleDegree: 5,
             lyrics: "And you know that you're the only one",
-            key: "d",
+            key: "D",
             notes: [
               {
                 code: 50,
-                key: "d",
+                key: "D",
               },
               {
                 code: 54,
-                key: "f#",
+                key: "F#",
               },
               {
                 code: 57,
-                key: "a",
+                key: "A",
               },
             ],
           },
@@ -116,19 +115,19 @@ export const generationSample: Generation = {
             id: "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
             scaleDegree: 6,
             lyrics: "To say, okay",
-            key: "e",
+            key: "E",
             notes: [
               {
                 code: 52,
-                key: "e",
+                key: "E",
               },
               {
                 code: 55,
-                key: "g",
+                key: "G",
               },
               {
                 code: 59,
-                key: "b",
+                key: "B",
               },
             ],
           },
@@ -136,19 +135,19 @@ export const generationSample: Generation = {
             id: "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
             scaleDegree: 4,
             lyrics: "Where you going, what you looking for",
-            key: "c",
+            key: "C",
             notes: [
               {
                 code: 48,
-                key: "c",
+                key: "C",
               },
               {
                 code: 52,
-                key: "e",
+                key: "E",
               },
               {
                 code: 55,
-                key: "g",
+                key: "G",
               },
             ],
           },
@@ -162,19 +161,19 @@ export const generationSample: Generation = {
             id: "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
             scaleDegree: 1,
             lyrics: "You know those boys don't want to play no more with you",
-            key: "g",
+            key: "G",
             notes: [
               {
                 code: 55,
-                key: "g",
+                key: "G",
               },
               {
                 code: 59,
-                key: "b",
+                key: "B",
               },
               {
                 code: 62,
-                key: "d",
+                key: "D",
               },
             ],
           },
@@ -182,19 +181,19 @@ export const generationSample: Generation = {
             id: "7g8h9i0j-1k2l-3m4n-5o6p-7q8r9s0t1u2v",
             scaleDegree: 5,
             lyrics: "It's true",
-            key: "d",
+            key: "D",
             notes: [
               {
                 code: 50,
-                key: "d",
+                key: "D",
               },
               {
                 code: 54,
-                key: "f#",
+                key: "F#",
               },
               {
                 code: 57,
-                key: "a",
+                key: "A",
               },
             ],
           },
@@ -202,19 +201,19 @@ export const generationSample: Generation = {
             id: "8h9i0j1k-2l3m-4n5o-6p7q-8r9s0t1u2v3w",
             scaleDegree: 6,
             lyrics: "Motorin', what's your price for flight",
-            key: "e",
+            key: "E",
             notes: [
               {
                 code: 52,
-                key: "e",
+                key: "E",
               },
               {
                 code: 55,
-                key: "g",
+                key: "G",
               },
               {
                 code: 59,
-                key: "b",
+                key: "B",
               },
             ],
           },
@@ -222,19 +221,19 @@ export const generationSample: Generation = {
             id: "9i0j1k2l-3m4n-5o6p-7q8r-9s0t1u2v3w4x",
             scaleDegree: 4,
             lyrics: "In finding Mr. Right",
-            key: "c",
+            key: "C",
             notes: [
               {
                 code: 48,
-                key: "c",
+                key: "C",
               },
               {
                 code: 52,
-                key: "e",
+                key: "E",
               },
               {
                 code: 55,
-                key: "g",
+                key: "G",
               },
             ],
           },

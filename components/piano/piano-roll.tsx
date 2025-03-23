@@ -2,12 +2,13 @@ import { Suspense, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { urlParams } from "@/lib/config"
-import { MAX_KEY, MIN_KEY, Note } from "@/lib/core/Piano"
+import { MidiNote } from "@/lib/core/keyboard"
+import { MAX_KEY, MIN_KEY } from "@/lib/core/Piano"
 import { ClassName } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 type Props = {
-  activeNotes?: Note[]
+  activeNotes?: MidiNote[]
   chordIndex: number
 } & ClassName
 

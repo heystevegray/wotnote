@@ -22,6 +22,13 @@ export const KeyEnum = z.enum([
 
 export type Key = z.infer<typeof KeyEnum>
 
+export const MidiNoteSchema = z.object({
+  code: z.number(),
+  key: KeyEnum,
+})
+
+export type MidiNote = z.infer<typeof MidiNoteSchema>
+
 export type MidiKey = {
   midiNote: number
   name: string

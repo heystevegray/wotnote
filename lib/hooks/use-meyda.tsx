@@ -4,6 +4,8 @@ import { createContext, ReactNode, useContext, useRef, useState } from "react"
 import Meyda, { MeydaFeaturesObject } from "meyda"
 import { MeydaAnalyzer } from "meyda/dist/esm/meyda-wa"
 
+import { MidiNote } from "../core/keyboard"
+
 export type PitchClass =
   | "C"
   | "C♯"
@@ -44,6 +46,7 @@ const useMeydaAudio = () => {
   const [pitchClass, setPitchClass] = useState<PitchClass | undefined>(
     undefined
   )
+  const [midiNotes, setMidiNotes] = useState<MidiNote[]>([])
   const [, setFeatures] = useState<MeydaFeaturesObject | undefined>(undefined)
 
   // Refs for audio objects.
@@ -65,13 +68,6 @@ const useMeydaAudio = () => {
    * @see https://meyda.js.org/audio-features#chroma
    */
   const getDominantPitchClass = (extractedFeatures: MeydaFeaturesObject) => {
-    // Inside your Meyda callback after verifying that RMS > threshold
-    const rmsThreshold = 0.01
-    if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
-      setPitchClass(undefined)
-      return
-    }
-
     const chroma = extractedFeatures.chroma
     if (chroma) {
       const maxIndex = chroma.indexOf(Math.max(...chroma))
@@ -109,6 +105,14 @@ const useMeydaAudio = () => {
         featureExtractors: ["rms", "chroma"],
         callback: (extractedFeatures: MeydaFeaturesObject) => {
           setFeatures(extractedFeatures)
+
+          // Inside your Meyda callback after verifying that RMS > threshold
+          const rmsThreshold = 0.01
+          if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
+            setPitchClass(undefined)
+            return
+          }
+
           setPitchClass(getDominantPitchClass(extractedFeatures))
         },
       })

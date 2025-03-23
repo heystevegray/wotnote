@@ -1,31 +1,13 @@
 import { z } from "zod"
 
-export const KeyEnum = z.enum([
-  "c",
-  "c#",
-  "d♭",
-  "d",
-  "d#",
-  "e♭",
-  "e",
-  "f",
-  "f#",
-  "g♭",
-  "g",
-  "g#",
-  "a♭",
-  "a",
-  "a#",
-  "b♭",
-  "b",
-])
+import { Key, KeyEnum, MidiNote, MidiNoteSchema } from "./keyboard"
 
 const SHARPS_TO_FLATS: Partial<Record<Key, Key>> = {
-  "c#": "d♭",
-  "d#": "e♭",
-  "f#": "g♭",
-  "g#": "a♭",
-  "a#": "b♭",
+  "C#": "D♭",
+  "D#": "E♭",
+  "F#": "G♭",
+  "G#": "A♭",
+  "A#": "B♭",
 }
 
 // const FLATS_TO_SHARPS: Partial<Record<Key, Key>> = {
@@ -36,18 +18,9 @@ const SHARPS_TO_FLATS: Partial<Record<Key, Key>> = {
 //   "b♭": "a#",
 // }
 
-export type Key = z.infer<typeof KeyEnum>
-
-export const NoteSchema = z.object({
-  code: z.number(),
-  key: KeyEnum,
-})
-
-export type Note = z.infer<typeof NoteSchema>
-
 export const ChordSchema = z.object({
   scaleDegree: z.number(),
-  notes: z.array(NoteSchema),
+  notes: z.array(MidiNoteSchema),
   key: KeyEnum,
   id: z.string(),
   lyrics: z.string().optional(),
@@ -87,18 +60,18 @@ const DEFAULT_KEY_CODE = 24
 const OCTAVE = 12 * 3
 
 const KEYS: { key: Key; code: number }[] = [
-  { key: "c", code: DEFAULT_KEY_CODE + OCTAVE },
-  { key: "c#", code: 25 + OCTAVE },
-  { key: "d", code: 26 + OCTAVE },
-  { key: "d#", code: 27 + OCTAVE },
-  { key: "e", code: 28 + OCTAVE },
-  { key: "f", code: 29 + OCTAVE },
-  { key: "f#", code: 30 + OCTAVE },
-  { key: "g", code: 31 + OCTAVE },
-  { key: "g#", code: 32 + OCTAVE },
-  { key: "a", code: 33 + OCTAVE },
-  { key: "a#", code: 34 + OCTAVE },
-  { key: "b", code: 35 + OCTAVE },
+  { key: "C", code: DEFAULT_KEY_CODE + OCTAVE },
+  { key: "D#", code: 25 + OCTAVE },
+  { key: "D", code: 26 + OCTAVE },
+  { key: "D#", code: 27 + OCTAVE },
+  { key: "E", code: 28 + OCTAVE },
+  { key: "F", code: 29 + OCTAVE },
+  { key: "F#", code: 30 + OCTAVE },
+  { key: "G", code: 31 + OCTAVE },
+  { key: "G#", code: 32 + OCTAVE },
+  { key: "A", code: 33 + OCTAVE },
+  { key: "A#", code: 34 + OCTAVE },
+  { key: "B", code: 35 + OCTAVE },
 ]
 
 const formulas: ScaleFormula = {
@@ -144,18 +117,18 @@ export const MIN_KEY = 21
 export const MAX_KEY = 108
 
 export const PIANO_KEYS: Key[] = [
-  "c",
-  "c#",
-  "d",
-  "d#",
-  "e",
-  "f",
-  "f#",
-  "g",
-  "g#",
-  "a",
-  "a#",
-  "b",
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
 ]
 
 export const PIANO_SCALES: Scale[] = [
@@ -170,7 +143,7 @@ export type Accidental = "sharp" | "flat"
 export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental }
 
 export const defaultConfig: DefaultConfig = {
-  key: "c",
+  key: "C",
   scale: "major",
   accidental: "flat",
 }
@@ -209,9 +182,9 @@ export class Piano {
     return intervals
   }
 
-  getNotes(octaves = 1): Note[] {
+  getNotes(octaves = 1): MidiNote[] {
     const intervals = this.getIntervals(octaves)
-    const notes: Note[] = []
+    const notes: MidiNote[] = []
 
     let startKeyCode =
       KEYS.find((note) => note.key === this.key)?.code || DEFAULT_KEY_CODE

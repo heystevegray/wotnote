@@ -10,6 +10,7 @@ import { Icons } from "@/components/icons"
 
 import { urlParams } from "../lib/config"
 import { useMeyda } from "../lib/hooks/use-meyda"
+import PianoRoll from "./piano/piano-roll"
 
 const AudioVisualizer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -141,7 +142,7 @@ const AudioVisualizer = () => {
         })}
       </CardContent> */}
       <CardFooter className="bg-background p-0 md:p-0">
-        {/* <PianoRoll chordIndex={0} activeNotes={midi.activeNotes} /> */}
+        <PianoRoll chordIndex={0} activeNotes={midi.activeNotes} />
       </CardFooter>
     </Card>
   )
