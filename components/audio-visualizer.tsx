@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Icons } from "@/components/icons"
-import PianoRoll from "@/components/piano/piano-roll"
 
 import { urlParams } from "../lib/config"
 import { useMeyda } from "../lib/hooks/use-meyda"
@@ -112,7 +111,7 @@ const AudioVisualizer = () => {
             />
             <p>{recording ? "Recording" : "Not Recording"}</p>
           </div>
-          <div>{audio.note}</div>
+          <div>{audio.pitchClass}</div>
           <div>
             <Button
               aria-label="Toggle recording"

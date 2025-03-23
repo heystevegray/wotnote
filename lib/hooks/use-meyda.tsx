@@ -4,7 +4,21 @@ import { createContext, ReactNode, useContext, useRef, useState } from "react"
 import Meyda, { MeydaFeaturesObject } from "meyda"
 import { MeydaAnalyzer } from "meyda/dist/esm/meyda-wa"
 
-const noteNames = [
+export type PitchClass =
+  | "C"
+  | "C♯"
+  | "D"
+  | "D♯"
+  | "E"
+  | "F"
+  | "F♯"
+  | "G"
+  | "G♯"
+  | "A"
+  | "A♯"
+  | "B"
+
+const pitchClasses: PitchClass[] = [
   "C",
   "C♯",
   "D",
@@ -27,7 +41,9 @@ export type Frequency = {
 
 const useMeydaAudio = () => {
   const [recording, setRecording] = useState(false)
-  const [note, setNote] = useState<string>("")
+  const [pitchClass, setPitchClass] = useState<PitchClass | undefined>(
+    undefined
+  )
   const [, setFeatures] = useState<MeydaFeaturesObject | undefined>(undefined)
 
   // Refs for audio objects.
@@ -37,21 +53,31 @@ const useMeydaAudio = () => {
   const meydaAnalyzerRef = useRef<MeydaAnalyzer | null>(null)
   const analyzerNodeRef = useRef<AnalyserNode | null>(null)
 
-  const processAudio = (extractedFeatures: MeydaFeaturesObject) => {
+  /**
+   *  Calculates the how much of each chromatic pitch class (C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B
+   * exists in the signal.
+   *
+   * What Is It Used For: Often used to analyze the harmonic content of recorded music, such as
+   * in chord or key detection.
+   *
+   * Range: 0.0 - 1.0 for each pitch class.
+   *
+   * @see https://meyda.js.org/audio-features#chroma
+   */
+  const getDominantPitchClass = (extractedFeatures: MeydaFeaturesObject) => {
     // Inside your Meyda callback after verifying that RMS > threshold
     const rmsThreshold = 0.01
     if (!extractedFeatures.rms || extractedFeatures.rms < rmsThreshold) {
-      setNote("")
+      setPitchClass("")
       return
     }
 
     const chroma = extractedFeatures.chroma
     if (chroma) {
       const maxIndex = chroma.indexOf(Math.max(...chroma))
-      const dominantNote = noteNames[maxIndex]
-      setNote(dominantNote)
+      return pitchClasses[maxIndex]
     } else {
-      setNote("")
+      return undefined
     }
   }
 
@@ -83,14 +109,15 @@ const useMeydaAudio = () => {
         featureExtractors: ["rms", "chroma"],
         callback: (extractedFeatures: MeydaFeaturesObject) => {
           setFeatures(extractedFeatures)
-          processAudio(extractedFeatures)
+          setPitchClass(getDominantPitchClass(extractedFeatures))
         },
       })
+
       meydaAnalyzer.start()
       meydaAnalyzerRef.current = meydaAnalyzer
 
       setRecording(true)
-      console.log("Meyda analyzer started.")
+      console.debug("Meyda analyzer started.")
     } catch (error) {
       console.error("Error starting Meyda analyzer:", error)
     }
@@ -115,14 +142,14 @@ const useMeydaAudio = () => {
     }
     setRecording(false)
     setFeatures(undefined)
-    setNote("")
-    console.log("Meyda analyzer stopped and audio context closed.")
+    setPitchClass(undefined)
+    console.debug("Meyda analyzer stopped and audio context closed.")
   }
 
   return {
     recording,
     audio: {
-      note,
+      pitchClass,
       // features,
     },
     analyzerNode: analyzerNodeRef.current,
