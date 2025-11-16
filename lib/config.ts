@@ -1,4 +1,4 @@
-import { Sparkle } from "lucide-react"
+import { Blocks, Sparkle } from "lucide-react"
 
 import { Icons } from "@/components/icons"
 
@@ -23,6 +23,11 @@ export const siteConfig = {
       href: "/chat",
       isAI: true,
     },
+    {
+      icon: Blocks,
+      title: "Build",
+      href: "/build",
+    },
   ],
   links: {
     github: "https://github.com/heystevegray/wotnote",
@@ -34,4 +39,5 @@ export const urlParams = {
   scale: "scale",
   color: "color",
   query: "q",
+  build: "build",
 }

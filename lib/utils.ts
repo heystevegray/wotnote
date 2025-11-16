@@ -73,14 +73,18 @@ export const generationSample: Generation = {
             key: "g",
             notes: [
               {
+                semitone: 0,
                 code: 55,
                 key: "g",
+                
               },
               {
+                semitone: 0,
                 code: 59,
                 key: "b",
               },
               {
+                semitone: 0,
                 code: 62,
                 key: "d",
               },
@@ -93,14 +97,17 @@ export const generationSample: Generation = {
             key: "d",
             notes: [
               {
+                semitone: 0,
                 code: 50,
                 key: "d",
               },
               {
+                semitone: 0,
                 code: 54,
                 key: "f#",
               },
               {
+                semitone: 0,
                 code: 57,
                 key: "a",
               },
@@ -113,14 +120,17 @@ export const generationSample: Generation = {
             key: "e",
             notes: [
               {
+                semitone: 0,
                 code: 52,
                 key: "e",
               },
               {
+                semitone: 0,
                 code: 55,
                 key: "g",
               },
               {
+                semitone: 0,
                 code: 59,
                 key: "b",
               },
@@ -133,14 +143,17 @@ export const generationSample: Generation = {
             key: "c",
             notes: [
               {
+                semitone: 0,
                 code: 48,
                 key: "c",
               },
               {
+                semitone: 0,
                 code: 52,
                 key: "e",
               },
               {
+                semitone: 0,
                 code: 55,
                 key: "g",
               },
@@ -159,14 +172,17 @@ export const generationSample: Generation = {
             key: "g",
             notes: [
               {
+                semitone: 0,
                 code: 55,
                 key: "g",
               },
               {
+                semitone: 0,
                 code: 59,
                 key: "b",
               },
               {
+                semitone: 0,
                 code: 62,
                 key: "d",
               },
@@ -179,14 +195,17 @@ export const generationSample: Generation = {
             key: "d",
             notes: [
               {
+                semitone: 0,
                 code: 50,
                 key: "d",
               },
               {
+                semitone: 0,
                 code: 54,
                 key: "f#",
               },
               {
+                semitone: 0,
                 code: 57,
                 key: "a",
               },
@@ -199,14 +218,17 @@ export const generationSample: Generation = {
             key: "e",
             notes: [
               {
+                semitone: 0,
                 code: 52,
                 key: "e",
               },
               {
+                semitone: 0,
                 code: 55,
                 key: "g",
               },
               {
+                semitone: 0,
                 code: 59,
                 key: "b",
               },
@@ -219,14 +241,17 @@ export const generationSample: Generation = {
             key: "c",
             notes: [
               {
+                semitone: 0,
                 code: 48,
                 key: "c",
               },
               {
+                semitone: 0,
                 code: 52,
                 key: "e",
               },
               {
+                semitone: 0,
                 code: 55,
                 key: "g",
               },

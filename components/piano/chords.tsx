@@ -1,18 +1,25 @@
 import type { ChordProps } from '@/lib/core/Piano';
 
-import Chord from './chord-card';
+import Chord, { type RemoveChordProps } from './chord-card';
 
-interface Props {
+type Props = {
   chords: ChordProps[];
-}
+} & RemoveChordProps;
 
-const Chords = ({ chords = [] }: Props) => {
+const Chords = ({ chords = [], onRemove }: Props) => {
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
       {chords
         .filter((chord) => Boolean(chord?.notes?.length >= 3))
         .map((chord, index) => {
-          return <Chord chord={chord} chordIndex={index} key={chord.id} />;
+          return (
+            <Chord
+              chord={chord}
+              chordIndex={index}
+              key={`${index}-${chord.id}`}
+              onRemove={onRemove}
+            />
+          );
         })}
     </div>
   );

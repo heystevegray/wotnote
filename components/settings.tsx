@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 import { urlParams } from '@/lib/config';
 import {
   baseConfig,
+  convertToFlat,
   type Key,
   PIANO_KEYS,
   PIANO_SCALES,
@@ -67,11 +68,17 @@ const Settings = () => {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {PIANO_KEYS.map((key) => (
-              <SelectItem key={key} value={key}>
-                {capitalizeFirstLetter(key)}
-              </SelectItem>
-            ))}
+            {PIANO_KEYS.map((key) => {
+              const flatKey = convertToFlat(key);
+              return (
+                <SelectItem key={key} value={key}>
+                  {capitalizeFirstLetter(key)}{' '}
+                  {flatKey && flatKey !== key
+                    ? `(${capitalizeFirstLetter(flatKey)})`
+                    : ''}
+                </SelectItem>
+              );
+            })}
           </SelectGroup>
         </SelectContent>
       </Select>

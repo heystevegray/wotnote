@@ -20,6 +20,8 @@ export const KeyEnum = z.enum([
   "b",
 ])
 
+export const keys = KeyEnum.options
+
 const SHARPS_TO_FLATS: Partial<Record<Key, Key>> = {
   "c#": "d♭",
   "d#": "e♭",
@@ -41,6 +43,7 @@ export type Key = z.infer<typeof KeyEnum>
 export const NoteSchema = z.object({
   code: z.number(),
   key: KeyEnum,
+  semitone: z.number(),
 })
 
 export type Note = z.infer<typeof NoteSchema>
@@ -167,12 +170,13 @@ export const PIANO_SCALES: Scale[] = [
 
 export type Accidental = "sharp" | "flat"
 
-export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental }
+export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental; build: Key[] }
 
 export const baseConfig: DefaultConfig = {
   key: "c",
   scale: "major",
   accidental: "flat",
+  build: []
 }
 
 export const convertToFlat = (key: Key): Key => {
@@ -234,7 +238,7 @@ export class Piano {
       }
 
       const key = KEYS[code % 12].key as Key
-      notes.push({ key, code })
+      notes.push({ key, code, semitone: code % 12 })
     }
 
     return notes
@@ -246,7 +250,7 @@ export class Piano {
 
     for (let index = 0; index < twoOctaves.length; index++) {
       const chord: ChordProps = {
-        id: crypto.randomUUID(),
+        id: `${this.key}-${this.scale}-degree-${index + 1}`,
         key: twoOctaves[index].key,
         notes: [
           {

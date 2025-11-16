@@ -1,18 +1,23 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { type ChordProps, convertToFlat, type Note } from '@/lib/core/Piano';
 import { capitalizeFirstLetter, cn } from '@/lib/utils';
+import { Icons } from '../icons';
+import { Button } from '../ui/button';
 
-interface Props {
+export type RemoveChordProps = {
+  onRemove?: (chord: ChordProps) => void;
+};
+
+export type ChordCardProps = {
   chord: ChordProps;
   chordIndex?: number;
-}
+} & RemoveChordProps;
 
 const scaleDegrees = [
   { value: 'Tonic', color: 'bg-chord-1' },
@@ -25,7 +30,7 @@ const scaleDegrees = [
   { value: 'Octave', color: 'bg-chord-1' },
 ];
 
-const Chord = ({ chord }: Props) => {
+const Chord = ({ chord, onRemove }: ChordCardProps) => {
   const degree = scaleDegrees[chord.scaleDegree];
   const loading = chord?.notes?.every((note) => note.key) === false;
 
@@ -38,17 +43,30 @@ const Chord = ({ chord }: Props) => {
             loading,
         },
       )}>
-      <CardHeader className="flex flex-row items-center gap-2 space-y-0">
-        <CardTitle>
+      <CardHeader className="flex flex-row items-center gap-2 space-y-0 justify-between">
+        <CardTitle className="text-sm flex flex-row items-center gap-2">
           <div
             className={cn(
-              'flex size-6 items-center justify-center rounded-full bg-foreground text-center text-sm text-background',
+              'flex size-6 items-center justify-center rounded-full bg-foreground text-center  text-background',
               degree?.color,
             )}>
             {chord.scaleDegree}
           </div>
+          <span className="font-normal text-muted-foreground">
+            {degree?.value}
+          </span>
         </CardTitle>
-        <CardDescription>{degree?.value}</CardDescription>
+        {onRemove ? (
+          <div className="flex justify-end">
+            <Button
+              aria-label="Remove Chord"
+              size="icon"
+              variant="ghost"
+              onClick={() => onRemove?.(chord)}>
+              <Icons.x />
+            </Button>
+          </div>
+        ) : null}
       </CardHeader>
       <CardContent className="flex flex-col items-center space-y-4">
         <h2 className="text-center text-3xl font-bold">
