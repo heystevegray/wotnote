@@ -20,6 +20,8 @@ export const KeyEnum = z.enum([
   "b",
 ])
 
+export const keys = KeyEnum.options
+
 const SHARPS_TO_FLATS: Partial<Record<Key, Key>> = {
   "c#": "d♭",
   "d#": "e♭",
@@ -167,12 +169,13 @@ export const PIANO_SCALES: Scale[] = [
 
 export type Accidental = "sharp" | "flat"
 
-export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental }
+export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental; build: Key[] }
 
 export const baseConfig: DefaultConfig = {
   key: "c",
   scale: "major",
   accidental: "flat",
+  build: []
 }
 
 export const convertToFlat = (key: Key): Key => {

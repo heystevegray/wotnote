@@ -16,7 +16,7 @@ export async function generate({ key, input }: { key: Key; input: string }) {
 
   (async () => {
     const { partialObjectStream } = streamObject({
-      model: openai('gpt-4.1-nano'),
+      model: openai('gpt-5-nano'),
       schema: z.object({
         song: z.object({
           name: z.string(),
