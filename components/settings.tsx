@@ -1,6 +1,11 @@
 'use client';
 
-import { convertToFlat, PIANO_KEYS, PIANO_SCALES } from '@/lib/core/piano';
+import {
+  convertToFlat,
+  type Key,
+  PIANO_KEYS,
+  PIANO_SCALES,
+} from '@/lib/core/piano';
 import useParams from '@/lib/hooks/use-params';
 import { capitalizeFirstLetter } from '@/lib/utils';
 import { Input } from './ui/input';
@@ -13,6 +18,15 @@ import {
   SelectValue,
 } from './ui/select';
 import { SidebarGroup, SidebarGroupLabel } from './ui/sidebar';
+
+export const getKeyWithFlat = (key: Key) => {
+  const flatKey = convertToFlat(key);
+  const capitalKey = capitalizeFirstLetter(key);
+  const capitalFlatKey = capitalizeFirstLetter(flatKey);
+  return flatKey && flatKey !== key
+    ? `${capitalFlatKey} (${capitalKey})`
+    : capitalKey;
+};
 
 const Settings = () => {
   const { key, scale, color, pushParams } = useParams();
@@ -29,13 +43,9 @@ const Settings = () => {
         <SelectContent>
           <SelectGroup>
             {PIANO_KEYS.map((key) => {
-              const flatKey = convertToFlat(key);
               return (
                 <SelectItem key={key} value={key}>
-                  {capitalizeFirstLetter(key)}{' '}
-                  {flatKey && flatKey !== key
-                    ? `(${capitalizeFirstLetter(flatKey)})`
-                    : ''}
+                  {getKeyWithFlat(key)}
                 </SelectItem>
               );
             })}

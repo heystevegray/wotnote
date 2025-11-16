@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from 'react';
 import Container from '@/components/container';
 import Chords from '@/components/piano/chords';
+import { getKeyWithFlat } from '@/components/settings';
 import { Button } from '@/components/ui/button';
 import type { ChordProps } from '@/lib/core/piano';
 import useParams from '@/lib/hooks/use-params';
@@ -56,7 +57,7 @@ const Build = () => {
             {chords.map((chord) => (
               <Button
                 size="sm"
-                variant="outline"
+                variant="secondary"
                 className="capitalize"
                 key={chord.id}
                 onClick={() => {
@@ -66,7 +67,7 @@ const Build = () => {
                   ];
                   pushParams('build', currentBuild.join(','));
                 }}>
-                {chord.scaleDegree} - {chord.key}
+                {chord.scaleDegree} - {getKeyWithFlat(chord.key)}
               </Button>
             ))}
             <Button

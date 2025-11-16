@@ -5,9 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { type ChordProps, convertToFlat, type Note } from '@/lib/core/piano';
-import { capitalizeFirstLetter, cn } from '@/lib/utils';
+import type { ChordProps, Note } from '@/lib/core/piano';
+import { cn } from '@/lib/utils';
 import { Icons } from '../icons';
+import { getKeyWithFlat } from '../settings';
 import { Button } from '../ui/button';
 
 export type RemoveChordProps = {
@@ -44,7 +45,7 @@ const Chord = ({ chord, onRemove }: ChordCardProps) => {
         <CardTitle className="text-sm flex flex-row items-center gap-2">
           <div
             className={cn(
-              'flex size-6 items-center justify-center rounded-full bg-foreground text-center  text-background',
+              'flex size-6 items-center justify-center rounded-full bg-foreground text-center text-background',
               degree?.color,
             )}>
             {chord.scaleDegree}
@@ -66,17 +67,11 @@ const Chord = ({ chord, onRemove }: ChordCardProps) => {
         ) : null}
       </CardHeader>
       <CardContent className="flex flex-col items-center space-y-4">
-        <h2 className="text-center text-3xl font-bold">
-          {capitalizeFirstLetter(convertToFlat(chord.key))}
-        </h2>
+        <h2 className="text-center text-3xl">{getKeyWithFlat(chord.key)}</h2>
         {/* <PianoRoll activeNotes={chord.notes} chordIndex={chordIndex} /> */}
-        <div className="flex gap-4">
+        <div className="flex gap-3 text-muted-foreground">
           {chord.notes.map((note: Note) => (
-            <div key={note.code}>
-              <p className="text-xl">
-                {capitalizeFirstLetter(convertToFlat(note.key))}
-              </p>
-            </div>
+            <p key={note.code}>{getKeyWithFlat(note.key)}</p>
           ))}
         </div>
       </CardContent>
