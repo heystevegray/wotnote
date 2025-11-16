@@ -1,22 +1,22 @@
-FROM node:20-alpine AS builder
+FROM oven/bun:1 AS builder
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package.json and bun.lockb
+COPY package.json bun.lockb* ./
 
 # Install dependencies
-RUN npm install
+RUN bun install --frozen-lockfile
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the Next.js application with standalone output
-RUN npm run build
+RUN bun run build
 
 # Create a new stage for the production image
-FROM node:20-alpine AS runner
+FROM oven/bun:1-slim AS runner
 
 # Set the working directory
 WORKDIR /app
@@ -28,7 +28,7 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/.next/standalone ./
 
 # Don't give the scripts root permission
-COPY --chown=node:node --from=builder /app/scripts/start.sh /app/start.sh
+COPY --chown=bun:bun --from=builder /app/scripts/start.sh /app/start.sh
 
 # Expose the port the app runs on
 EXPOSE 3000
