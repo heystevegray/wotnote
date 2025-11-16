@@ -16,7 +16,7 @@ COPY . .
 RUN bun run build
 
 # Create a new stage for the production image
-FROM node:20-alpine AS runner
+FROM oven/bun:1-slim AS runner
 
 # Set the working directory
 WORKDIR /app
@@ -29,8 +29,15 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Copy package.json for runtime
+COPY --from=builder /app/package.json ./package.json
+
+# Don't give the scripts root permission
+COPY --chown=bun:bun --from=builder /app/scripts/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Expose the port the app runs on
 EXPOSE 3000
 
 # Start the Next.js application
-CMD ["node", "server.js"]
+CMD ["./start.sh"]
