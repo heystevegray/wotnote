@@ -61,7 +61,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <Footer />
             </div>
             <Toaster />
-            <Analytics />
             <TailwindIndicator />
           </ThemeProvider>
         </SidebarProvider>
