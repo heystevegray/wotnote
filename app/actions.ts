@@ -4,7 +4,7 @@ import { openai } from '@ai-sdk/openai';
 import { createStreamableValue } from '@ai-sdk/rsc';
 import { streamObject } from 'ai';
 import { z } from 'zod';
-import type { Key } from '@/lib/core/Piano';
+import type { Key } from '@/lib/core/piano';
 
 export async function generate({ key, input }: { key: Key; input: string }) {
   'use server';

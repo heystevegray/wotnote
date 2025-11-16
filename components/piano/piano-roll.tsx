@@ -2,7 +2,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 
 import { urlParams } from '@/lib/config';
-import type { Note } from '@/lib/core/Piano';
+import type { Note } from '@/lib/core/piano';
 import type { ClassName } from '@/lib/types';
 
 type Props = { activeNotes?: Note[]; chordIndex: number } & ClassName;

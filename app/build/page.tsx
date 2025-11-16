@@ -12,7 +12,7 @@ import {
   type Key,
   Piano,
   type Scale,
-} from '@/lib/core/Piano';
+} from '@/lib/core/piano';
 
 const Build = () => {
   const router = useRouter();

@@ -11,7 +11,7 @@ import {
   PIANO_KEYS,
   PIANO_SCALES,
   type Scale,
-} from '@/lib/core/Piano';
+} from '@/lib/core/piano';
 import { capitalizeFirstLetter } from '@/lib/utils';
 
 import { Input } from './ui/input';

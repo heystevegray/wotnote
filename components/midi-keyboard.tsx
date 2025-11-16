@@ -12,7 +12,7 @@ import {
   MIN_KEY,
   Piano,
   type Scale,
-} from '@/lib/core/Piano';
+} from '@/lib/core/piano';
 import useMidi from '@/lib/hooks/use-midi';
 
 import PianoRoll from './piano/piano-roll';

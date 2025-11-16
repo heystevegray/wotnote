@@ -1,4 +1,4 @@
-import type { ChordProps } from '@/lib/core/Piano';
+import type { ChordProps } from '@/lib/core/piano';
 
 import Chord, { type RemoveChordProps } from './chord-card';
 

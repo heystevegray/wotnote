@@ -19,7 +19,7 @@ import {
   convertToFlat,
   type Key,
   type Scale,
-} from '@/lib/core/Piano';
+} from '@/lib/core/piano';
 import useUserAgent from '@/lib/hooks/use-user-agent';
 import { capitalizeFirstLetter } from '@/lib/utils';
 

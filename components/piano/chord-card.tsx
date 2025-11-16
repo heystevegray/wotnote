@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { type ChordProps, convertToFlat, type Note } from '@/lib/core/Piano';
+import { type ChordProps, convertToFlat, type Note } from '@/lib/core/piano';
 import { capitalizeFirstLetter, cn } from '@/lib/utils';
 import { Icons } from '../icons';
 import { Button } from '../ui/button';

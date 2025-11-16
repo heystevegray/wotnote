@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { type ReactElement, Suspense } from 'react';
 
 import { urlParams } from '@/lib/config';
-import { baseConfig, type Key, Piano, type Scale } from '@/lib/core/Piano';
+import { baseConfig, type Key, Piano, type Scale } from '@/lib/core/piano';
 
 import Container from '../container';
 import MidiKeyboard from '../midi-keyboard';
