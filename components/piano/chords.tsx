@@ -16,7 +16,7 @@ const Chords = ({ chords = [], onRemove }: Props) => {
             <Chord
               chord={chord}
               chordIndex={index}
-              key={chord.id}
+              key={`${index}-${chord.id}`}
               onRemove={onRemove}
             />
           );

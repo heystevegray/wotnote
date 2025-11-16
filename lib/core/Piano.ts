@@ -250,7 +250,7 @@ export class Piano {
 
     for (let index = 0; index < twoOctaves.length; index++) {
       const chord: ChordProps = {
-        id: crypto.randomUUID(),
+        id: `${this.key}-${this.scale}-degree-${index + 1}`,
         key: twoOctaves[index].key,
         notes: [
           {
