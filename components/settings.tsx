@@ -1,19 +1,14 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
-
-import { urlParams } from '@/lib/config';
 import {
-  baseConfig,
   convertToFlat,
   type Key,
   PIANO_KEYS,
   PIANO_SCALES,
   type Scale,
 } from '@/lib/core/piano';
+import useParams from '@/lib/hooks/use-params';
 import { capitalizeFirstLetter } from '@/lib/utils';
-
 import { Input } from './ui/input';
 import {
   Select,
@@ -26,44 +21,14 @@ import {
 import { SidebarGroup, SidebarGroupLabel } from './ui/sidebar';
 
 const Settings = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const defaultKey: Key =
-    (searchParams?.get(urlParams.key) as Key) ?? baseConfig.key;
-  const defaultSacale: Scale =
-    (searchParams?.get(urlParams.scale) as Scale) ?? baseConfig.scale;
-  const defaultColor =
-    (searchParams?.get(urlParams.color) as string) ?? baseConfig.color;
-
-  // Get a new searchParams string by merging the current
-  // searchParams with a provided key/value pair
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams?.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
-
-  const handleKeyChange = (key: Key) => {
-    router.push(`${pathname}?${createQueryString(urlParams.key, key)}`);
-  };
-
-  const handleScaleChange = (scale: Scale) => {
-    router.push(`${pathname}?${createQueryString(urlParams.scale, scale)}`);
-  };
-
-  const handleColorChange = (color: string) => {
-    router.push(`${pathname}?${createQueryString(urlParams.color, color)}`);
-  };
+  const { key, scale, color, pushParams } = useParams();
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Key</SidebarGroupLabel>
-      <Select defaultValue={defaultKey} onValueChange={handleKeyChange}>
+      <Select
+        defaultValue={key}
+        onValueChange={(value) => pushParams('key', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Select a Key" />
         </SelectTrigger>
@@ -84,7 +49,9 @@ const Settings = () => {
         </SelectContent>
       </Select>
       <SidebarGroupLabel>Scale</SidebarGroupLabel>
-      <Select defaultValue={defaultSacale} onValueChange={handleScaleChange}>
+      <Select
+        defaultValue={scale}
+        onValueChange={(value) => pushParams('scale', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Select a Scale" />
         </SelectTrigger>
@@ -101,8 +68,8 @@ const Settings = () => {
       <SidebarGroupLabel>Color</SidebarGroupLabel>
       <Input
         type="color"
-        defaultValue={defaultColor}
-        onChange={(e) => handleColorChange(e.target.value)}
+        defaultValue={color}
+        onChange={(e) => pushParams('color', e.target.value)}
       />
     </SidebarGroup>
   );

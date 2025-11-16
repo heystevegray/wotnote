@@ -2,7 +2,6 @@
 
 import { readStreamableValue } from '@ai-sdk/rsc';
 import { Sparkle } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Container from '@/components/container';
 import {
@@ -12,17 +11,15 @@ import {
 import HeaderText from '@/components/header-text';
 import Chords from '@/components/piano/chords';
 import { Button } from '@/components/ui/button';
-import { urlParams } from '@/lib/config';
 import {
-  baseConfig,
   type ChordProps,
   convertToFlat,
   type Key,
   type Scale,
 } from '@/lib/core/piano';
+import useParams from '@/lib/hooks/use-params';
 import useUserAgent from '@/lib/hooks/use-user-agent';
 import { capitalizeFirstLetter } from '@/lib/utils';
-
 import { generate } from '../actions';
 
 // Allow streaming responses up to 30 seconds
@@ -51,9 +48,7 @@ const Phrase = ({ phrase }: { phrase: Phrase }) => {
 
 export default function Home() {
   const { optionKey, isMobile } = useUserAgent();
-  const searchParams = useSearchParams();
-  const query = searchParams?.get(urlParams.query) ?? '';
-  const key = (searchParams?.get(urlParams.key) as Key) ?? baseConfig.key;
+  const { key, query } = useParams();
   const [open, setOpen] = useState(false);
   const [generation, setGeneration] = useState<Generation>();
 

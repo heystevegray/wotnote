@@ -10,6 +10,8 @@
     "includes": [
       "./app/**/*",
       "./components/**/*",
+      "./lib/**/*",
+      "./scripts/**/*",
       "!**/node_modules",
       "!**/dist",
       "!**/.next"

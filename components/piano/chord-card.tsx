@@ -36,13 +36,10 @@ const Chord = ({ chord, onRemove }: ChordCardProps) => {
 
   return (
     <Card
-      className={cn(
-        'shadow-lg transition-transform ease-in-out hover:scale-110 hover:shadow-2xl',
-        {
-          'scale-110 shadow-2xl blur-sm transition-transform ease-in-out':
-            loading,
-        },
-      )}>
+      className={cn({
+        'scale-110 shadow-2xl blur-sm transition-transform ease-in-out':
+          loading,
+      })}>
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 justify-between">
         <CardTitle className="text-sm flex flex-row items-center gap-2">
           <div

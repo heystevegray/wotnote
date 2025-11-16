@@ -1,20 +1,11 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useCallback, useEffect } from 'react';
 
-import { urlParams } from '@/lib/config';
-import {
-  baseConfig,
-  type Key,
-  MAX_KEY,
-  MIN_KEY,
-  Piano,
-  type Scale,
-} from '@/lib/core/piano';
+import { MAX_KEY, MIN_KEY } from '@/lib/core/piano';
 import useMidi from '@/lib/hooks/use-midi';
-
+import useParams from '@/lib/hooks/use-params';
 import PianoRoll from './piano/piano-roll';
 
 interface KeyProperties {
@@ -24,19 +15,10 @@ interface KeyProperties {
 
 const MidiKeyboard = () => {
   const midiConfig = useMidi();
-  const searchParams = useSearchParams();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const key: Key = (searchParams?.get(urlParams.key) as Key) ?? baseConfig.key;
-  const scale: Scale =
-    (searchParams?.get(urlParams.scale) as Scale) ?? baseConfig.scale;
-  const color =
-    (searchParams?.get(urlParams.color) as string) ??
-    'hsl(var(--key-highlight))';
-
-  const selectedScale = new Piano({ key, scale });
-  const notes = selectedScale.getNotes();
+  const { key, scale, color, notes } = useParams();
 
   const mapRange = (
     [in_min, in_max]: [number, number],

@@ -1,8 +1,7 @@
-import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 
-import { urlParams } from '@/lib/config';
 import type { Note } from '@/lib/core/piano';
+import useParams from '@/lib/hooks/use-params';
 import type { ClassName } from '@/lib/types';
 
 type Props = { activeNotes?: Note[]; chordIndex: number } & ClassName;
@@ -11,12 +10,7 @@ const SVG_WIDTH = 4346.38;
 const SVG_HEIGHT = 524.24;
 
 const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
-  const searchParams = useSearchParams();
-
-  const color =
-    (searchParams?.get(urlParams.color) as string) ??
-    'hsl(var(--key-highlight))';
-
+  const { color } = useParams();
   const getKeyByCode = (code: number) => {
     return document.getElementsByClassName(`${code}`)[
       chordIndex

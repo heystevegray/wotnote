@@ -1,53 +1,14 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import Container from '@/components/container';
 import Chords from '@/components/piano/chords';
 import { Button } from '@/components/ui/button';
-import { urlParams } from '@/lib/config';
-import {
-  baseConfig,
-  type ChordProps,
-  type Key,
-  Piano,
-  type Scale,
-} from '@/lib/core/piano';
+import type { ChordProps } from '@/lib/core/piano';
+import useParams from '@/lib/hooks/use-params';
 
 const Build = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  // Parse build as scale degrees (1-7) for transposition
-  const buildScaleDegrees: number[] =
-    searchParams
-      ?.get(urlParams.build)
-      ?.split(',')
-      .filter(Boolean)
-      .map((s) => Number.parseInt(s, 10))
-      .filter((n) => !Number.isNaN(n)) ?? [];
-
-  const key: Key = (searchParams?.get(urlParams.key) as Key) ?? baseConfig.key;
-  const scale: Scale =
-    (searchParams?.get(urlParams.scale) as Scale) ?? baseConfig.scale;
-
-  const chords = useMemo(() => {
-    const selectedScale = new Piano({ key, scale });
-    return selectedScale.getChords().slice(0, -1); // Get first 7 chords
-  }, [key, scale]);
-
-  // Get a new searchParams string by merging the current
-  // searchParams with a provided key/value pair
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams?.toString() || '');
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
+  const { buildScaleDegrees, chords, deleteParam, pushParams } = useParams();
 
   const buildChords = useMemo(
     () =>
@@ -74,22 +35,18 @@ const Build = () => {
       };
 
       const scaleDegree = keyMap[event.key];
-      if (scaleDegree && pathname) {
+      if (scaleDegree) {
         const chord = chords.find((c) => c.scaleDegree === scaleDegree);
         if (chord) {
           const currentBuild = [...buildScaleDegrees, chord.scaleDegree];
-          const queryString = createQueryString(
-            urlParams.build,
-            currentBuild.join(','),
-          );
-          router.push(`${pathname}?${queryString}`);
+          pushParams('build', currentBuild.join(','));
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [buildScaleDegrees, chords, createQueryString, pathname, router]);
+  }, [buildScaleDegrees, chords, pushParams]);
 
   return (
     <Container>
@@ -107,12 +64,7 @@ const Build = () => {
                     ...buildScaleDegrees,
                     chord.scaleDegree,
                   ];
-                  const queryString = createQueryString(
-                    urlParams.build,
-                    currentBuild.join(','),
-                  );
-                  const target = `${pathname}?${queryString}`;
-                  router.push(target);
+                  pushParams('build', currentBuild.join(','));
                 }}>
                 {chord.scaleDegree} - {chord.key}
               </Button>
@@ -122,12 +74,7 @@ const Build = () => {
               variant="secondary"
               className="w-fit"
               onClick={() => {
-                if (!pathname) return;
-                const params = new URLSearchParams(
-                  searchParams?.toString() || '',
-                );
-                params.delete(urlParams.build);
-                router.push(`${pathname}?${params.toString()}`);
+                deleteParam('build');
               }}>
               Reset
             </Button>

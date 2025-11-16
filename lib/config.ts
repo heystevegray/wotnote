@@ -19,15 +19,15 @@ export const siteConfig = {
       hideMain: true,
     },
     {
-      icon: Sparkle,
-      title: "Chat",
-      href: "/chat",
-      isAI: true,
-    },
-    {
       icon: Blocks,
       title: "Build",
       href: "/build",
+    },
+    {
+      icon: Sparkle,
+      title: "Generate",
+      href: "/chat",
+      isAI: true,
     },
   ],
   links: {
@@ -35,10 +35,13 @@ export const siteConfig = {
   },
 }
 
-export const urlParams: Record<keyof DefaultConfig, string> = {
+export type URLParams = Record<keyof DefaultConfig, string> & { query: string };
+
+export const urlParams: URLParams = {
   key: "key",
   scale: "scale",
   color: "color",
   query: "q",
   build: "build",
+  accidental: 'sharp'
 }
