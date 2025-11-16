@@ -43,6 +43,7 @@ export type Key = z.infer<typeof KeyEnum>
 export const NoteSchema = z.object({
   code: z.number(),
   key: KeyEnum,
+  semitone: z.number(),
 })
 
 export type Note = z.infer<typeof NoteSchema>
@@ -237,7 +238,7 @@ export class Piano {
       }
 
       const key = KEYS[code % 12].key as Key
-      notes.push({ key, code })
+      notes.push({ key, code, semitone: code % 12 })
     }
 
     return notes
