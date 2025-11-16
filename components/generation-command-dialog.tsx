@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
 import {
@@ -11,7 +10,6 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { urlParams } from '@/lib/config';
 import useParams from '@/lib/hooks/use-params';
 import { exampleQuestions } from '@/lib/utils';
 import Gradient from './gradient';

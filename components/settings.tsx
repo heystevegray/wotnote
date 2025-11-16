@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  convertToFlat,
-  type Key,
-  PIANO_KEYS,
-  PIANO_SCALES,
-  type Scale,
-} from '@/lib/core/piano';
+import { convertToFlat, PIANO_KEYS, PIANO_SCALES } from '@/lib/core/piano';
 import useParams from '@/lib/hooks/use-params';
 import { capitalizeFirstLetter } from '@/lib/utils';
 import { Input } from './ui/input';
