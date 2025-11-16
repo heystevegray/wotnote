@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -63,7 +62,7 @@ const Chord = ({ chord, onRemove }: ChordCardProps) => {
               aria-label="Remove Chord"
               size="icon"
               variant="ghost"
-              onClick={onRemove}>
+              onClick={() => onRemove?.(chord)}>
               <Icons.x />
             </Button>
           </div>

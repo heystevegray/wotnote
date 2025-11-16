@@ -4,7 +4,6 @@ import { openai } from '@ai-sdk/openai';
 import { createStreamableValue } from '@ai-sdk/rsc';
 import { streamObject } from 'ai';
 import { z } from 'zod';
-
 import type { Key } from '@/lib/core/Piano';
 
 export async function generate({ key, input }: { key: Key; input: string }) {
@@ -103,7 +102,7 @@ export async function generate({ key, input }: { key: Key; input: string }) {
                         ]),
                       }),
                     )
-                    .describe('The notes that make up this chrod.'),
+                    .describe('The notes that make up this chord.'),
                 }),
               ),
             }),
