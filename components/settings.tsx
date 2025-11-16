@@ -33,7 +33,8 @@ const Settings = () => {
     (searchParams?.get(urlParams.key) as Key) ?? baseConfig.key;
   const defaultSacale: Scale =
     (searchParams?.get(urlParams.scale) as Scale) ?? baseConfig.scale;
-  const defaultColor = searchParams?.get(urlParams.color) as string;
+  const defaultColor =
+    (searchParams?.get(urlParams.color) as string) ?? baseConfig.color;
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair

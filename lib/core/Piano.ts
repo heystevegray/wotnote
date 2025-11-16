@@ -170,12 +170,13 @@ export const PIANO_SCALES: Scale[] = [
 
 export type Accidental = "sharp" | "flat"
 
-export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental; build: Key[] }
+export type DefaultConfig = { key: Key; scale: Scale; accidental: Accidental; build: Key[], color: string }
 
 export const baseConfig: DefaultConfig = {
   key: "c",
   scale: "major",
   accidental: "flat",
+  color: '#6d85df',
   build: []
 }
 
