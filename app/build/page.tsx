@@ -94,39 +94,48 @@ const Build = () => {
   return (
     <Container>
       <div className="flex flex-col gap-6">
-        <div className="flex gap-2 flex-wrap mx-auto">
-          {chords.map((chord) => (
+        <div className="mx-auto flex flex-col gap-2">
+          <div className="flex gap-2 flex-wrap">
+            {chords.map((chord) => (
+              <Button
+                size="sm"
+                variant="outline"
+                className="capitalize"
+                key={chord.id}
+                onClick={() => {
+                  const currentBuild = [
+                    ...buildScaleDegrees,
+                    chord.scaleDegree,
+                  ];
+                  const queryString = createQueryString(
+                    urlParams.build,
+                    currentBuild.join(','),
+                  );
+                  const target = `${pathname}?${queryString}`;
+                  router.push(target);
+                }}>
+                {chord.scaleDegree} - {chord.key}
+              </Button>
+            ))}
             <Button
               size="sm"
-              variant="outline"
-              className="capitalize"
-              key={chord.id}
+              variant="secondary"
+              className="w-fit"
               onClick={() => {
-                const currentBuild = [...buildScaleDegrees, chord.scaleDegree];
-                const queryString = createQueryString(
-                  urlParams.build,
-                  currentBuild.join(','),
+                if (!pathname) return;
+                const params = new URLSearchParams(
+                  searchParams?.toString() || '',
                 );
-                const target = `${pathname}?${queryString}`;
-                router.push(target);
+                params.delete(urlParams.build);
+                router.push(`${pathname}?${params.toString()}`);
               }}>
-              {chord.scaleDegree} - {chord.key}
+              Reset
             </Button>
-          ))}
-          <Button
-            size="sm"
-            variant="secondary"
-            className="w-fit"
-            onClick={() => {
-              if (!pathname) return;
-              const params = new URLSearchParams(
-                searchParams?.toString() || '',
-              );
-              params.delete(urlParams.build);
-              router.push(`${pathname}?${params.toString()}`);
-            }}>
-            Reset
-          </Button>
+          </div>
+          <p className="text-muted-foreground text-center text-xs">
+            You can use the number keys (1-7) to add chords, transpose in the
+            sidebar.
+          </p>
         </div>
         <Chords chords={buildChords} />
       </div>
