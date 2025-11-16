@@ -1,11 +1,10 @@
-import Link from "next/link"
-
-import { siteConfig } from "@/lib/config"
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
-import { MainNav } from "@/components/main-nav"
-import { ThemeToggle } from "@/components/theme-toggle"
+import Link from 'next/link';
+import { Icons } from '@/components/icons';
+import { MainNav } from '@/components/main-nav';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { buttonVariants } from '@/components/ui/button';
+import { siteConfig } from '@/lib/config';
+import { cn } from '@/lib/utils';
 
 export function SiteHeader() {
   return (
@@ -17,17 +16,15 @@ export function SiteHeader() {
             <Link
               href={siteConfig.links.github}
               target="_blank"
-              rel="noreferrer"
-            >
+              rel="noreferrer">
               <div
                 className={cn(
-                  "rounded-full",
+                  'rounded-full',
                   buttonVariants({
-                    size: "icon",
-                    variant: "ghost",
-                  })
-                )}
-              >
+                    size: 'icon',
+                    variant: 'ghost',
+                  }),
+                )}>
                 <Icons.gitHub className="size-6" />
                 <span className="sr-only">GitHub</span>
               </div>
@@ -37,5 +34,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

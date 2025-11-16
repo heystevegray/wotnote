@@ -1,9 +1,9 @@
-import { ChordProps } from "@/lib/core/Piano"
+import type { ChordProps } from '@/lib/core/Piano';
 
-import Chord from "./chord-card"
+import Chord from './chord-card';
 
 interface Props {
-  chords: ChordProps[]
+  chords: ChordProps[];
 }
 
 const Chords = ({ chords = [] }: Props) => {
@@ -12,10 +12,10 @@ const Chords = ({ chords = [] }: Props) => {
       {chords
         .filter((chord) => Boolean(chord?.notes?.length >= 3))
         .map((chord, index) => {
-          return <Chord chord={chord} chordIndex={index} key={chord.id} />
+          return <Chord chord={chord} chordIndex={index} key={chord.id} />;
         })}
     </div>
-  )
-}
+  );
+};
 
-export default Chords
+export default Chords;

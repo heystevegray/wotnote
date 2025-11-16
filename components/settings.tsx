@@ -1,19 +1,19 @@
-"use client"
+'use client';
 
-import React, { useCallback } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 
-import { urlParams } from "@/lib/config"
+import { urlParams } from '@/lib/config';
 import {
-  Key,
+  baseConfig,
+  type Key,
   PIANO_KEYS,
   PIANO_SCALES,
-  Scale,
-  baseConfig,
-} from "@/lib/core/Piano"
-import { capitalizeFirstLetter } from "@/lib/utils"
+  type Scale,
+} from '@/lib/core/Piano';
+import { capitalizeFirstLetter } from '@/lib/utils';
 
-import { Input } from "./ui/input"
+import { Input } from './ui/input';
 import {
   Select,
   SelectContent,
@@ -21,42 +21,42 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select"
-import { SidebarGroup, SidebarGroupLabel } from "./ui/sidebar"
+} from './ui/select';
+import { SidebarGroup, SidebarGroupLabel } from './ui/sidebar';
 
 const Settings = () => {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const defaultKey: Key =
-    (searchParams.get(urlParams.key) as Key) ?? baseConfig.key
+    (searchParams?.get(urlParams.key) as Key) ?? baseConfig.key;
   const defaultSacale: Scale =
-    (searchParams.get(urlParams.scale) as Scale) ?? baseConfig.scale
-  const defaultColor = searchParams.get(urlParams.color) as string
+    (searchParams?.get(urlParams.scale) as Scale) ?? baseConfig.scale;
+  const defaultColor = searchParams?.get(urlParams.color) as string;
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
   const createQueryString = useCallback(
     (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set(name, value)
+      const params = new URLSearchParams(searchParams?.toString());
+      params.set(name, value);
 
-      return params.toString()
+      return params.toString();
     },
-    [searchParams]
-  )
+    [searchParams],
+  );
 
   const handleKeyChange = (key: Key) => {
-    router.push(pathname + "?" + createQueryString(urlParams.key, key))
-  }
+    router.push(`${pathname}?${createQueryString(urlParams.key, key)}`);
+  };
 
   const handleScaleChange = (scale: Scale) => {
-    router.push(pathname + "?" + createQueryString(urlParams.scale, scale))
-  }
+    router.push(`${pathname}?${createQueryString(urlParams.scale, scale)}`);
+  };
 
   const handleColorChange = (color: string) => {
-    router.push(pathname + "?" + createQueryString(urlParams.color, color))
-  }
+    router.push(`${pathname}?${createQueryString(urlParams.color, color)}`);
+  };
 
   return (
     <SidebarGroup>
@@ -84,7 +84,7 @@ const Settings = () => {
           <SelectGroup>
             {PIANO_SCALES.map((scale) => (
               <SelectItem key={scale} value={scale}>
-                {capitalizeFirstLetter(scale.replace(/-/g, " "))}
+                {capitalizeFirstLetter(scale.replace(/-/g, ' '))}
               </SelectItem>
             ))}
           </SelectGroup>
@@ -97,7 +97,7 @@ const Settings = () => {
         onChange={(e) => handleColorChange(e.target.value)}
       />
     </SidebarGroup>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;

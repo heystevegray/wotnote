@@ -1,7 +1,5 @@
-import { Suspense } from "react"
-import packageJson from "package.json"
-
-import { siteConfig } from "@/lib/config"
+import packageJson from 'package.json';
+import { Suspense } from 'react';
 // import useMidi from "@/lib/hooks/use-midi"
 import {
   Sidebar,
@@ -13,9 +11,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
+import { siteConfig } from '@/lib/config';
 
-import Settings from "./settings"
+import Settings from './settings';
 
 export function AppSidebar() {
   // const data = useMidi()
@@ -80,5 +79,5 @@ export function AppSidebar() {
         <p className="text-center text-sm">v{packageJson.version}</p>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

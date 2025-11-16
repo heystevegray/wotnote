@@ -1,15 +1,14 @@
-import * as React from "react"
-import Link from "next/link"
+import Link from 'next/link';
 
-import { siteConfig } from "@/lib/config"
-import { NavItem } from "@/lib/types"
-import { cn } from "@/lib/utils"
+import { siteConfig } from '@/lib/config';
+import type { NavItem } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
-import { buttonVariants } from "./ui/button"
-import { SidebarTrigger } from "./ui/sidebar"
+import { buttonVariants } from './ui/button';
+import { SidebarTrigger } from './ui/sidebar';
 
 interface MainNavProps {
-  items?: NavItem[]
+  items?: NavItem[];
 }
 
 export function MainNav({ items }: MainNavProps) {
@@ -25,30 +24,28 @@ export function MainNav({ items }: MainNavProps) {
       {items?.length ? (
         <nav className="hidden gap-6 md:flex">
           {items?.map(
-            (item, index) =>
+            (item) =>
               item.href && (
                 <Link
-                  key={index}
+                  key={item.title}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-2 text-sm font-medium text-muted-foreground",
-                    item.disabled && "cursor-not-allowed opacity-80"
-                  )}
-                >
+                    'flex items-center gap-2 text-sm font-medium text-muted-foreground',
+                    item.disabled && 'cursor-not-allowed opacity-80',
+                  )}>
                   <div
                     className={cn(
-                      "flex items-center gap-2",
-                      item.isAI && buttonVariants({ variant: "ai" })
-                    )}
-                  >
+                      'flex items-center gap-2',
+                      item.isAI && buttonVariants({ variant: 'ai' }),
+                    )}>
                     <item.icon className="size-4" />
                     {item.title}
                   </div>
                 </Link>
-              )
+              ),
           )}
         </nav>
       ) : null}
     </div>
-  )
+  );
 }

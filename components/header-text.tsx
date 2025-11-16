@@ -1,46 +1,43 @@
-import { PropsWithChildren } from "react"
+import type { PropsWithChildren } from 'react';
 
-import { ClassName } from "@/lib/types"
-import { cn } from "@/lib/utils"
+import type { ClassName } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
-import Container from "./container"
-import { Icons } from "./icons"
-import { Badge } from "./ui/badge"
+import Container from './container';
+import { Icons } from './icons';
+import { Badge } from './ui/badge';
 
 export type EmptyScreenProps = {
-  title?: string
-  description?: string
-  hideLogo?: boolean
-  badge?: string
+  title?: string;
+  description?: string;
+  hideLogo?: boolean;
+  badge?: string;
 } & ClassName &
-  PropsWithChildren
+  PropsWithChildren;
 
 const HeaderText = ({
   title,
   description,
   children = null,
   hideLogo = false,
-  badge = "",
+  badge = '',
   className,
 }: EmptyScreenProps) => {
   return (
     <div className="pt-12">
       <Container
-        className={cn("flex w-full items-center justify-center", className)}
-      >
+        className={cn('flex w-full items-center justify-center', className)}>
         <div className="flex flex-col space-y-4 text-center">
           <div
-            className={cn("flex w-full justify-center", {
+            className={cn('flex w-full justify-center', {
               hidden: hideLogo,
-            })}
-          >
+            })}>
             <Icons.logo className="size-6" />
           </div>
           <Badge
-            className={cn("mx-auto w-fit", {
+            className={cn('mx-auto w-fit', {
               hidden: !badge,
-            })}
-          >
+            })}>
             {badge}
           </Badge>
           <h2 className="m-0 flex flex-col items-center justify-center bg-clip-text p-0 text-2xl md:text-3xl">
@@ -55,7 +52,7 @@ const HeaderText = ({
         </div>
       </Container>
     </div>
-  )
-}
+  );
+};
 
-export default HeaderText
+export default HeaderText;

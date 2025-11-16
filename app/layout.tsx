@@ -1,20 +1,19 @@
-import "@/app/globals.css"
+import '@/app/globals.css';
 
-import { Metadata, Viewport } from "next"
-import { cookies } from "next/headers"
-import Script from "next/script"
-import { Analytics } from "@vercel/analytics/react"
-import { Toaster } from "sonner"
-
-import { siteConfig } from "@/lib/config"
-import { fontSans } from "@/lib/fonts"
-import { cn, isDevelopment } from "@/lib/utils"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import Footer from "@/components/footer"
-import { SiteHeader } from "@/components/header"
-import { TailwindIndicator } from "@/components/tailwind-indicator"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Analytics } from '@vercel/analytics/react';
+import type { Metadata, Viewport } from 'next';
+import { cookies } from 'next/headers';
+import Script from 'next/script';
+import { Toaster } from 'sonner';
+import { AppSidebar } from '@/components/app-sidebar';
+import Footer from '@/components/footer';
+import { SiteHeader } from '@/components/header';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
+import { ThemeProvider } from '@/components/theme-provider';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { siteConfig } from '@/lib/config';
+import { fontSans } from '@/lib/fonts';
+import { cn, isDevelopment } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: {
@@ -23,26 +22,26 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
   },
-}
+};
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "cyan" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: '(prefers-color-scheme: light)', color: 'cyan' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
   ],
-}
+};
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -51,16 +50,14 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <script
             defer
             src="https://analytics.jfay.dev/script.js"
-            data-website-id="70799b6a-0adc-4d93-baff-423766a9efab"
-          ></script>
+            data-website-id="70799b6a-0adc-4d93-baff-423766a9efab"></script>
         )}
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-        )}
-      >
+          'min-h-screen bg-background font-sans antialiased',
+          fontSans.variable,
+        )}>
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -83,5 +80,5 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         />
       </body>
     </html>
-  )
+  );
 }

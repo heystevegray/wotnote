@@ -1,6 +1,6 @@
-import Link from "next/link"
+import Link from 'next/link';
 
-import { MY_NAME, MY_WEBSITE_URL } from "@/lib/config"
+import { MY_NAME, MY_WEBSITE_URL } from '@/lib/config';
 
 const Footer = () => {
   return (
@@ -10,7 +10,7 @@ const Footer = () => {
         {MY_NAME}
       </Link>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

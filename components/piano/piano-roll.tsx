@@ -1,27 +1,27 @@
-import { Suspense, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
 
-import { urlParams } from "@/lib/config"
-import { Note } from "@/lib/core/Piano"
-import { ClassName } from "@/lib/types"
+import { urlParams } from '@/lib/config';
+import type { Note } from '@/lib/core/Piano';
+import type { ClassName } from '@/lib/types';
 
-type Props = {
-  activeNotes?: Note[]
-  chordIndex: number
-} & ClassName
+type Props = { activeNotes?: Note[]; chordIndex: number } & ClassName;
 
-const SVG_WIDTH = 4346.38
-const SVG_HEIGHT = 524.24
+const SVG_WIDTH = 4346.38;
+const SVG_HEIGHT = 524.24;
 
 const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
   const color =
-    (searchParams.get(urlParams.color) as string) ?? "hsl(var(--key-highlight))"
+    (searchParams?.get(urlParams.color) as string) ??
+    'hsl(var(--key-highlight))';
 
   const getKeyByCode = (code: number) => {
-    return document.getElementsByClassName(`${code}`)[chordIndex] as HTMLElement
-  }
+    return document.getElementsByClassName(`${code}`)[
+      chordIndex
+    ] as HTMLElement;
+  };
 
   // const resetKeys = () => {
   //   // Reset all keys
@@ -34,20 +34,21 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
   // }
 
   const highlightKeys = () => {
-    activeNotes?.map((note) => {
-      const key = getKeyByCode(note.code)
+    activeNotes?.forEach((note) => {
+      const key = getKeyByCode(note.code);
 
       if (key) {
-        key.style.fill = color
+        key.style.fill = color;
       }
-    })
-  }
+    });
+  };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: shh
   useEffect(() => {
     // resetKeys()
-    highlightKeys()
+    highlightKeys();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeNotes])
+  }, [activeNotes]);
 
   return (
     <Suspense>
@@ -56,8 +57,8 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
           id="piano"
           xmlns="http://www.w3.org/2000/svg"
           width="100%"
-          viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-        >
+          viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}>
+          <title>Piano Roll</title>
           <g id="piano-component-keys">
             <path
               id="21"
@@ -591,7 +592,7 @@ const PianoRoll = ({ activeNotes, chordIndex, className }: Props) => {
         </svg>
       </div>
     </Suspense>
-  )
-}
+  );
+};
 
-export default PianoRoll
+export default PianoRoll;

@@ -1,11 +1,8 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { toast } from "sonner"
-
-import { urlParams } from "@/lib/config"
-import { exampleQuestions } from "@/lib/utils"
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import * as React from 'react';
+import { toast } from 'sonner';
 import {
   CommandDialog,
   CommandEmpty,
@@ -13,56 +10,56 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from '@/components/ui/command';
+import { urlParams } from '@/lib/config';
+import { exampleQuestions } from '@/lib/utils';
 
-import Gradient from "./gradient"
-import { Icons } from "./icons"
+import Gradient from './gradient';
+import { Icons } from './icons';
 
-export const COMMAND_DIALOG_KEYBOARD_SHORTCUT = "k"
+export const COMMAND_DIALOG_KEYBOARD_SHORTCUT = 'k';
 
 export function GenerateDialog({
   show = false,
   setShow,
 }: {
-  show?: boolean
-  setShow?: React.Dispatch<React.SetStateAction<boolean>>
+  show?: boolean;
+  setShow?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [open, setOpen] = React.useState(false)
-  const query = searchParams.get(urlParams.query) ?? ""
-  const [input, setInput] = React.useState(query)
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [open, setOpen] = React.useState(false);
+  const query = searchParams?.get(urlParams.query) ?? '';
+  const [input, setInput] = React.useState(query);
 
   const handleClose = () => {
-    setOpen(false)
+    setOpen(false);
 
     if (setShow) {
-      setShow(false)
+      setShow(false);
     }
-  }
+  };
 
   const handleChange = (value: string) => {
-    handleClose()
+    handleClose();
 
-    router.push(pathname + "?" + createQueryString(urlParams.query, value))
+    router.push(`${pathname}?${createQueryString(urlParams.query, value)}`);
 
-    toast("Attempting to generate", {
-      description: `“${value}”`,
-    })
-  }
+    toast('Attempting to generate', { description: `“${value}”` });
+  };
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
   const createQueryString = React.useCallback(
     (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set(name, value)
+      const params = new URLSearchParams(searchParams?.toString());
+      params.set(name, value);
 
-      return params.toString()
+      return params.toString();
     },
-    [searchParams]
-  )
+    [searchParams],
+  );
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -70,41 +67,40 @@ export function GenerateDialog({
         e.key === COMMAND_DIALOG_KEYBOARD_SHORTCUT &&
         (e.metaKey || e.ctrlKey)
       ) {
-        e.preventDefault()
-        setOpen((open) => !open)
+        e.preventDefault();
+        setOpen((open) => !open);
       }
-    }
+    };
 
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
 
   React.useEffect(() => {
     if (show) {
-      setOpen(true)
+      setOpen(true);
     }
-  }, [show])
+  }, [show]);
 
   const shuffledQuestions = React.useMemo(() => {
-    return exampleQuestions.sort(() => 0.5 - Math.random())
-  }, [])
+    return exampleQuestions.sort(() => 0.5 - Math.random());
+  }, []);
 
   return (
     <CommandDialog
       open={open}
       onOpenChange={() => handleClose()}
-      title="Generate Chords"
-    >
+      title="Generate Chords">
       <CommandInput
         value={input}
         onValueChange={setInput}
         placeholder="Type a song name to generate chords..."
         onKeyDown={(e) => {
-          if (e.key === "Enter" && input) {
+          if (e.key === 'Enter' && input) {
             // Prevent the default action
-            e.preventDefault()
+            e.preventDefault();
             // Call the handleChange function with the input value
-            handleChange(input)
+            handleChange(input);
           }
         }}
       />
@@ -117,8 +113,10 @@ export function GenerateDialog({
           </p>
         </CommandEmpty>
         <CommandGroup heading="Suggestions">
-          {shuffledQuestions.map((question, index) => (
-            <CommandItem onSelect={(value) => handleChange(value)} key={index}>
+          {shuffledQuestions.map((question) => (
+            <CommandItem
+              onSelect={(value) => handleChange(value)}
+              key={question}>
               <Icons.logo />
               <span>{question}</span>
             </CommandItem>
@@ -126,5 +124,5 @@ export function GenerateDialog({
         </CommandGroup>
       </CommandList>
     </CommandDialog>
-  )
+  );
 }
