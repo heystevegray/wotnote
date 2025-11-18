@@ -1,43 +1,47 @@
-import { Blocks, Sparkle } from "lucide-react"
+import { Blocks, Sparkle } from 'lucide-react';
 
-import { Icons } from "@/components/icons"
+import { Icons } from '@/components/icons';
+import type { DefaultConfig } from './core/piano';
 
-export const MY_WEBSITE_URL = "https://www.stevegray.io/"
-export const MY_NAME = "Steve Gray"
+export const MY_WEBSITE_URL = 'https://www.stevegray.io/';
+export const MY_NAME = 'Steve Gray';
 
-export type SiteConfig = typeof siteConfig
+export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "wotnote",
-  description: "Write music faster",
+  name: 'wotnote',
+  description: 'Write music faster',
   mainNav: [
     {
       icon: Icons.logo,
-      title: "Home",
-      href: "/",
+      title: 'Home',
+      href: '/',
       hideMain: true,
     },
     {
-      icon: Sparkle,
-      title: "Chat",
-      href: "/chat",
-      isAI: true,
+      icon: Blocks,
+      title: 'Build',
+      href: '/build',
     },
     {
-      icon: Blocks,
-      title: "Build",
-      href: "/build",
+      icon: Sparkle,
+      title: 'Generate',
+      href: '/chat',
+      isAI: true,
     },
   ],
   links: {
-    github: "https://github.com/heystevegray/wotnote",
+    github: 'https://github.com/heystevegray/wotnote',
   },
-}
+};
 
-export const urlParams = {
-  key: "key",
-  scale: "scale",
-  color: "color",
-  query: "q",
-  build: "build",
-}
+export type URLParams = Record<keyof DefaultConfig, string> & { query: string };
+
+export const urlParams: URLParams = {
+  key: 'key',
+  scale: 'scale',
+  color: 'color',
+  query: 'q',
+  build: 'build',
+  accidental: 'sharp',
+};

@@ -1,6 +1,5 @@
 import '@/app/globals.css';
 
-import { Analytics } from '@vercel/analytics/react';
 import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import Script from 'next/script';
@@ -13,7 +12,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { siteConfig } from '@/lib/config';
 import { fontSans } from '@/lib/fonts';
-import { cn, isDevelopment } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: {
@@ -45,14 +44,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {isDevelopment ? null : (
-          <script
-            defer
-            src="https://analytics.jfay.dev/script.js"
-            data-website-id="70799b6a-0adc-4d93-baff-423766a9efab"></script>
-        )}
-      </head>
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
@@ -70,7 +61,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <Footer />
             </div>
             <Toaster />
-            <Analytics />
             <TailwindIndicator />
           </ThemeProvider>
         </SidebarProvider>

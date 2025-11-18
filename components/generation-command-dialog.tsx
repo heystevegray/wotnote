@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
 import {
@@ -11,9 +10,8 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { urlParams } from '@/lib/config';
+import useParams from '@/lib/hooks/use-params';
 import { exampleQuestions } from '@/lib/utils';
-
 import Gradient from './gradient';
 import { Icons } from './icons';
 
@@ -26,11 +24,9 @@ export function GenerateDialog({
   show?: boolean;
   setShow?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [open, setOpen] = React.useState(false);
-  const query = searchParams?.get(urlParams.query) ?? '';
+
+  const { query, pushParams } = useParams();
   const [input, setInput] = React.useState(query);
 
   const handleClose = () => {
@@ -43,23 +39,9 @@ export function GenerateDialog({
 
   const handleChange = (value: string) => {
     handleClose();
-
-    router.push(`${pathname}?${createQueryString(urlParams.query, value)}`);
-
+    pushParams('query', value);
     toast('Attempting to generate', { description: `“${value}”` });
   };
-
-  // Get a new searchParams string by merging the current
-  // searchParams with a provided key/value pair
-  const createQueryString = React.useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams?.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
