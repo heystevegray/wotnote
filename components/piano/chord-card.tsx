@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { ChordProps, Note } from '@/lib/core/piano';
-import { cn } from '@/lib/utils';
+import { capitalizeFirstLetter, cn } from '@/lib/utils';
 import { Icons } from '../icons';
 import { getKeyWithFlat } from '../settings';
 import { Button } from '../ui/button';
@@ -51,7 +51,7 @@ const Chord = ({ chord, onRemove }: ChordCardProps) => {
             {chord.scaleDegree}
           </div>
           <span className="font-normal text-muted-foreground">
-            {degree?.value}
+            {capitalizeFirstLetter(chord.key)} {chord.quality}
           </span>
         </CardTitle>
         {onRemove ? (

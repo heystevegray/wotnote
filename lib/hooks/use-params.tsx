@@ -8,13 +8,13 @@ export const useParams = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Parse build as scale degrees (1-7) for transposition
+  // Parse build as scale degrees (supports decimals like 1.5 for chord qualities)
   const buildScaleDegrees: number[] =
     searchParams
       ?.get(urlParams.build)
       ?.split(',')
       .filter(Boolean)
-      .map((s) => Number.parseInt(s, 10))
+      .map((s) => parseFloat(s))
       .filter((n) => !Number.isNaN(n)) ?? [];
 
   const query = searchParams?.get(urlParams.query) ?? '';

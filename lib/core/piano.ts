@@ -46,12 +46,58 @@ export const NoteSchema = z.object({
 
 export type Note = z.infer<typeof NoteSchema>;
 
+// Chord quality mapping
+// Integer part of scaleDegree (1-12) = semitone offset
+// Decimal part (0-9) = chord quality
+export const ChordQualityEnum = z.enum([
+  'diatonic',
+  'major',
+  'minor',
+  'dim',
+  'aug',
+  'maj7',
+  'min7',
+  'dom7',
+  'halfdim7',
+  'dim7',
+]);
+
+export type ChordQuality = z.infer<typeof ChordQualityEnum>;
+
+export const CHORD_QUALITIES: Record<number, ChordQuality> = {
+  0: 'diatonic', // Whatever naturally occurs in the scale
+  1: 'major', // Major triad (R, 3, 5)
+  2: 'minor', // Minor triad (R, ♭3, 5)
+  3: 'dim', // Diminished triad (R, ♭3, ♭5)
+  4: 'aug', // Augmented triad (R, 3, ♯5)
+  5: 'maj7', // Major 7th (R, 3, 5, 7)
+  6: 'min7', // Minor 7th (R, ♭3, 5, ♭7)
+  7: 'dom7', // Dominant 7th (R, 3, 5, ♭7)
+  8: 'halfdim7', // Half-diminished 7th (R, ♭3, ♭5, ♭7)
+  9: 'dim7', // Fully diminished 7th (R, ♭3, ♭♭7)
+} as const;
+
+// Map chord qualities to interval patterns (in semitones from root)
+export const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
+  diatonic: [0, 4, 7], // diatonic - will be determined by scale
+  major: [0, 4, 7], // major triad
+  minor: [0, 3, 7], // minor triad
+  dim: [0, 3, 6], // diminished triad
+  aug: [0, 4, 8], // augmented triad
+  maj7: [0, 4, 7, 11], // major 7th
+  min7: [0, 3, 7, 10], // minor 7th
+  dom7: [0, 4, 7, 10], // dominant 7th
+  halfdim7: [0, 3, 6, 10], // half-diminished 7th
+  dim7: [0, 3, 6, 9], // fully diminished 7th
+};
+
 export const ChordSchema = z.object({
   scaleDegree: z.number(),
   notes: z.array(NoteSchema),
   key: KeyEnum,
   id: z.string(),
   lyrics: z.string().optional(),
+  quality: ChordQualityEnum,
 });
 
 export type ChordProps = z.infer<typeof ChordSchema>;
@@ -268,11 +314,85 @@ export class Piano {
           { ...twoOctaves[index + 4] },
         ],
         scaleDegree: index + 1,
+        quality: 'diatonic', // Diatonic chords use default quality
       };
 
       chords.push(chord);
     }
 
     return chords.slice(0, 8);
+  }
+
+  // Create a chord based on semitone offset (1-12) and quality (.0-.9)
+  // e.g., 1.5 = semitone 0 (root), quality 5 (maj7)
+  //       4.2 = semitone 3 (E♭ in C), quality 2 (minor)
+  getChordByScaleDegree(scaleDegree: number): ChordProps | null {
+    const semitoneOffset = Math.floor(scaleDegree) - 1; // 1-12 maps to 0-11 semitones
+    const qualityDecimal = Math.round(
+      (scaleDegree - Math.floor(scaleDegree)) * 10,
+    );
+    
+    // Map quality decimal to ChordQuality string
+    const quality = CHORD_QUALITIES[qualityDecimal];
+    if (!quality) return null;
+
+    // Validate inputs (1-12 for semitones)
+    if (semitoneOffset < 0 || semitoneOffset > 11) return null;
+    if (!(quality in CHORD_INTERVALS)) return null;
+
+    // Get the root note of the key
+    const keyRoot = KEYS.find((note) => note.key === this.key);
+    if (!keyRoot) return null;
+
+    // Calculate the root note based on semitone offset from key root
+    const rootCode = keyRoot.code + semitoneOffset;
+    const rootSemitone = rootCode % 12;
+    const rootKey = KEYS[rootSemitone].key as Key;
+
+    // For diatonic quality, try to use scale notes if possible
+    if (quality === 'diatonic') {
+      const scaleNotes = this.getNotes(2);
+      const matchingNote = scaleNotes.find(
+        (note) => note.semitone === rootSemitone,
+      );
+      if (matchingNote) {
+        const diatonicChords = this.getChords();
+        const matchingChord = diatonicChords.find(
+          (chord) => chord.key === matchingNote.key,
+        );
+        if (matchingChord) return matchingChord;
+      }
+    }
+
+    // Build chord using interval pattern
+    const intervals = CHORD_INTERVALS[quality];
+    const notes: Note[] = intervals.map((semitones) => {
+      const targetCode = rootCode + semitones;
+      const targetSemitone = targetCode % 12;
+      const key = KEYS[targetSemitone].key as Key;
+
+      return {
+        code: targetCode,
+        key,
+        semitone: targetSemitone,
+      };
+    });
+
+    const chord: ChordProps = {
+      id: `${this.key}-${this.scale}-semitone-${scaleDegree}`,
+      key: rootKey,
+      notes,
+      scaleDegree,
+      quality,
+    };
+
+    return chord;
+  }
+
+  // Get multiple chords by scale degrees (supports decimals)
+  getChordsByScaleDegrees(scaleDegrees: number[]): ChordProps[] {
+    return scaleDegrees
+      .map((sd) => this.getChordByScaleDegree(sd))
+      .filter((chord): chord is ChordProps => chord !== null);
   }
 }
